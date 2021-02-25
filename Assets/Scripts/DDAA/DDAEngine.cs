@@ -41,8 +41,8 @@ public sealed class DDAEngine
         difficultiesPointGlobal += additiveValue;
     }
 
-    public float CalculateInGameValue(float point, float dpgContribution, float minValue = 0f, float inGameValue = 0f) 
+    public float CalculateInGameValue(float point, float dpgContribution, float minValue = 0f) 
     {
-        return minValue + point + difficultiesPointGlobal * dpgContribution + inGameValue;
+        return minValue + point + difficultiesPointGlobal * dpgContribution;
     }
 }
