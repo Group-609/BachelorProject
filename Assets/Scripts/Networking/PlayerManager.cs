@@ -17,7 +17,7 @@ namespace Photon.Pun.Demo.PunBasics
 
     /// <summary>
     /// Player manager.
-    /// Handles fire Input and Beams.
+    /// Handles fire Input.
     /// </summary>
     public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
     {
@@ -37,10 +37,6 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField]
         private GameObject playerUiPrefab;
 
-        [Tooltip("The Beams GameObject to control")]
-        [SerializeField]
-        private GameObject beams;
-
         //True, when the user is firing
         bool IsFiring;
 
@@ -53,14 +49,6 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Awake()
         {
-            if (this.beams == null)
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> Beams Reference.", this);
-            }
-            else
-            {
-                this.beams.SetActive(false);
-            }
 
             // #Important
             // used in GameManager.cs: we keep track of the localPlayer instance to prevent instanciation when levels are synchronized
@@ -103,24 +91,19 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
-           
-			UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
-        }
+                   }
 
 
 		public override void OnDisable()
 		{
 			// Always call the base to remove callbacks
 			base.OnDisable ();
-
-			UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
 		}
 
 
         /// <summary>
         /// MonoBehaviour method called on GameObject by Unity on every frame.
         /// Process Inputs if local player.
-        /// Show and hide the beams
         /// Watch for end of game, when local player health is 0.
         /// </summary>
         public void Update()
@@ -132,13 +115,8 @@ namespace Photon.Pun.Demo.PunBasics
 
                 if (this.Health <= 0f)
                 {
-                    GameManager.Instance.LeaveRoom();
+                    //Respawn player
                 }
-            }
-
-            if (this.beams != null && this.IsFiring != this.beams.activeInHierarchy)
-            {
-                this.beams.SetActive(this.IsFiring);
             }
         }
 
@@ -188,26 +166,9 @@ namespace Photon.Pun.Demo.PunBasics
             this.Health -= 0.1f*Time.deltaTime;
         }
 
-        /// <summary>
-        /// MonoBehaviour method called after a new level of index 'level' was loaded.
-        /// We recreate the Player UI because it was destroy when we switched level.
-        /// Also reposition the player if outside the current arena.
-        /// </summary>
-        /// <param name="level">Level index loaded</param>
-        void CalledOnLevelWasLoaded(int level)
-        {
-            GameObject _uiGo = Instantiate(this.playerUiPrefab);
-            _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
-        }
-
         #endregion
 
         #region Private Methods
-
-		void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadingMode)
-		{
-			this.CalledOnLevelWasLoaded(scene.buildIndex);
-		}
 
         /// <summary>
         /// Processes the inputs. This MUST ONLY BE USED when the player has authority over this Networked GameObject (photonView.isMine == true)

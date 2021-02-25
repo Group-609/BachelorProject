@@ -54,7 +54,7 @@ namespace Photon.Pun.Demo.PunBasics
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
 			if (!PhotonNetwork.IsConnected)
 			{
-				SceneManager.LoadScene("PunBasics-Launcher");
+				SceneManager.LoadScene("Launcher");
 
 				return;
 			}
@@ -154,6 +154,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		void LoadArena()
 		{
+			
 			if ( ! PhotonNetwork.IsMasterClient )
 			{
 				Debug.LogError( "PhotonNetwork : Trying to Load a level but we are not the master Client" );
@@ -161,7 +162,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 			Debug.LogFormat( "PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount );
 
-			PhotonNetwork.LoadLevel("PunBasics-Room for "+PhotonNetwork.CurrentRoom.PlayerCount);
+			PhotonNetwork.LoadLevel("Master");
 		}
 
 		#endregion
