@@ -4,7 +4,6 @@ using UnityEngine;
 
 public sealed class DDAEngine
 {
-
     // --------------------------------- //
     // Singleton related implementation //
     //----------------------------------//
@@ -12,10 +11,7 @@ public sealed class DDAEngine
     private static DDAEngine instance = null;
     private static readonly object padlock = new object();
 
-    private DDAEngine()
-    {
-
-    }
+    private DDAEngine(){}
 
     public static DDAEngine Instance { 
         get 
