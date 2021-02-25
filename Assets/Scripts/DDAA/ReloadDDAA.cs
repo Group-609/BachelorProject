@@ -28,8 +28,21 @@ public sealed class ReloadDDAA
         }
     }
 
-    // Implementation for ReloadDDAA (parameters, used functions etc.)
+    // Implementation for ReloadDDAA itself
 
-    private static float minReloadTime = 2f;
+    // NOTE!!! 
+    // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
+
+    //static parameters
+    private static readonly float minReloadTime = 2f;
+    private static readonly float dpgContribution = 0.5f;
+    private static readonly float pointContribution = 0.7f;
+
+    //mutable parameters
+    private float reloadMultiplier = 1f;
+    private float reloadPoint = 1f;
+
+    // THE IN-GAME VALUE USED
+    // I gave it initial value as minimum reload time, though it could be any we wish (probably somewhere in the middle)
     private float reloadTime = minReloadTime;
 }
