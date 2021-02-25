@@ -75,10 +75,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
 				}
-
-
 			}
-
 		}
 
 		/// <summary>
@@ -134,7 +131,7 @@ namespace Photon.Pun.Demo.PunBasics
 		/// </summary>
 		public override void OnLeftRoom()
 		{
-			SceneManager.LoadScene("PunBasics-Launcher");
+			SceneManager.LoadScene("Launcher");
 		}
 
 		#endregion

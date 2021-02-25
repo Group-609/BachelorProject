@@ -110,9 +110,6 @@ namespace Photon.Pun.Demo.PunBasics
 			cameraOffset.y = height;
 			
 		    cameraTransform.position = Vector3.Lerp(cameraTransform.position, this.transform.position +this.transform.TransformVector(cameraOffset), smoothSpeed*Time.deltaTime);
-
-		    cameraTransform.LookAt(this.transform.position + centerOffset);
-		    
 	    }
 
 	   

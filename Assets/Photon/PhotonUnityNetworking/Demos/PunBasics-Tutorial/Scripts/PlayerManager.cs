@@ -103,11 +103,8 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
-
-            #if UNITY_5_4_OR_NEWER
-            // Unity 5.4 has a new scene management. register a method to call CalledOnLevelWasLoaded.
+           
 			UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
-            #endif
         }
 
 
@@ -116,9 +113,7 @@ namespace Photon.Pun.Demo.PunBasics
 			// Always call the base to remove callbacks
 			base.OnDisable ();
 
-			#if UNITY_5_4_OR_NEWER
 			UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
-			#endif
 		}
 
 
@@ -173,7 +168,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         /// <summary>
         /// MonoBehaviour method called once per frame for every Collider 'other' that is touching the trigger.
-        /// We're going to affect health while the beams are interesting the player
+        /// We do damage here
         /// </summary>
         /// <param name="other">Other.</param>
         public void OnTriggerStay(Collider other)
@@ -184,26 +179,14 @@ namespace Photon.Pun.Demo.PunBasics
                 return;
             }
 
-            // We are only interested in Beamers
-            // we should be using tags but for the sake of distribution, let's simply check by name.
-            if (!other.name.Contains("Beam"))
+            // We are only interested in bullets
+            if (!other.name.Contains("Bullet"))
             {
                 return;
             }
 
-            // we slowly affect health when beam is constantly hitting us, so player has to move to prevent death.
             this.Health -= 0.1f*Time.deltaTime;
         }
-
-
-        #if !UNITY_5_4_OR_NEWER
-        /// <summary>See CalledOnLevelWasLoaded. Outdated in Unity 5.4.</summary>
-        void OnLevelWasLoaded(int level)
-        {
-            this.CalledOnLevelWasLoaded(level);
-        }
-        #endif
-
 
         /// <summary>
         /// MonoBehaviour method called after a new level of index 'level' was loaded.
@@ -213,12 +196,6 @@ namespace Photon.Pun.Demo.PunBasics
         /// <param name="level">Level index loaded</param>
         void CalledOnLevelWasLoaded(int level)
         {
-            // check if we are outside the Arena and if it's the case, spawn around the center of the arena in a safe zone
-            if (!Physics.Raycast(transform.position, -Vector3.up, 5f))
-            {
-                transform.position = new Vector3(0f, 5f, 0f);
-            }
-
             GameObject _uiGo = Instantiate(this.playerUiPrefab);
             _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
         }
@@ -227,13 +204,10 @@ namespace Photon.Pun.Demo.PunBasics
 
         #region Private Methods
 
-
-		#if UNITY_5_4_OR_NEWER
 		void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode loadingMode)
 		{
 			this.CalledOnLevelWasLoaded(scene.buildIndex);
 		}
-		#endif
 
         /// <summary>
         /// Processes the inputs. This MUST ONLY BE USED when the player has authority over this Networked GameObject (photonView.isMine == true)
@@ -252,6 +226,7 @@ namespace Photon.Pun.Demo.PunBasics
                 if (!this.IsFiring)
                 {
                     this.IsFiring = true;
+                    Debug.Log("Firing weapon");
                 }
             }
 
