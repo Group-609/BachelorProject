@@ -51,7 +51,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("Prefab of paintball to shoot")]
         [SerializeField]
-        private Rigidbody paintballPrefab;
+        private GameObject paintballPrefab;
 
         [Tooltip("Transform the paint balls come from")]
         private Transform paintGun;
@@ -158,7 +158,7 @@ namespace Photon.Pun.Demo.PunBasics
                 return;
             }
 
-            Destroy(other.gameObject);
+            PhotonNetwork.Destroy(other.gameObject);
             this.Health -= 10f;
         }
 
@@ -183,9 +183,9 @@ namespace Photon.Pun.Demo.PunBasics
                 if (!this.IsFiring)
                 {
                     this.IsFiring = true;
-                    Debug.Log("Firing weapon");
-                    Rigidbody paintball = Instantiate(paintballPrefab, paintGun.position, Quaternion.identity);
-                    paintball.velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
+                    Vector3 velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
+                    object[] instantiationData = {velocity};
+                    GameObject paintball = PhotonNetwork.Instantiate(paintballPrefab.name, paintGun.position, paintGun.rotation, 0, instantiationData);     //last parameter sends data to OnPhotonInstantiate() found in Paintball.cs
                 }
             }
 
