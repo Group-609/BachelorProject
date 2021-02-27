@@ -23,11 +23,23 @@ namespace Photon.Pun.Demo.PunBasics
     {
         #region Public Fields
 
+        //DDA friendly variables
+        //---------------------------------------------------------
         [Tooltip("The current Health of our player")]
-        public float Health = 1f;
+        public float Health = 100f;
+
+        [Tooltip("The Health of our player when he spawns")]
+        public float startingHealth = 100f;
+
+        [Tooltip("Speed of this player's paintballs")]
+        public float paintBallSpeed = 50f;
+        //---------------------------------------------------------
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
         public static GameObject LocalPlayerInstance;
+
+        [Tooltip("The game manager object.")]
+        public GameManager gameManager;
 
         #endregion
 
@@ -36,6 +48,13 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("The Player's UI GameObject Prefab")]
         [SerializeField]
         private GameObject playerUiPrefab;
+
+        [Tooltip("Prefab of paintball to shoot")]
+        [SerializeField]
+        private Rigidbody paintballPrefab;
+
+        [Tooltip("Transform the paint balls come from")]
+        private Transform paintGun;
 
         //True, when the user is firing
         bool IsFiring;
@@ -55,6 +74,7 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)
             {
                 LocalPlayerInstance = gameObject;
+                paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("PaintGun");
             }
 
             // #Critical
@@ -91,7 +111,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
-                   }
+        }
 
 
 		public override void OnDisable()
@@ -115,14 +135,14 @@ namespace Photon.Pun.Demo.PunBasics
 
                 if (this.Health <= 0f)
                 {
-                    //Respawn player
+                    Health = startingHealth;
+                    transform.position = gameManager.transform.position;
                 }
             }
         }
 
         /// <summary>
         /// MonoBehaviour method called when the Collider 'other' enters the trigger.
-        /// Affect Health of the Player if the collider is a beam
         /// Note: when jumping and firing at the same, you'll find that the player's own beam intersects with itself
         /// One could move the collider further away to prevent this or check if the beam belongs to the player.
         /// </summary>
@@ -132,38 +152,14 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 return;
             }
-
-
-            // We are only interested in Beamers
-            // we should be using tags but for the sake of distribution, let's simply check by name.
-            if (!other.name.Contains("Beam"))
+            // We are only interested in paintballs
+            if (!other.name.Contains("PaintBall"))
             {
                 return;
             }
 
-            this.Health -= 0.1f;
-        }
-
-        /// <summary>
-        /// MonoBehaviour method called once per frame for every Collider 'other' that is touching the trigger.
-        /// We do damage here
-        /// </summary>
-        /// <param name="other">Other.</param>
-        public void OnTriggerStay(Collider other)
-        {
-            // we dont' do anything if we are not the local player.
-            if (!photonView.IsMine)
-            {
-                return;
-            }
-
-            // We are only interested in bullets
-            if (!other.name.Contains("Bullet"))
-            {
-                return;
-            }
-
-            this.Health -= 0.1f*Time.deltaTime;
+            Destroy(other.gameObject);
+            this.Health -= 10f;
         }
 
         #endregion
@@ -188,6 +184,8 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     this.IsFiring = true;
                     Debug.Log("Firing weapon");
+                    Rigidbody paintball = Instantiate(paintballPrefab, paintGun.position, Quaternion.identity);
+                    paintball.velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
                 }
             }
 
