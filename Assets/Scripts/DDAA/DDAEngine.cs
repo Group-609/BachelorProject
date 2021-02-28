@@ -45,6 +45,6 @@ public sealed class DDAEngine
 
     public float CalculateInGameValue(float point, float pointContribution, float dpgContribution, float minValue = 0f) 
     {
-        return minValue + point * pointContribution + difficultiesPointGlobal * dpgContribution;
+        return minValue + (point * pointContribution) + (difficultiesPointGlobal * dpgContribution);
     }
 }

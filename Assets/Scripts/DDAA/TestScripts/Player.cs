@@ -54,5 +54,7 @@ public class Player : MonoBehaviour
     {
         KillCountCondition.Instance.ConditionValue = killCount;
         ReloadDDAA.Instance.AdjustReloadTime();
+        killCount = 0;
+        killCountText.text = killCount.ToString();
     }
 }

@@ -30,7 +30,7 @@ public sealed class KillCountCondition : ICondition
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly int[] dpgValues = new int[] { 0, 5, 10, 15, 20 }; // kill count numbers, by which the DDAA's additive values would be mapped
-    private static readonly float[] dpgAdditiveValues = new float[] { -0.2f, 0.2f, 0.4f, 0.6f, 1f }; // additive values to multiplier
+    private static readonly float[] dpgAdditiveValues = new float[] { -1f, 0f, 0.5f, 1f, 1.5f }; // additive values to DPG point
 
     private int currentKillCount;
 
@@ -49,9 +49,9 @@ public sealed class KillCountCondition : ICondition
     {
         for(int i=0; i<conditionalValues.Length; i++)
         {
-            if (conditionalValues[i] <= currentKillCount)
+            if (conditionalValues[i] >= currentKillCount)
                 return additiveValues[i];
         }
-        return 0f;
+        return additiveValues[additiveValues.Length-1];
     }
 }

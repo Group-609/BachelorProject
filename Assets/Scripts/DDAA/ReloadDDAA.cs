@@ -35,16 +35,17 @@ public sealed class ReloadDDAA
     private static readonly float initialReloadPoint = 1f;
     private static readonly float minReloadTime = 2f;
     private static readonly float dpgContribution = 0.5f;
-    private static readonly float reloadPointContribution = 0.7f;
+    private static readonly float reloadPointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly int[] killCountValues = new int[] { 0, 5, 10, 15, 20 }; // kill count numbers at which the DDAA's additive values would be mapped
 
     private static readonly float[] killCountPointAdditiveValues = new float[] { -1, 0, 1, 2, 3 }; // additive values to point directly
-    private static readonly float[] killCountMultiplierAdditiveValues = new float[] { -0.2f, 0.2f, 0.4f, 0.6f, 1f }; // additive values to multiplier
+    private static readonly float[] killCountMultiplierAdditiveValues = new float[] { -0.2f, 0f, 0.2f, 0.4f, 0.6f }; // additive values to multiplier
 
     // Mutable parameters. 
-    private float reloadMultiplier = 1f; // Do not ajust this, it will change during the gameplay
+    // Do not ajust these, it will change during the gameplay
+    private float reloadMultiplier = 1f; 
     private float reloadPoint = initialReloadPoint; 
 
     // THE IN-GAME VALUE USED
@@ -70,6 +71,7 @@ public sealed class ReloadDDAA
         // adjust multiplier and point values
         reloadMultiplier += KillCountCondition.Instance.GetAdditiveValue(killCountValues, killCountMultiplierAdditiveValues);
         reloadPoint *= reloadMultiplier;
+        Debug.Log("Reload point = " + reloadPoint);
 
         //set reloadTime
         reloadTime = DDAEngine.Instance.CalculateInGameValue(reloadPoint, reloadPointContribution, dpgContribution, minReloadTime);

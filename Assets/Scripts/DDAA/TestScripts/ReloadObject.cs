@@ -23,7 +23,6 @@ public class ReloadObject : MonoBehaviour, ReloadDDAA.IReloadChangeListener
     public void OnReloadTimeChanged(float reloadTime)
     {
         this.reloadTime = reloadTime;
-        Debug.Log("Reload time changed. New reload time is " + reloadTime.ToString());
         reloadTimeText.text = reloadTime.ToString();
     }   
 }
