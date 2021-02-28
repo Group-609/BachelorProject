@@ -5,9 +5,10 @@ using UnityEngine;
 /* Interface, which defines the generic structure of every specific condition to be implemented */
 public interface ICondition
 {
-    // value holder for the current value of the condition
+    // Value holder for the current value of the condition. 
+    // This value is set from object, which controls some variable in DDAA, so adjustment is started.
     float ConditionValue { get; set; }
 
-    // based on ConditionalValues this function should return what adjustment should be done to DDAA's multiplier
+    // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
     float GetAdditiveValue(int[] conditionalValues, float[] additiveValues);
 }
