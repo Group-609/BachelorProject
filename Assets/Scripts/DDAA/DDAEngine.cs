@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    This class takes care of the calculating the in-game value by using formula.
+
+    Also, it holds and takes care of Difficulty Point Global variable
+*/
+
 public sealed class DDAEngine
 {
     // --------------------------------- //
@@ -37,8 +43,8 @@ public sealed class DDAEngine
         difficultiesPointGlobal += additiveValue;
     }
 
-    public float CalculateInGameValue(float point, float dpgContribution, float minValue = 0f) 
+    public float CalculateInGameValue(float point, float pointContribution, float dpgContribution, float minValue = 0f) 
     {
-        return minValue + point + difficultiesPointGlobal * dpgContribution;
+        return minValue + point * pointContribution + difficultiesPointGlobal * dpgContribution;
     }
 }
