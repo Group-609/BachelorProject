@@ -33,6 +33,9 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("Speed of this player's paintballs")]
         public float paintBallSpeed = 50f;
+
+        [Tooltip("Speed of this player's paintballs")]
+        public float paintballDamage;
         //---------------------------------------------------------
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
@@ -146,6 +149,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// Note: when jumping and firing at the same, you'll find that the player's own beam intersects with itself
         /// One could move the collider further away to prevent this or check if the beam belongs to the player.
         /// </summary>
+        /*
         public void OnTriggerEnter(Collider other)
         {
             if (!photonView.IsMine)
@@ -160,6 +164,15 @@ namespace Photon.Pun.Demo.PunBasics
 
             PhotonNetwork.Destroy(other.gameObject);
             this.Health -= 10f;
+        }
+        */
+
+        /// <summary>
+        /// Change the player's health.
+        /// </summary>
+        public void ChangeHealth(float value)
+        {
+            Health += value;
         }
 
         #endregion
@@ -184,7 +197,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     this.IsFiring = true;
                     Vector3 velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
-                    object[] instantiationData = {velocity, this.GetComponent<PhotonView>().ViewID};
+                    object[] instantiationData = {velocity, this.GetComponent<PhotonView>().ViewID, paintballDamage};
                     GameObject paintball = PhotonNetwork.Instantiate(paintballPrefab.name, paintGun.position, paintGun.rotation, 0, instantiationData);     //last parameter sends data to OnPhotonInstantiate() found in Paintball.cs
                 }
             }
