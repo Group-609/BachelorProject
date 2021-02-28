@@ -184,7 +184,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     this.IsFiring = true;
                     Vector3 velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
-                    object[] instantiationData = {velocity};
+                    object[] instantiationData = {velocity, this.GetComponent<PhotonView>().ViewID};
                     GameObject paintball = PhotonNetwork.Instantiate(paintballPrefab.name, paintGun.position, paintGun.rotation, 0, instantiationData);     //last parameter sends data to OnPhotonInstantiate() found in Paintball.cs
                 }
             }
