@@ -138,41 +138,33 @@ namespace Photon.Pun.Demo.PunBasics
 
                 if (this.Health <= 0f)
                 {
-                    Health = startingHealth;
-                    transform.position = gameManager.transform.position;
+                    transform.position = gameManager.transform.position;        //TODO: Damn first person controller resets this variable breaking the respawn. 
+                    this.Health = startingHealth;
                 }
             }
         }
 
         /// <summary>
-        /// MonoBehaviour method called when the Collider 'other' enters the trigger.
-        /// Note: when jumping and firing at the same, you'll find that the player's own beam intersects with itself
-        /// One could move the collider further away to prevent this or check if the beam belongs to the player.
-        /// </summary>
-        /*
-        public void OnTriggerEnter(Collider other)
-        {
-            if (!photonView.IsMine)
-            {
-                return;
-            }
-            // We are only interested in paintballs
-            if (!other.name.Contains("PaintBall"))
-            {
-                return;
-            }
-
-            PhotonNetwork.Destroy(other.gameObject);
-            this.Health -= 10f;
-        }
-        */
-
-        /// <summary>
         /// Change the player's health.
         /// </summary>
-        public void ChangeHealth(float value)
+        [PunRPC]
+        public void ChangeHealth(float value, int targetViewID)
         {
-            Health += value;
+            Debug.LogError("Health changed");
+            PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().Health += value;
+        }
+
+        [PunRPC]
+        public void ShootFakeBullet()
+        {
+            //TODO: Create fake paintball that does the graphics part
+        }
+
+        //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
+        //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
+        public void HitPlayer(GameObject player, float healthChange)
+        {
+            photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
 
         #endregion
@@ -196,9 +188,10 @@ namespace Photon.Pun.Demo.PunBasics
                 if (!this.IsFiring)
                 {
                     this.IsFiring = true;
-                    Vector3 velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
-                    object[] instantiationData = {velocity, this.GetComponent<PhotonView>().ViewID, paintballDamage};
-                    GameObject paintball = PhotonNetwork.Instantiate(paintballPrefab.name, paintGun.position, paintGun.rotation, 0, instantiationData);     //last parameter sends data to OnPhotonInstantiate() found in Paintball.cs
+                    GameObject paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
+                    paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
+                    paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
+                    paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
                 }
             }
 
@@ -220,13 +213,11 @@ namespace Photon.Pun.Demo.PunBasics
             if (stream.IsWriting)
             {
                 // We own this player: send the others our data
-                stream.SendNext(this.IsFiring);
                 stream.SendNext(this.Health);
             }
             else
             {
                 // Network player, receive data
-                this.IsFiring = (bool)stream.ReceiveNext();
                 this.Health = (float)stream.ReceiveNext();
             }
         }
