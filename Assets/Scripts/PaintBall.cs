@@ -19,7 +19,6 @@ public class PaintBall : MonoBehaviour, IPunInstantiateMagicCallback
 
     void OnCollisionEnter(Collision collision)
     {
-        //
         //If hit a networked object
         if (collision.collider.gameObject.GetComponent<PhotonView>() != null)
         {
@@ -28,8 +27,13 @@ public class PaintBall : MonoBehaviour, IPunInstantiateMagicCallback
             {
                 return;
             }
+            //If it's just the local player seeing this and he is not the master, we just make the bullet invisible and let the master do the damage. 
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                GetComponent<Renderer>().enabled = false;
+            }
             //Is it a different player
-            else if(collision.collider.gameObject.GetComponent<PlayerManager>())
+            else if (collision.collider.gameObject.GetComponent<PlayerManager>())
             {
                 collision.collider.gameObject.GetComponent<PlayerManager>().ChangeHealth(-bulletDamage);      //We damage friend :( for now for testing reasons, later change to heal friend :)
             }
