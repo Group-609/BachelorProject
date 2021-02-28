@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -9,12 +10,17 @@ public class Player : MonoBehaviour
     private static readonly int initialTime = 5;
     private int time = initialTime;
 
-    [SerializeField] private TextMesh timerText;
-    [SerializeField] private TextMesh killCountText;
+    [SerializeField] private Button increaseButton;
+    [SerializeField] private Button decreaseButton;
+
+    [SerializeField] private Text timerText;
+    [SerializeField] private Text killCountText;
 
     private void Start()
     {
-        InvokeRepeating("ControlTimer", 1, 0);
+        increaseButton.onClick.AddListener(OnInreaseClicked);
+        decreaseButton.onClick.AddListener(OnDecreaseClicked);
+        InvokeRepeating("ControlTimer", 0, 1);
     }
 
     private void ControlTimer()
@@ -29,15 +35,15 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnInreaseClicked()
+    private void OnInreaseClicked()
     {
         killCount++;
         killCountText.text = killCount.ToString();
     }
 
-    public void OnDicreaseClicked()
+    public void OnDecreaseClicked()
     {
-        if (killCount < 0)
+        if (killCount > 0)
         {
             killCount--;
             killCountText.text = killCount.ToString();

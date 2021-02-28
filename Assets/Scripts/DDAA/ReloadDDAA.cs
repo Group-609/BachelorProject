@@ -55,7 +55,7 @@ public sealed class ReloadDDAA
     // Otherwise the variable, which holds reload time, will not be notified.
     public interface IReloadChangeListener
     {
-        void OnReloadTimeChanged();
+        void OnReloadTimeChanged(float reloadTime);
     }
 
     private IReloadChangeListener reloadListener;
@@ -76,7 +76,7 @@ public sealed class ReloadDDAA
 
         if (reloadListener != null)
         {
-            reloadListener.OnReloadTimeChanged();
+            reloadListener.OnReloadTimeChanged(reloadTime);
         }
     }
 }

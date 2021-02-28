@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ReloadObject : MonoBehaviour, ReloadDDAA.IReloadChangeListener
 {
 
     private float reloadTime = ReloadDDAA.Instance.reloadTime;
 
-    [SerializeField] private TextMesh reloadTimeText;
+    [SerializeField] private Text reloadTimeText;
 
     private void Awake()
     {
@@ -19,8 +20,9 @@ public class ReloadObject : MonoBehaviour, ReloadDDAA.IReloadChangeListener
         reloadTimeText.text = reloadTime.ToString();
     }
 
-    public void OnReloadTimeChanged()
+    public void OnReloadTimeChanged(float reloadTime)
     {
+        this.reloadTime = reloadTime;
         Debug.Log("Reload time changed. New reload time is " + reloadTime.ToString());
         reloadTimeText.text = reloadTime.ToString();
     }   
