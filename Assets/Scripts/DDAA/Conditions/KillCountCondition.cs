@@ -17,6 +17,8 @@ public sealed class KillCountCondition : ICondition
     {
         get
         {
+            // Locks this part of the code, so singleton is not instantiated twice at the same time 
+            // on two different threads (thread-safe method)
             lock (padlock)
             {
                 if (instance == null)
@@ -29,6 +31,7 @@ public sealed class KillCountCondition : ICondition
     }
 
     // IMPORTANT! Both arrays have to be the same length
+    // They both are optional to have (based on our decisions what condition affects what variables etc.)
     private static readonly int[] dpgValues = new int[] { 0, 5, 10, 15, 20 }; // kill count numbers, by which the DDAA's additive values would be mapped
     private static readonly float[] dpgAdditiveValues = new float[] { -1f, 0f, 0.5f, 1f, 1.5f }; // additive values to DPG point
 
@@ -41,17 +44,7 @@ public sealed class KillCountCondition : ICondition
         {
             // should start the configuration of every DDAA here
             currentKillCount = (int) value;
-            DDAEngine.Instance.AdjustDPG(GetAdditiveValue(dpgValues, dpgAdditiveValues));
+            DDAEngine.Instance.AdjustDPG(value, dpgValues, dpgAdditiveValues);
         }
-    }
-
-    public float GetAdditiveValue(int[] conditionalValues, float[] additiveValues)
-    {
-        for(int i=0; i<conditionalValues.Length; i++)
-        {
-            if (conditionalValues[i] >= currentKillCount)
-                return additiveValues[i];
-        }
-        return additiveValues[additiveValues.Length-1];
     }
 }

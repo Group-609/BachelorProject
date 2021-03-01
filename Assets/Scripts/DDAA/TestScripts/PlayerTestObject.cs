@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+public class PlayerTestObject : MonoBehaviour
 {
     private int killCount;
 
     private static readonly int initialTime = 5;
     private int time = initialTime;
 
-    [SerializeField] private Button increaseButton;
-    [SerializeField] private Button decreaseButton;
+    public Button increaseButton;
+    public Button decreaseButton;
 
-    [SerializeField] private Text timerText;
-    [SerializeField] private Text killCountText;
+    public Text timerText;
+    public Text killCountText;
 
     private void Start()
     {
@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
     private void AdjustDifficulty()
     {
         KillCountCondition.Instance.ConditionValue = killCount;
-        ReloadDDAA.Instance.AdjustReloadTime();
+        ReloadDDAA.Instance.AdjustInGameValue();
         killCount = 0;
         killCountText.text = killCount.ToString();
     }

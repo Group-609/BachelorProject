@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class ReloadDDAA
+public sealed class ReloadDDAA: IDDAA
 {
     // --------------------------------- //
     // Singleton related implementation //
@@ -17,6 +17,8 @@ public sealed class ReloadDDAA
     {
         get
         {
+            // Locks this part of the code, so singleton is not instantiated twice at the same time 
+            // on two different threads (thread-safe method)
             lock (padlock)
             {
                 if (instance == null)
@@ -32,7 +34,7 @@ public sealed class ReloadDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float initialReloadPoint = 1f;
+    private static readonly float baseReloadPoint = 1f;
     private static readonly float minReloadTime = 2f;
     private static readonly float dpgContribution = 0.5f;
     private static readonly float reloadPointContribution = 1f;
@@ -46,31 +48,30 @@ public sealed class ReloadDDAA
     // Mutable parameters. 
     // Do not ajust these, it will change during the gameplay
     private float reloadMultiplier = 1f; 
-    private float reloadPoint = initialReloadPoint; 
+    private float reloadPoint = baseReloadPoint; 
 
     // THE IN-GAME VALUE USED
     // I gave it initial value as minimum reload time, though it could be any we wish (probably somewhere in the middle)
-    public float reloadTime = DDAEngine.Instance.CalculateInGameValue(initialReloadPoint, reloadPointContribution, dpgContribution, minReloadTime);
+    public float reloadTime = DDAEngine.Instance.CalculateInGameValue(baseReloadPoint, reloadPointContribution, dpgContribution, minReloadTime);
 
     // This listener is important if some action has to take place, when the reload time is changed.
     // Otherwise the variable, which holds reload time, will not be notified.
-    public interface IReloadChangeListener
-    {
-        void OnReloadTimeChanged(float reloadTime);
-    }
+    private IValueChangeListener reloadListener;
 
-    private IReloadChangeListener reloadListener;
-
-    public void SetReloadListener(IReloadChangeListener listener)
+    public void SetReloadListener(IValueChangeListener listener)
     {
         reloadListener = listener;
     }
 
-    public void AdjustReloadTime()
+    public void AdjustInGameValue()
     {
+        reloadMultiplier += DDAEngine.Instance.GetAdditiveValue(
+                KillCountCondition.Instance.ConditionValue, 
+                killCountValues, 
+                killCountMultiplierAdditiveValues
+            );
         // adjust multiplier and point values
-        reloadMultiplier += KillCountCondition.Instance.GetAdditiveValue(killCountValues, killCountMultiplierAdditiveValues);
-        reloadPoint *= reloadMultiplier;
+        reloadPoint = baseReloadPoint * reloadMultiplier; // possible to add value directly
         Debug.Log("Reload point = " + reloadPoint);
 
         //set reloadTime
@@ -78,7 +79,7 @@ public sealed class ReloadDDAA
 
         if (reloadListener != null)
         {
-            reloadListener.OnReloadTimeChanged(reloadTime);
+            reloadListener.OnValueChanged(reloadTime);
         }
     }
 }
