@@ -10,6 +10,9 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections;
+using UnityStandardAssets.Characters.FirstPerson;   
+
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -36,6 +39,9 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("Speed of this player's paintballs")]
         public float paintballDamage;
+
+        [Tooltip("Time it takes for the player to get control back after dying")]
+        public float respawnTime;
         //---------------------------------------------------------
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
@@ -61,6 +67,9 @@ namespace Photon.Pun.Demo.PunBasics
 
         //True, when the user is firing
         bool IsFiring;
+
+
+        private IEnumerator respawnCoroutine;
 
         #endregion
 
@@ -138,8 +147,12 @@ namespace Photon.Pun.Demo.PunBasics
 
                 if (this.Health <= 0f)
                 {
-                    transform.position = gameManager.transform.position;        //TODO: Damn first person controller resets this variable breaking the respawn. 
+                    gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
+                    transform.position = gameManager.transform.position;
                     this.Health = startingHealth;
+                    respawnCoroutine = ReturnPlayerControl(respawnTime);        //we reenable the FirstPersonController script after the respawn time is done
+                    StartCoroutine(respawnCoroutine);
+
                 }
             }
         }
@@ -201,6 +214,15 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     this.IsFiring = false;
                 }
+            }
+        }
+
+        private IEnumerator ReturnPlayerControl(float waitTime)
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(waitTime);
+                gameObject.GetComponent<FirstPersonController>().enabled = true;
             }
         }
 
