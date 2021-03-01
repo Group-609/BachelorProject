@@ -31,7 +31,7 @@ namespace Photon.Pun.Demo.PunBasics
 	    [SerializeField]
 	    private Text playerNameText;
 
-	    [Tooltip("UI Slider to display Player's Health")]
+	    [Tooltip("UI Slider to display Player's health")]
 	    [SerializeField]
 	    private Slider playerHealthSlider;
 
@@ -77,7 +77,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 			// Reflect the Player Health
 			if (playerHealthSlider != null) {
-				playerHealthSlider.value = target.Health;
+				playerHealthSlider.value = target.health;
 			}
 		}
 

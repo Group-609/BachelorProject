@@ -29,9 +29,9 @@ namespace Photon.Pun.Demo.PunBasics
         //DDA friendly variables
         //---------------------------------------------------------
         [Tooltip("The current Health of our player")]
-        public float Health = 100f;
+        public float health = 100f;
 
-        [Tooltip("The Health of our player when he spawns")]
+        [Tooltip("The health of our player when he spawns")]
         public float startingHealth = 100f;
 
         [Tooltip("Speed of this player's paintballs")]
@@ -145,16 +145,21 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 this.ProcessInputs();
 
-                if (this.Health <= 0f)
+                if (this.health <= 0f)
                 {
                     gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
                     transform.position = gameManager.transform.position;
-                    this.Health = startingHealth;
-                    respawnCoroutine = ReturnPlayerControl(respawnTime);        //we reenable the FirstPersonController script after the respawn time is done
-                    StartCoroutine(respawnCoroutine);
-
+                    this.health = startingHealth;
+                    StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
                 }
             }
+        }
+
+        //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
+        //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
+        public void HitPlayer(GameObject player, float healthChange)
+        {
+            photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
 
         /// <summary>
@@ -163,8 +168,7 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeHealth(float value, int targetViewID)
         {
-            Debug.LogError("Health changed");
-            PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().Health += value;
+            PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
         }
 
         [PunRPC]
@@ -173,11 +177,20 @@ namespace Photon.Pun.Demo.PunBasics
             //TODO: Create fake paintball that does the graphics part
         }
 
-        //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
-        //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
-        public void HitPlayer(GameObject player, float healthChange)
+        
+        
+        //Function to call when an enemy is hit. 
+        // enemy - the enemy we hit
+        // healthChange - the effect on the enemies health (negative values for hurting)
+        public void HitEnemy(GameObject enemy, float healthChange)
         {
-            photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC("ChangeEnemyHealth", RpcTarget.All, healthChange, enemy.GetComponent<PhotonView>().ViewID);
+        }
+
+        [PunRPC]
+        public void ChangeEnemyHealth(float value, int targetViewID)
+        {
+            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().health += value;
         }
 
         #endregion
@@ -235,12 +248,12 @@ namespace Photon.Pun.Demo.PunBasics
             if (stream.IsWriting)
             {
                 // We own this player: send the others our data
-                stream.SendNext(this.Health);
+                stream.SendNext(this.health);
             }
             else
             {
                 // Network player, receive data
-                this.Health = (float)stream.ReceiveNext();
+                this.health = (float)stream.ReceiveNext();
             }
         }
 

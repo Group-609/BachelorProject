@@ -15,16 +15,15 @@ public class PaintBall : MonoBehaviour
             return;
         }
         //Is it a different player
-        else if (collision.collider.gameObject.GetComponent<PlayerManager>())
+        else if (collision.collider.gameObject.tag == "Player")
         {
-            collision.collider.gameObject.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, -paintballDamage);      //We damage friend :( for now for testing reasons. Later change to heal friend :)
+            playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, -paintballDamage);      //We damage friend :( for now for testing reasons. Later change to heal friend :)
         }
-        /*  //Code for when we create an enemy
-        else if (collision.collider.gameObject.GetComponent<Enemy>())
+        //Code for when we create an enemy
+        else if (collision.collider.gameObject.tag == "Enemy")
         {
-            collision.collider.gameObject.GetComponent<Enemy>().ChangeHealth(-paintballDamage);     //We damage enemy
+            playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
         }
-        */
         Destroy(gameObject);
     }
 }
