@@ -10,6 +10,9 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections;
+using UnityStandardAssets.Characters.FirstPerson;   
+
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -26,13 +29,19 @@ namespace Photon.Pun.Demo.PunBasics
         //DDA friendly variables
         //---------------------------------------------------------
         [Tooltip("The current Health of our player")]
-        public float Health = 100f;
+        public float health = 100f;
 
-        [Tooltip("The Health of our player when he spawns")]
+        [Tooltip("The health of our player when he spawns")]
         public float startingHealth = 100f;
 
         [Tooltip("Speed of this player's paintballs")]
         public float paintBallSpeed = 50f;
+
+        [Tooltip("Speed of this player's paintballs")]
+        public float paintballDamage;
+
+        [Tooltip("Time it takes for the player to get control back after dying")]
+        public float respawnTime;
         //---------------------------------------------------------
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
@@ -58,6 +67,9 @@ namespace Photon.Pun.Demo.PunBasics
 
         //True, when the user is firing
         bool IsFiring;
+
+
+        private IEnumerator respawnCoroutine;
 
         #endregion
 
@@ -133,33 +145,52 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 this.ProcessInputs();
 
-                if (this.Health <= 0f)
+                if (this.health <= 0f)
                 {
-                    Health = startingHealth;
+                    gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
                     transform.position = gameManager.transform.position;
+                    this.health = startingHealth;
+                    StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
                 }
             }
         }
 
-        /// <summary>
-        /// MonoBehaviour method called when the Collider 'other' enters the trigger.
-        /// Note: when jumping and firing at the same, you'll find that the player's own beam intersects with itself
-        /// One could move the collider further away to prevent this or check if the beam belongs to the player.
-        /// </summary>
-        public void OnTriggerEnter(Collider other)
+        //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
+        //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
+        public void HitPlayer(GameObject player, float healthChange)
         {
-            if (!photonView.IsMine)
-            {
-                return;
-            }
-            // We are only interested in paintballs
-            if (!other.name.Contains("PaintBall"))
-            {
-                return;
-            }
+            photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+        }
 
-            PhotonNetwork.Destroy(other.gameObject);
-            this.Health -= 10f;
+        /// <summary>
+        /// Change the player's health.
+        /// </summary>
+        [PunRPC]
+        public void ChangeHealth(float value, int targetViewID)
+        {
+            PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
+        }
+
+        [PunRPC]
+        public void ShootFakeBullet()
+        {
+            //TODO: Create fake paintball that does the graphics part
+        }
+
+        
+        
+        //Function to call when an enemy is hit. 
+        // enemy - the enemy we hit
+        // healthChange - the effect on the enemies health (negative values for hurting)
+        public void HitEnemy(GameObject enemy, float healthChange)
+        {
+            photonView.RPC("ChangeEnemyHealth", RpcTarget.All, healthChange, enemy.GetComponent<PhotonView>().ViewID);
+        }
+
+        [PunRPC]
+        public void ChangeEnemyHealth(float value, int targetViewID)
+        {
+            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().health += value;
         }
 
         #endregion
@@ -183,9 +214,10 @@ namespace Photon.Pun.Demo.PunBasics
                 if (!this.IsFiring)
                 {
                     this.IsFiring = true;
-                    Vector3 velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
-                    object[] instantiationData = {velocity, this.GetComponent<PhotonView>().ViewID};
-                    GameObject paintball = PhotonNetwork.Instantiate(paintballPrefab.name, paintGun.position, paintGun.rotation, 0, instantiationData);     //last parameter sends data to OnPhotonInstantiate() found in Paintball.cs
+                    GameObject paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
+                    paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
+                    paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
+                    paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
                 }
             }
 
@@ -198,6 +230,15 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
+        private IEnumerator ReturnPlayerControl(float waitTime)
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(waitTime);
+                gameObject.GetComponent<FirstPersonController>().enabled = true;
+            }
+        }
+
         #endregion
 
         #region IPunObservable implementation
@@ -207,14 +248,12 @@ namespace Photon.Pun.Demo.PunBasics
             if (stream.IsWriting)
             {
                 // We own this player: send the others our data
-                stream.SendNext(this.IsFiring);
-                stream.SendNext(this.Health);
+                stream.SendNext(this.health);
             }
             else
             {
                 // Network player, receive data
-                this.IsFiring = (bool)stream.ReceiveNext();
-                this.Health = (float)stream.ReceiveNext();
+                this.health = (float)stream.ReceiveNext();
             }
         }
 

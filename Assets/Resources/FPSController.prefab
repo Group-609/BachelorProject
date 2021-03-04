@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: -2781562190664306553}
   m_Layer: 0
   m_Name: FPSController
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -307,12 +307,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98fac77b304554f238a61572f5720187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 100
+  health: 100
   startingHealth: 100
   paintBallSpeed: 50
+  paintballDamage: 10
+  respawnTime: 0.5
   gameManager: {fileID: 0}
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}
-  paintballPrefab: {fileID: 2514502999786563198, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}
+  paintballPrefab: {fileID: 909444189230491489, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}
 --- !u!114 &-4129676564591277995
 MonoBehaviour:
   m_ObjectHideFlags: 0

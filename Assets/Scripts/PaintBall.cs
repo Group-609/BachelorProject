@@ -1,29 +1,29 @@
 ﻿using UnityEngine;
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 
-public class PaintBall : MonoBehaviour, IPunInstantiateMagicCallback
+public class PaintBall : MonoBehaviour
 {
-    private int playerWhoShotViewID;
-
-    //Here, we receive data sent during instantiation, photon networking specific
-    public void OnPhotonInstantiate(Photon.Pun.PhotonMessageInfo info)
-    {
-        object[] instantiationData = info.photonView.InstantiationData;
-        Vector3 velocity = (Vector3)instantiationData[0];
-        playerWhoShotViewID = (int)instantiationData[1];
-        GetComponent<Rigidbody>().velocity = velocity;
-    }
+    public GameObject playerWhoShot;
+    public float paintballDamage; //Damage this specific bullet does
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Bullet collided with: " + collision.collider);
-        if (collision.collider.gameObject.GetComponent<PhotonView>() != null)
+        //If the object is the player who shot
+        if (collision.collider.gameObject == playerWhoShot)
         {
-            if (collision.collider.gameObject.GetComponent<PhotonView>().ViewID == playerWhoShotViewID)
-            {
-                return;
-            }
+            return;
         }
-        PhotonNetwork.Destroy(gameObject);
+        //Is it a different player
+        else if (collision.collider.gameObject.tag == "Player")
+        {
+            playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, -paintballDamage);      //We damage friend :( for now for testing reasons. Later change to heal friend :)
+        }
+        //Code for when we create an enemy
+        else if (collision.collider.gameObject.tag == "Enemy")
+        {
+            playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
+        }
+        Destroy(gameObject);
     }
 }
