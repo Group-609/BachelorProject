@@ -32,14 +32,17 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        if (health < 0)
+        if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.Destroy(gameObject);
+            if (health < 0)
+            {
+                PhotonNetwork.Destroy(gameObject);
+            }
+            FindNavTarget();
+            distanceToPlayer = Vector3.Distance(player.position, transform.position);
+            SetSpeed();
+            Attack();
         }
-        FindNavTarget();
-        distanceToPlayer = Vector3.Distance(player.position, transform.position);
-        SetSpeed();
-        Attack();
     }
 
     void SetSpeed()
@@ -89,15 +92,15 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator TriggerDamageEffect()
     {
-        //Time damage effect delay to when bee stings
+        //Time damage effect delay to when attack happens
         yield return new WaitForSeconds(attackAnimationDelay);
         if (distanceToPlayer <= minDist)
         {
             //player.GetComponent<HurtEffect>().Hit();
-            Debug.Log("Player is attacked");
+            Debug.LogError("Player is attacked");
         }
 
-        //Wait for bee animation to finish
+        //Wait for attack animation to finish
         yield return new WaitForSeconds(attackAnimationDelay);
         isAttackReady = true;
 

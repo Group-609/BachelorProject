@@ -307,7 +307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98fac77b304554f238a61572f5720187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 0
+  health: 100
   startingHealth: 100
   paintBallSpeed: 50
   paintballDamage: 10

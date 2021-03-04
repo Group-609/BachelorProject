@@ -6,9 +6,15 @@ using Photon.Pun;
 public class EnemySpawner : MonoBehaviourPunCallbacks
 {
     public GameObject enemyPrefab;
-    public int enemyCount = 0;
+
+
+    [SerializeField]
     private int maxEnemyCount = 2;
-    private bool needToSpawnEnemy = true;
+
+    [SerializeField]
+    private int spawnInterval = 3;
+
+    private bool coroutineRunning = false;
     private Transform enemySpawn;
 
     // Start is called before the first frame update
@@ -20,31 +26,24 @@ public class EnemySpawner : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if (needToSpawnEnemy)
+        if (PhotonNetwork.IsMasterClient)
         {
-            needToSpawnEnemy = false;
-            Debug.Log("Spawning enemy");
-            PhotonNetwork.Instantiate(enemyPrefab.name, enemySpawn.transform.position, Quaternion.identity);
+            if (!coroutineRunning)
+            {
+                StartCoroutine(CheckEnemyCount());
+            }
         }
-        else
-        {
-            StartCoroutine(CheckEnemyCount());
-        }
-
     }
 
     IEnumerator CheckEnemyCount()
     {
-        yield return new WaitForSeconds(1);
-        enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
-
-        if (enemyCount < maxEnemyCount)
+        coroutineRunning = true;
+        yield return new WaitForSeconds(spawnInterval);
+        if (GameObject.FindGameObjectsWithTag("Enemy").Length < maxEnemyCount)
         {
-            needToSpawnEnemy = true;
+            PhotonNetwork.Instantiate(enemyPrefab.name, enemySpawn.transform.position, Quaternion.identity);
+            Debug.Log("Spawning enemy");
         }
-        else
-        {
-            needToSpawnEnemy = false;
-        }
+        coroutineRunning = false;
     }
 }

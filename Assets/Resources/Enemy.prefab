@@ -66,9 +66,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   players: []
   player: {fileID: 0}
-  baseSpeed: 0
   minDist: 2
-  minSpeed: 2
+  speed: 2
   health: 50
   refreshTargetTimerLimit: 50
 --- !u!195 &5732855970157686023
