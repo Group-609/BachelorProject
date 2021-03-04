@@ -56,6 +56,17 @@ public sealed class DDAEngine
         return additiveValues[additiveValues.Length - 1];
     }
 
+    // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
+    public float GetAdditiveValue(float conditionValue, float[] conditionalValues, float[] additiveValues)
+    {
+        for (int i = 0; i < conditionalValues.Length; i++)
+        {
+            if (conditionalValues[i] >= conditionValue)
+                return additiveValues[i];
+        }
+        return additiveValues[additiveValues.Length - 1];
+    }
+
     public float CalculateInGameValue(float point, float pointContribution, float dpgContribution, float minValue = 0f) 
     {
         return minValue + (point * pointContribution) + (difficultiesPointGlobal * dpgContribution);
