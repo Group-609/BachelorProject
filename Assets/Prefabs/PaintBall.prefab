@@ -125,5 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f390b634016cb7144b24e4944f061147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerWhoShot: {fileID: 0}
-  paintballDamage: 0
+  despawnTime: 2

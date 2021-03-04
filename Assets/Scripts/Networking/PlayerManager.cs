@@ -42,6 +42,9 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("Time it takes for the player to get control back after dying")]
         public float respawnTime;
+
+        [Tooltip("Time between 2 shots")]
+        public float shootWaitTime = 0.5f;
         //---------------------------------------------------------
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
@@ -62,11 +65,18 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField]
         private GameObject paintballPrefab;
 
+        [Tooltip("Prefab of paintball to shoot for other players")]
+        [SerializeField]
+        private GameObject paintballPrefabClient;
+
         [Tooltip("Transform the paint balls come from")]
         private Transform paintGun;
 
         //True, when the user is firing
         bool IsFiring;
+
+        //True when the shooting coroutine is running, used for fake bullets of other player
+        bool waitingToShoot = false;
 
 
         private IEnumerator respawnCoroutine;
@@ -153,6 +163,13 @@ namespace Photon.Pun.Demo.PunBasics
                     StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
                 }
             }
+            if(IsFiring)
+            {
+                if (!waitingToShoot)
+                {
+                    StartCoroutine(ShootPaintball());
+                }
+            }
         }
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
@@ -170,14 +187,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
         }
-
-        [PunRPC]
-        public void ShootFakeBullet()
-        {
-            //TODO: Create fake paintball that does the graphics part
-        }
-
-        
         
         //Function to call when an enemy is hit. 
         // enemy - the enemy we hit
@@ -210,15 +219,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     //	return;
                 }
-
-                if (!this.IsFiring)
-                {
-                    this.IsFiring = true;
-                    GameObject paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
-                    paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
-                    paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
-                    paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
-                }
+                this.IsFiring = true;
             }
 
             if (Input.GetButtonUp("Fire1"))
@@ -239,21 +240,43 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
-        #endregion
+        private IEnumerator ShootPaintball()
+        {
+            waitingToShoot = true;
+            yield return new WaitForSeconds(shootWaitTime);
+            GameObject paintball;
+            if (photonView.IsMine)  //We check if this is the local player shooting
+            {
+                paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
+            }
+            else //we spawn fake bullets for other players
+            {
+                paintball = Instantiate(paintballPrefabClient, paintGun.transform.position, Quaternion.identity);
+            }
+            paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
+            paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
+            paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
 
-        #region IPunObservable implementation
+            waitingToShoot = false;
+        }
 
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    #endregion
+
+    #region IPunObservable implementation
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
                 // We own this player: send the others our data
                 stream.SendNext(this.health);
+                stream.SendNext(this.IsFiring);
             }
             else
             {
                 // Network player, receive data
                 this.health = (float)stream.ReceiveNext();
+                this.IsFiring = (bool)stream.ReceiveNext();
             }
         }
 

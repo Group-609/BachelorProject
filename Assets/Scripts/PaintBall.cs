@@ -4,8 +4,19 @@ using Photon.Pun.Demo.PunBasics;
 
 public class PaintBall : MonoBehaviour
 {
+    [SerializeField]
+    private float despawnTime = 2.0f;
+
+    [System.NonSerialized]
     public GameObject playerWhoShot;
+
+    [System.NonSerialized]
     public float paintballDamage; //Damage this specific bullet does
+
+    void Start()
+    {
+        Destroy(gameObject, despawnTime);
+    }
 
     void OnCollisionEnter(Collision collision)
     {
