@@ -35,7 +35,7 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     //static parameters
     private static readonly float baseSpawnPoint = 1f;
-    private static readonly float minSpawnAmount = 2f;
+    private static readonly int minSpawnAmount = 5;
     private static readonly float dpgContribution = 0.1f;
     private static readonly float spawnPointContribution = 1f;
 
@@ -52,7 +52,7 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     // THE IN-GAME VALUE USED
     // I gave it initial value as minimum reload time, though it could be any we wish (probably somewhere in the middle)
-    public float spawnAmount = DDAEngine.Instance.CalculateInGameValue(baseSpawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
+    public int spawnAmount = (int) DDAEngine.Instance.CalculateInGameValue(baseSpawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
 
     // This listener is important if some action has to take place, when the reload time is changed.
     // Otherwise the variable, which holds reload time, will not be notified.
@@ -72,10 +72,9 @@ public sealed class EnemySpawnDDAA : IDDAA
             );
         // adjust multiplier and point values
         spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
-        Debug.Log("Spawn point = " + spawnPoint);
 
         //set reloadTime
-        spawnAmount = DDAEngine.Instance.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
+        spawnAmount = (int) DDAEngine.Instance.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
 
         if (reloadListener != null)
         {
