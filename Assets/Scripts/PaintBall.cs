@@ -4,14 +4,15 @@ using Photon.Pun.Demo.PunBasics;
 
 public class Paintball : MonoBehaviour
 {
-    [SerializeField]
+
+    [Tooltip("The time it takes for the bullet to disappear")]
     private float despawnTime = 2.0f;
 
     [System.NonSerialized]
     public GameObject playerWhoShot;
 
     [System.NonSerialized]
-    public float paintballDamage; //Damage this specific bullet does
+    public float paintballDamage; //Damage this specific paintball does
 
     void Start()
     {

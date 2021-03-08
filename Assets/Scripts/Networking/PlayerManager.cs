@@ -163,12 +163,9 @@ namespace Photon.Pun.Demo.PunBasics
                     StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
                 }
             }
-            if(IsFiring)
+            if (IsFiring && !waitingToShoot)
             {
-                if (!waitingToShoot)
-                {
-                    StartCoroutine(ShootPaintball());
-                }
+                StartCoroutine(ShootPaintball());
             }
         }
 
