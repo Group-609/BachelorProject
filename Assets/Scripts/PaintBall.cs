@@ -2,7 +2,7 @@
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 
-public class PaintBall : MonoBehaviour
+public class Paintball : MonoBehaviour
 {
     [SerializeField]
     private float despawnTime = 2.0f;

@@ -96,8 +96,8 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)
             {
                 LocalPlayerInstance = gameObject;
-                paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("PaintGun");
             }
+            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("PaintGun");
 
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
@@ -243,20 +243,22 @@ namespace Photon.Pun.Demo.PunBasics
         private IEnumerator ShootPaintball()
         {
             waitingToShoot = true;
-            yield return new WaitForSeconds(shootWaitTime);
+           
             GameObject paintball;
             if (photonView.IsMine)  //We check if this is the local player shooting
             {
                 paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
+                paintball.GetComponent<Paintball>().playerWhoShot = this.gameObject;
+                paintball.GetComponent<Paintball>().paintballDamage = this.paintballDamage;
             }
             else //we spawn fake bullets for other players
             {
                 paintball = Instantiate(paintballPrefabClient, paintGun.transform.position, Quaternion.identity);
+                paintball.GetComponent<PaintballClientSide>().playerWhoShot = this.gameObject;
             }
-            paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
-            paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
+            
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
-
+            yield return new WaitForSeconds(shootWaitTime);
             waitingToShoot = false;
         }
 

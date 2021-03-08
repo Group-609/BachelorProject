@@ -6,7 +6,8 @@ public class PaintballClientSide : MonoBehaviour
 {
     [SerializeField]
     private float despawnTime = 2.0f;
-    private GameObject playerWhoShot;
+    [System.NonSerialized]
+    public GameObject playerWhoShot;
 
     void Start()
     {
