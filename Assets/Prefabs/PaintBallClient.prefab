@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 879477788856803401}
   - component: {fileID: 8147916920504858516}
   - component: {fileID: 2514502999786563198}
-  - component: {fileID: 4802554107348960827}
+  - component: {fileID: 4848302033026376105}
   m_Layer: 0
-  m_Name: PaintBall
+  m_Name: PaintBallClient
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,7 +113,7 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &4802554107348960827
+--- !u!114 &4848302033026376105
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 909444189230491489}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f390b634016cb7144b24e4944f061147, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ea7d7ad59231964d97b6bf84b41367e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   despawnTime: 2
