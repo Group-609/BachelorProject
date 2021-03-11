@@ -245,8 +245,8 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)  //We check if this is the local player shooting
             {
                 paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
-                paintball.GetComponent<Paintball>().playerWhoShot = this.gameObject;
-                paintball.GetComponent<Paintball>().paintballDamage = this.paintballDamage;
+                paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
+                paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
             }
             else //we spawn fake bullets for other players
             {
