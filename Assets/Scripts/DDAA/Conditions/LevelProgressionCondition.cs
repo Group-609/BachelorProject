@@ -32,7 +32,7 @@ public sealed class LevelProgressionCondition : ICondition
         }
     }
 
-    private int currentLevel;
+    public int currentLevel;
     private static readonly int[] expectedFinishTimes = new int[] { 25, 50, 75 }; // adjust these. Expected time (in sec), when player should complete level
 
     // IMPORTANT! Both arrays have to be the same length
@@ -66,13 +66,15 @@ public sealed class LevelProgressionCondition : ICondition
 
     public void LevelFinished()
     {
-        try
+        if (currentLevel < expectedFinishTimes.Length)
         {
             Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedFinishTimes[currentLevel]);
-            ConditionValue = time / expectedFinishTimes[currentLevel];
+            if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
+                ConditionValue = time / expectedFinishTimes[currentLevel];
             currentLevel++;
             Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
-        } catch(IndexOutOfRangeException e)
+        } 
+        else
         {
             Debug.Log("Game is finished");
             isGameFinished = true;

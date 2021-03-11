@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IDDAA
 {
-    void AdjustInGameValue();
+    void AdjustInGameValue(int addToInGameValue = 0);
 }

@@ -63,7 +63,7 @@ public sealed class ReloadDDAA: IDDAA
         reloadListener = listener;
     }
 
-    public void AdjustInGameValue()
+    public void AdjustInGameValue(int addToInGameValue = 0)
     {
         reloadMultiplier += DDAEngine.Instance.GetAdditiveValue(
                 KillCountCondition.Instance.ConditionValue, 
@@ -75,7 +75,7 @@ public sealed class ReloadDDAA: IDDAA
         Debug.Log("Reload point = " + reloadPoint);
 
         //set reloadTime
-        reloadTime = DDAEngine.Instance.CalculateInGameValue(reloadPoint, reloadPointContribution, dpgContribution, minReloadTime);
+        reloadTime = DDAEngine.Instance.CalculateInGameValue(reloadPoint, reloadPointContribution, dpgContribution, minReloadTime + addToInGameValue);
 
         if (reloadListener != null)
         {

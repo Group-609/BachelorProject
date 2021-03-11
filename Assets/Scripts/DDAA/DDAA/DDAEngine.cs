@@ -38,6 +38,8 @@ public sealed class DDAEngine
     // Used functions 
     // Call them using DDAEngine.Instance.FunctionName
 
+    public bool isDynamicAdjustmentEnabled;
+
     private float difficultiesPointGlobal = 10;
 
     public void AdjustDPG(float conditionValue, int[] conditionalValues, float[] additiveValues)

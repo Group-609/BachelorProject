@@ -63,7 +63,7 @@ public sealed class EnemySpawnDDAA : IDDAA
         spawnListener = listener;
     } 
 
-    public void AdjustInGameValue()
+    public void AdjustInGameValue(int addToInGameValue = 0)
     {
         spawnMultiplier += DDAEngine.Instance.GetAdditiveValue(
                 LevelProgressionCondition.Instance.ConditionValue,
@@ -74,7 +74,7 @@ public sealed class EnemySpawnDDAA : IDDAA
         spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
 
         //set reloadTime
-        spawnAmount = (int) DDAEngine.Instance.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
+        spawnAmount = (int) DDAEngine.Instance.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
 
         if (spawnListener != null)
         {

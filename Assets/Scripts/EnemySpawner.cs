@@ -16,7 +16,10 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private bool coroutineRunning = false;
     private Transform enemySpawn;
 
-    private int enemiesLeftToSpawn = EnemySpawnDDAA.Instance.spawnAmount;
+    private int[] baseEnemyCountAddition = new int[] { 0, 5, 10 }; // adds to the base enemy count when the level changes. First is always 0. 
+
+    private static readonly int initialEnemyAmountToSpawn = EnemySpawnDDAA.Instance.spawnAmount;
+    private int enemiesLeftToSpawn = initialEnemyAmountToSpawn;
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +42,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             else if (enemiesLeftToSpawn == 0 && GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
             {
                 LevelProgressionCondition.Instance.LevelFinished();
-                EnemySpawnDDAA.Instance.AdjustInGameValue();
+                ChangeEnemyCount(LevelProgressionCondition.Instance.currentLevel);
             }
         }
     }
@@ -54,6 +57,18 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             enemiesLeftToSpawn--;
         }
         coroutineRunning = false;
+    }
+
+    private void ChangeEnemyCount(int currentLevel)
+    {
+        if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
+        {
+            EnemySpawnDDAA.Instance.AdjustInGameValue(baseEnemyCountAddition[currentLevel]);
+        }
+        else
+        {
+            OnValueChanged(initialEnemyAmountToSpawn + baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
+        }
     }
 
     public void OnValueChanged(float value)
