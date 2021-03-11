@@ -2,7 +2,7 @@
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 
-public class Paintball : MonoBehaviour
+public class PaintBall : MonoBehaviour
 {
 
     [Tooltip("The time it takes for the bullet to disappear")]
