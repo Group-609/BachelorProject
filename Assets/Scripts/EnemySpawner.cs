@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
@@ -16,7 +17,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private bool coroutineRunning = false;
     private Transform enemySpawn;
 
-    private int[] baseEnemyCountAddition = new int[] { 0, 5, 10 }; // adds to the base enemy count when the level changes. First is always 0. 
+    private static readonly int[] baseEnemyCountAddition = new int[] { 0, 5, 10 }; // adds to the base enemy count when the level changes. First is always 0. 
 
     private static readonly int initialEnemyAmountToSpawn = EnemySpawnDDAA.Instance.spawnAmount;
     private int enemiesLeftToSpawn = initialEnemyAmountToSpawn;
@@ -42,7 +43,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             else if (enemiesLeftToSpawn == 0 && GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
             {
                 LevelProgressionCondition.Instance.LevelFinished();
-                ChangeEnemyCount(LevelProgressionCondition.Instance.currentLevel);
+                try
+                {
+                    ChangeEnemyCount(baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
+                } 
+                catch (IndexOutOfRangeException) { }
             }
         }
     }
@@ -59,15 +64,15 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         coroutineRunning = false;
     }
 
-    private void ChangeEnemyCount(int currentLevel)
+    private void ChangeEnemyCount(int addToEnemyCount)
     {
         if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
         {
-            EnemySpawnDDAA.Instance.AdjustInGameValue(baseEnemyCountAddition[currentLevel]);
+            EnemySpawnDDAA.Instance.AdjustInGameValue(addToEnemyCount);
         }
         else
         {
-            OnValueChanged(initialEnemyAmountToSpawn + baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
+            OnValueChanged(initialEnemyAmountToSpawn + addToEnemyCount);
         }
     }
 
