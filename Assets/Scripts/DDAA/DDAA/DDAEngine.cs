@@ -45,6 +45,11 @@ public sealed class DDAEngine
         difficultiesPointGlobal += GetAdditiveValue(conditionValue, conditionalValues, additiveValues);
     }
 
+    public void AdjustDPG(float conditionValue, float[] conditionalValues, float[] additiveValues)
+    {
+        difficultiesPointGlobal += GetAdditiveValue(conditionValue, conditionalValues, additiveValues);
+    }
+
     // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
     public float GetAdditiveValue(float conditionValue, int[] conditionalValues, float[] additiveValues)
     {

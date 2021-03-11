@@ -35,15 +35,15 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     //static parameters
     private static readonly float baseSpawnPoint = 1f;
-    private static readonly int minSpawnAmount = 5;
+    private static readonly int minSpawnAmount = 8;
     private static readonly float dpgContribution = 0.1f;
-    private static readonly float spawnPointContribution = 1f;
+    private static readonly float spawnPointContribution = 2f;
 
     // IMPORTANT! Both arrays have to be the same length
-    private static readonly float[] levelProgression = new float[] { 0.5f, 1.5f, 2.5f }; // how many times were they faster than needed
+    private static readonly float[] levelProgression = new float[] { 0.5f, 0.75f, 0f, 1.25f, 1.5f }; // how many times were they faster than needed
 
-    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 2f, 0f, -0.5f }; // additive values to point directly
-    private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { 0.3f, 0f, -0.2f }; // additive values to multiplier
+    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
+    private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { 1f, 0.5f, 0f, -1.5f, -2f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, it will change during the gameplay
@@ -56,11 +56,11 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     // This listener is important if some action has to take place, when the reload time is changed.
     // Otherwise the variable, which holds reload time, will not be notified.
-    private IValueChangeListener reloadListener;
+    private IValueChangeListener spawnListener;
 
-    public void SetReloadListener(IValueChangeListener listener)
+    public void SetSpawnListener(IValueChangeListener listener)
     {
-        reloadListener = listener;
+        spawnListener = listener;
     } 
 
     public void AdjustInGameValue()
@@ -76,9 +76,9 @@ public sealed class EnemySpawnDDAA : IDDAA
         //set reloadTime
         spawnAmount = (int) DDAEngine.Instance.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
 
-        if (reloadListener != null)
+        if (spawnListener != null)
         {
-            reloadListener.OnValueChanged(spawnAmount);
+            spawnListener.OnValueChanged(spawnAmount);
         }
     }
 }

@@ -7,12 +7,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 {
     public GameObject enemyPrefab;
 
-
     [SerializeField]
     private int maxEnemyCount = 2;
 
     [SerializeField]
-    private int spawnInterval = 3;
+    private int spawnInterval = 2;
 
     private bool coroutineRunning = false;
     private Transform enemySpawn;
@@ -22,44 +21,45 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(enemiesLeftToSpawn + " enemies to spawn");
         enemySpawn = transform.Find("EnemySpawnPoint");
+        EnemySpawnDDAA.Instance.SetSpawnListener(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
-
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && !LevelProgressionCondition.Instance.isGameFinished)
         {
-            if (!coroutineRunning)
+            LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
+            if (!coroutineRunning && enemiesLeftToSpawn != 0)
             {
-                StartCoroutine(CheckEnemyCount());
+                StartCoroutine(SpawnEnemy());
+            }
+            else if (enemiesLeftToSpawn == 0 && GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
+            {
+                LevelProgressionCondition.Instance.LevelFinished();
+                EnemySpawnDDAA.Instance.AdjustInGameValue();
             }
         }
     }
 
-    IEnumerator CheckEnemyCount()
+    IEnumerator SpawnEnemy()
     {
         coroutineRunning = true;
         yield return new WaitForSeconds(spawnInterval);
-        if (GameObject.FindGameObjectsWithTag("Enemy").Length < maxEnemyCount && enemiesLeftToSpawn > 0)
+        if (GameObject.FindGameObjectsWithTag("Enemy").Length < maxEnemyCount)
         {
             PhotonNetwork.Instantiate(enemyPrefab.name, enemySpawn.transform.position, Quaternion.identity);
-            Debug.Log("Spawning enemy");
             enemiesLeftToSpawn--;
-        } 
-        else if (enemiesLeftToSpawn == 0)
-        {
-            LevelProgressionCondition.Instance.LevelFinished();
-            EnemySpawnDDAA.Instance.AdjustInGameValue();
         }
         coroutineRunning = false;
     }
 
     public void OnValueChanged(float value)
     {
-        // change spawn location here
+        // change spawn location here, when level is created
+        Debug.Log(value + " enemies to spawn");
         enemiesLeftToSpawn = (int) value;
     }
 }

@@ -33,17 +33,19 @@ public sealed class LevelProgressionCondition : ICondition
     }
 
     private int currentLevel;
-    private static readonly int[] expectedFinishTimes = new int[] { 10, 20, 30 }; // adjust these
+    private static readonly int[] expectedFinishTimes = new int[] { 25, 50, 75 }; // adjust these. Expected time (in sec), when player should complete level
 
     // IMPORTANT! Both arrays have to be the same length
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
-    private static readonly int[] dpgValues = new int[] { 0, 5, 10, 15, 20 }; // kill count numbers, by which the DDAA's additive values would be mapped
-    private static readonly float[] dpgAdditiveValues = new float[] { -1f, 0f, 0.5f, 1f, 1.5f }; // additive values to DPG point
+    private static readonly float[] dpgValues = new float[] { 0.8f, 0f, 1.2f}; // finish level time comparison, by which the DDAA's additive values would be mapped
+    private static readonly float[] dpgAdditiveValues = new float[] { 2f, 0f, -2.5f }; // additive values to DPG point
 
     //holds the value of player's speed compared to what is expected (time/expectedTime)
     private float currentConditionalValue;
 
     private float time;
+
+    public bool isGameFinished = false;
 
     public float ConditionValue
     {
@@ -66,11 +68,14 @@ public sealed class LevelProgressionCondition : ICondition
     {
         try
         {
+            Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedFinishTimes[currentLevel]);
             ConditionValue = time / expectedFinishTimes[currentLevel];
             currentLevel++;
-        } catch(NullReferenceException e)
+            Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
+        } catch(IndexOutOfRangeException e)
         {
-            Debug.Log("Game has finished");
+            Debug.Log("Game is finished");
+            isGameFinished = true;
         }
     }
 }
