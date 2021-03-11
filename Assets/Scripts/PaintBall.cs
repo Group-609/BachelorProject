@@ -2,10 +2,22 @@
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
 
-public class PaintBall : MonoBehaviour
+public class Paintball : MonoBehaviour
 {
+
+    [Tooltip("The time it takes for the bullet to disappear")]
+    private float despawnTime = 2.0f;
+
+    [System.NonSerialized]
     public GameObject playerWhoShot;
-    public float paintballDamage; //Damage this specific bullet does
+
+    [System.NonSerialized]
+    public float paintballDamage; //Damage this specific paintball does
+
+    void Start()
+    {
+        Destroy(gameObject, despawnTime);
+    }
 
     void OnCollisionEnter(Collision collision)
     {

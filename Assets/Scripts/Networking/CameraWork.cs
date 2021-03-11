@@ -61,7 +61,10 @@ namespace Photon.Pun.Demo.PunBasics
 
 		void Follow()
 		{
-			cameraTransform.gameObject.SetActive(true);
+			//cameraTransform.gameObject.SetActive(true);
+			cameraTransform.gameObject.GetComponent<Camera>().enabled = true;
+			cameraTransform.gameObject.GetComponent<AudioListener>().enabled = true;
+			cameraTransform.gameObject.GetComponent<FlareLayer>().enabled = true;
 		}
 		#endregion
 	}
