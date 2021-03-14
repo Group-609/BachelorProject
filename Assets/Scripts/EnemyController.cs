@@ -14,6 +14,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private bool isAttackReady = true;
     private float attackAnimationDelay = .5f;
 
+    public Color maxHealthCol;
+    public Color lowHealthCol;
+    public float maxHealth = 50f;
     public float health = 50f;
 
     private NavMeshAgent agent;
@@ -28,6 +31,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         //animator.Play("AngryFlight");     //Walking animation
         agent.stoppingDistance = 2;
         players = findPlayers();
+
+        maxHealthCol = new Color(.19f, .1f, .2f); //Dark purple
+        lowHealthCol = new Color(.95f, .73f, 1f); //bright pink
+        health = maxHealth;
     }
 
     void Update()
@@ -88,6 +95,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
             StartCoroutine(TriggerDamageEffect());
         }
+    }
+
+    public void OnDamageTaken()
+    {
+        gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthCol, maxHealthCol, health / maxHealth);
     }
 
     IEnumerator TriggerDamageEffect()

@@ -68,6 +68,9 @@ MonoBehaviour:
   player: {fileID: 0}
   minDist: 2
   speed: 2
+  maxHealthCol: {r: 48, g: 25, b: 52, a: 1}
+  lowHealthCol: {r: 244, g: 187, b: 255, a: 1}
+  maxHealth: 50
   health: 50
   refreshTargetTimerLimit: 50
 --- !u!195 &5732855970157686023
