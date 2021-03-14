@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.AI;
 using System.Collections;
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -10,26 +11,31 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public Transform player;
     private float distanceToPlayer;
     public int minDist = 2;
-    public int speed = 2;
+    
     private bool isAttackReady = true;
-    private float attackAnimationDelay = .5f;
+    private float attackAnimationDelay = 1.5f;
+
+    //DDA friendly variables--------------
+    public float attackDamage = 5f;
+    public int speed = 2;
+    public float maxHealth = 50f;
+    public float health = 50f;
+    //-------------------------------------
 
     public Color maxHealthCol;
     public Color lowHealthCol;
-    public float maxHealth = 50f;
-    public float health = 50f;
 
     private NavMeshAgent agent;
-    //public Animator animator;
+    public Animator animator;
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
 
     void Start()
     {
-        //animator = GetComponentInChildren<Animator>();    //Uncomment when adding animator
+        animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        //animator.Play("AngryFlight");     //Walking animation
-        agent.stoppingDistance = 2;
+        animator.Play("Walk_body");     //Walking animation
+        agent.stoppingDistance = minDist;
         players = findPlayers();
 
         maxHealthCol = new Color(.19f, .1f, .2f); //Dark purple
@@ -43,7 +49,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (health < 0)
             {
-                PhotonNetwork.Destroy(gameObject);
+                animator.SetBool("IsDead", true);
+                PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
             }
             FindNavTarget();
             distanceToPlayer = Vector3.Distance(player.position, transform.position);
@@ -89,10 +96,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (isAttackReady && distanceToPlayer <= minDist)
         {
             isAttackReady = false; 
-
-            //Set run attack animation here
-            //animator.Play("Attack");
-
+            animator.SetBool("IsAttacking", true);
             StartCoroutine(TriggerDamageEffect());
         }
     }
@@ -109,14 +113,31 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (distanceToPlayer <= minDist)
         {
             //player.GetComponent<HurtEffect>().Hit();
+            HitPlayer(player.gameObject, -attackDamage);
             Debug.LogError("Player is attacked");
         }
 
         //Wait for attack animation to finish
         yield return new WaitForSeconds(attackAnimationDelay);
+        animator.SetBool("IsAttacking", false);
         isAttackReady = true;
 
         yield return null;
+    }
+
+    //Function to call when an enemy attacks player. 
+    // enemy - the enemy we hit
+    // healthChange - the effect on the enemies health (negative values for hurting)
+    public void HitPlayer(GameObject player, float healthChange)
+    {
+        photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+    }
+
+    [PunRPC]
+    public void ChangePlayerHealth(float value, int targetViewID)
+    {
+        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
+        //PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().OnDamageTaken();   //Player hurt effect
     }
 
     #region IPunObservable implementation
