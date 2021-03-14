@@ -35,6 +35,7 @@ public class Paintball : MonoBehaviour
         else if (collision.collider.gameObject.tag == "Enemy")
         {
             playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
+            collision.collider.gameObject.GetComponent<EnemyController>().OnDamageTaken();
         }
         Destroy(gameObject);
     }
