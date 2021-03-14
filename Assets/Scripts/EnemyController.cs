@@ -61,7 +61,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             //find player closest to enemy
             for(int i = 0; i < players.Length; i++)
             {
-                if(Vector3.Distance(players[i].transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position))        //We can add in DDA here by multiplying the distances based on the player with a multiplier
+                if(Vector3.Distance(players[i].transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
                 {
                     closestPlayer = players[i].transform;
                 }

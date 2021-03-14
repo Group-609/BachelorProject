@@ -35,18 +35,28 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private GameObject instance;
 
-        [Tooltip("The prefab to use for representing the player")]
+
+		[Tooltip("Check to change the condition")]
+		[SerializeField]
+		private bool IsDDAEnabled = true;
+
+		[Tooltip("The prefab to use for representing the player")]
         [SerializeField]
         private GameObject playerPrefab;
 
-        #endregion
+		#endregion
 
-        #region MonoBehaviour CallBacks
+		#region MonoBehaviour CallBacks
 
-        /// <summary>
-        /// MonoBehaviour method called on GameObject by Unity during initialization phase.
-        /// </summary>
-        void Start()
+		private void Awake()
+		{
+			DDAEngine.Instance.isDynamicAdjustmentEnabled = IsDDAEnabled;
+		}
+
+		/// <summary>
+		/// MonoBehaviour method called on GameObject by Unity during initialization phase.
+		/// </summary>
+		void Start()
 		{
 			Instance = this;
 

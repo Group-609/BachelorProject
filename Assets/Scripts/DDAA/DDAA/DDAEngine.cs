@@ -38,6 +38,8 @@ public sealed class DDAEngine
     // Used functions 
     // Call them using DDAEngine.Instance.FunctionName
 
+    public bool isDynamicAdjustmentEnabled;
+
     private float difficultiesPointGlobal = 10;
 
     public void AdjustDPG(float conditionValue, int[] conditionalValues, float[] additiveValues)
@@ -45,8 +47,24 @@ public sealed class DDAEngine
         difficultiesPointGlobal += GetAdditiveValue(conditionValue, conditionalValues, additiveValues);
     }
 
+    public void AdjustDPG(float conditionValue, float[] conditionalValues, float[] additiveValues)
+    {
+        difficultiesPointGlobal += GetAdditiveValue(conditionValue, conditionalValues, additiveValues);
+    }
+
     // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
     public float GetAdditiveValue(float conditionValue, int[] conditionalValues, float[] additiveValues)
+    {
+        for (int i = 0; i < conditionalValues.Length; i++)
+        {
+            if (conditionalValues[i] >= conditionValue)
+                return additiveValues[i];
+        }
+        return additiveValues[additiveValues.Length - 1];
+    }
+
+    // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
+    public float GetAdditiveValue(float conditionValue, float[] conditionalValues, float[] additiveValues)
     {
         for (int i = 0; i < conditionalValues.Length; i++)
         {
