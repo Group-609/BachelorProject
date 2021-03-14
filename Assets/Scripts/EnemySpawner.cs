@@ -47,7 +47,10 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
                 {
                     ChangeEnemyCount(baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
                 } 
-                catch (IndexOutOfRangeException) { }
+                catch (IndexOutOfRangeException) 
+                {
+                    Debug.Log("Game is finished");    
+                }
             }
         }
     }
