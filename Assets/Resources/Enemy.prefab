@@ -739,6 +739,7 @@ MonoBehaviour:
   health: 50
   maxHealthCol: {r: 48, g: 25, b: 52, a: 1}
   lowHealthCol: {r: 244, g: 187, b: 255, a: 1}
+  animator: {fileID: 0}
   refreshTargetTimerLimit: 50
 --- !u!195 &5732855970157686023
 NavMeshAgent:
@@ -981,9 +982,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowLayerWeightsInspector: 1
   ShowParameterInspector: 1
-  m_SynchronizeParameters: []
+  m_SynchronizeParameters:
+  - Type: 4
+    SynchronizeType: 1
+    Name: IsAttacking
+  - Type: 4
+    SynchronizeType: 1
+    Name: IsDead
   m_SynchronizeLayers:
-  - SynchronizeType: 0
+  - SynchronizeType: 1
     LayerIndex: 0
   - SynchronizeType: 0
     LayerIndex: 1

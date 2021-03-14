@@ -49,7 +49,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (health < 0)
             {
-                PhotonNetwork.Destroy(gameObject);
+                animator.SetBool("IsDead", true);
+                PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
             }
             FindNavTarget();
             distanceToPlayer = Vector3.Distance(player.position, transform.position);
@@ -95,9 +96,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (isAttackReady && distanceToPlayer <= minDist)
         {
             isAttackReady = false; 
-
-            //Set run attack animation here
-            animator.Play("Attack_body");
+            animator.SetBool("IsAttacking", true);
             StartCoroutine(TriggerDamageEffect());
         }
     }
@@ -120,6 +119,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
         //Wait for attack animation to finish
         yield return new WaitForSeconds(attackAnimationDelay);
+        animator.SetBool("IsAttacking", false);
         isAttackReady = true;
 
         yield return null;
