@@ -12,7 +12,10 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private int maxEnemyCount = 2;
 
     [SerializeField]
-    private int spawnInterval = 2;
+    private int spawnIntervalForArea = 2;
+
+    [SerializeField]
+    private int spawnIntervalForProgress = 5;
 
     private bool isEnemySpawningInProgress = false;
 
@@ -23,16 +26,16 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private static readonly int[] baseEnemyCountAddition = new int[] { 0, 5, 10 };
 
     private static readonly int initialEnemyAmountToSpawn = EnemySpawnDDAA.Instance.spawnAmount;
-    private int enemiesLeftToSpawn = initialEnemyAmountToSpawn;
+    private int enemiesLeftToSpawnForArea = initialEnemyAmountToSpawn;
 
     private int activeSpawnPointIndex;
-    private List<List<EnemySpawnPoint>> enemyAreaSpawnPoints = new List<List<EnemySpawnPoint>>();
-    private List<List<EnemySpawnPoint>> enemyProgressSpawnPoints = new List<List<EnemySpawnPoint>>(); // not sure about a correct name here
+    private readonly List<List<EnemySpawnPoint>> enemyAreaSpawnPoints = new List<List<EnemySpawnPoint>>();
+    private readonly List<List<EnemySpawnPoint>> enemyProgressSpawnPoints = new List<List<EnemySpawnPoint>>(); // not sure about a correct name here
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(enemiesLeftToSpawn + " enemies to spawn");
+        Debug.Log(enemiesLeftToSpawnForArea + " enemies to spawn");
         SetSpawnPoints(GameObject.FindGameObjectsWithTag("EnemySpawnPoint"));
         EnemySpawnDDAA.Instance.SetSpawnListener(this);
     }
@@ -43,11 +46,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         if (PhotonNetwork.IsMasterClient && !LevelProgressionCondition.Instance.isGameFinished)
         {
             LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
-            if (!isEnemySpawningInProgress && enemiesLeftToSpawn != 0)
+            if (!isEnemySpawningInProgress && enemiesLeftToSpawnForArea > 0)
             {
                 StartCoroutine(SpawnEnemy());
             }
-            else if (enemiesLeftToSpawn == 0 && GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
+            else if (enemiesLeftToSpawnForArea == 0 && GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
             {
                 LevelProgressionCondition.Instance.LevelFinished();
                 
@@ -67,24 +70,28 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     IEnumerator SpawnEnemy()
     {
         isEnemySpawningInProgress = true;
-        yield return new WaitForSeconds(spawnInterval);
         if (GameObject.FindGameObjectsWithTag("Enemy").Length < maxEnemyCount)
         {
             if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
             {
-                int locationIndex = new System.Random().Next(0, enemyProgressSpawnPoints[activeSpawnPointIndex].Count - 1);
-                Debug.Log("Enemy " + enemyCountForProgressSpawnPoints[activeSpawnPointIndex] + ". Location index: " + locationIndex);
-                PhotonNetwork.Instantiate(enemyPrefab.name, enemyProgressSpawnPoints[activeSpawnPointIndex][locationIndex].transform.position, Quaternion.identity);
-                enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                List<EnemySpawnPoint> validProgressPointsList = enemyProgressSpawnPoints[activeSpawnPointIndex].ToListWithValidPoints();
+                if (validProgressPointsList.Count > 0)
+                {
+                    int locationIndex = new System.Random().Next(0, validProgressPointsList.Count - 1);
+                    Debug.Log("Enemy " + enemyCountForProgressSpawnPoints[activeSpawnPointIndex] + ". Location index: " + locationIndex);
+                    PhotonNetwork.Instantiate(enemyPrefab.name, validProgressPointsList[locationIndex].transform.position, Quaternion.identity);
+                    enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                    yield return new WaitForSeconds(spawnIntervalForProgress);
+                }
             }
             else
             {
                 int locationIndex = new System.Random().Next(0, enemyAreaSpawnPoints[activeSpawnPointIndex].Count - 1);
-                Debug.Log("Enemy " + enemiesLeftToSpawn + ". Location index: " + locationIndex);
+                Debug.Log("Enemy " + enemiesLeftToSpawnForArea + ". Location index: " + locationIndex);
                 PhotonNetwork.Instantiate(enemyPrefab.name, enemyAreaSpawnPoints[activeSpawnPointIndex][locationIndex].transform.position, Quaternion.identity);
-                enemiesLeftToSpawn--;
+                enemiesLeftToSpawnForArea--;
+                yield return new WaitForSeconds(spawnIntervalForArea);
             }
-            
         }
         isEnemySpawningInProgress = false;
     }
@@ -104,14 +111,13 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     public void OnValueChanged(float value)
     {
-        // change spawn location here, when level is created
-        Debug.Log(value + " enemies to spawn");
-        enemiesLeftToSpawn = (int) value;
+        Debug.Log("Active point: " + activeSpawnPointIndex + ". " + value + " enemies to spawn");
+        enemiesLeftToSpawnForArea = (int) value;
     }
 
     private void SetSpawnPoints(GameObject[] allSpawnPointObjects)
     {
-        foreach(GameObject spawnPointObject in allSpawnPointObjects)
+        foreach (GameObject spawnPointObject in allSpawnPointObjects)
         {
             EnemySpawnPoint spawnPoint = spawnPointObject.GetComponent<EnemySpawnPoint>();
 
