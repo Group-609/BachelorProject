@@ -14,6 +14,9 @@ public class PaintBall : MonoBehaviour
     [System.NonSerialized]
     public float paintballDamage; //Damage this specific paintball does
 
+    [System.NonSerialized]
+    public bool isLocal; //true if this is a real bullet that does damage
+
     void Start()
     {
         Destroy(gameObject, despawnTime);
@@ -26,15 +29,16 @@ public class PaintBall : MonoBehaviour
         {
             return;
         }
-        //Is it a different player
-        else if (collision.collider.gameObject.tag == "Player")
+        else if (isLocal)
         {
-            playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, -paintballDamage);      //We damage friend :( for now for testing reasons. Later change to heal friend :)
-        }
-        //Code for when we create an enemy
-        else if (collision.collider.gameObject.tag == "Enemy")
-        {
-            playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
+            if (collision.collider.gameObject.tag == "Player")
+            {
+                playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, paintballDamage);      //We heal friend :)
+            }
+            else if (collision.collider.gameObject.tag == "Enemy")
+            {
+                playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
+            }
         }
         Destroy(gameObject);
     }

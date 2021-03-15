@@ -58,6 +58,8 @@ namespace Photon.Pun.Demo.PunBasics
 		/// </summary>
 		void Start()
 		{
+			//Ignore the collisions between layer 8 (Enemy) and layer 9 (Enemy projectile)
+			Physics.IgnoreLayerCollision(8, 9);
 			Instance = this;
 
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
