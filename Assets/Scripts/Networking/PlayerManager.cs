@@ -35,7 +35,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float startingHealth = 100f;
 
         [Tooltip("Speed of this player's paintballs")]
-        public float paintBallSpeed = 50f;
+        public float paintBallSpeed = 15f;
 
         [Tooltip("Speed of this player's paintballs")]
         public float paintballDamage;

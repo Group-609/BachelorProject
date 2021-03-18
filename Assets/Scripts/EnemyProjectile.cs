@@ -28,10 +28,7 @@ public class EnemyProjectile : MonoBehaviour
 
     void Update()
     {
-        if(debugPath)
-        {
-            DrawPath();
-        }
+
     }
 
     void OnCollisionEnter(Collision collision)
@@ -48,41 +45,24 @@ public class EnemyProjectile : MonoBehaviour
 				enemyWhoShot.GetComponent<EnemyController>().HitPlayer(collision.collider.gameObject, -damage);
 			}
 		}
+		//TODO: projectile hit sound
 		Destroy(gameObject);
     }
 
-	public void Launch()
+	public void Launch(Vector3 playerVelocity)
 	{
-		//Physics.gravity = Vector3.up * gravity
-		//ball.useGravity = true;
-		GetComponent<Rigidbody>().velocity = CalculateLaunchData().initialVelocity;
+		GetComponent<Rigidbody>().velocity = CalculateLaunchData(playerVelocity).initialVelocity;
 	}
 
-	LaunchData CalculateLaunchData()
+	LaunchData CalculateLaunchData(Vector3 playerVelocity)
 	{
 		float displacementY = target.position.y - transform.position.y;
-		Vector3 displacementXZ = new Vector3(target.position.x - transform.position.x, 0, target.position.z - transform.position.z);
 		float time = Mathf.Sqrt(-2 * h / Physics.gravity.y) + Mathf.Sqrt(2 * (displacementY - h) / Physics.gravity.y);
+		Vector3 displacementXZ = new Vector3(target.position.x + playerVelocity.x * time - transform.position.x, 0, target.position.z + playerVelocity.z * time - transform.position.z);
 		Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * Physics.gravity.y * h);
 		Vector3 velocityXZ = displacementXZ / time;
 
 		return new LaunchData(velocityXZ + velocityY * -Mathf.Sign(Physics.gravity.y), time);
-	}
-
-	void DrawPath()
-	{
-		LaunchData launchData = CalculateLaunchData();
-		Vector3 previousDrawPoint = transform.position;
-
-		int resolution = 30;
-		for (int i = 1; i <= resolution; i++)
-		{
-			float simulationTime = i / (float)resolution * launchData.timeToTarget;
-			Vector3 displacement = launchData.initialVelocity * simulationTime + Vector3.up * Physics.gravity.y * simulationTime * simulationTime / 2f;
-			Vector3 drawPoint = transform.position + displacement;
-			Debug.DrawLine(previousDrawPoint, drawPoint, Color.green);
-			previousDrawPoint = drawPoint;
-		}
 	}
 
 	struct LaunchData

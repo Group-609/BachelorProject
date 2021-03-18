@@ -7,28 +7,37 @@ using Photon.Pun.Demo.PunBasics;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [System.NonSerialized]
     public GameObject[] players;
+    [System.NonSerialized]
     public Transform player;
     private float distanceToPlayer;
-    public int minDistForMeleeAttack = 2;
-    public int minDistForMovement = 110;
-    
     private bool isAttackReady = true;
     private float attackAnimationDelay = 1.5f;
 
-    //DDA friendly variables--------------
-    public float attackDamage = 5f;
-    public int speed = 2;
+    [Header("DDA friendly variables - they might be changed by the DDAA")]
+    //the default values here should be used if DDA is not applied
+    public float meleeDamage = 90f;
+    public float projectileDamage = 30f;
+    public float speed = 3f;
     public float maxHealth = 50f;
-    public float health = 50f;
     public float shootingDistance = 25f;
+    public float minDistForMeleeAttack = 2;
+    [Tooltip("Stopping distance should be lower than minimum distance for melee")]
+    public float stoppingDistance = 2.5f;
+    public int minDistForMovement = 110;
     //-------------------------------------
+    [System.NonSerialized]
+    public float health = 50f;      //current player health
 
+    [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
     [SerializeField]
     private GameObject projectilePrefab;
 
+    [System.NonSerialized]
     public Color maxHealthCol;
+    [System.NonSerialized]
     public Color lowHealthCol;
 
     private NavMeshAgent agent;
@@ -36,12 +45,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
 
+    //Used for estimating where player will be when projectile hits
+    private Vector3 previousFramePlayerPosition;
+    private Vector3 playerVelocity = new Vector3(0,0,0);
+
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk_body");     //Walking animation
-        agent.stoppingDistance = minDistForMeleeAttack;
+        agent.stoppingDistance = stoppingDistance;
         players = findPlayers();
 
         maxHealthCol = new Color(.19f, .1f, .2f); //Dark purple
@@ -75,7 +88,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void SetSpeed(int speed)
+    void FixedUpdate()
+    {
+        if (player != null)
+        {
+            playerVelocity = (player.position - previousFramePlayerPosition) / Time.fixedDeltaTime;
+            previousFramePlayerPosition = player.position;
+        }
+    }
+
+    void SetSpeed(float speed)
     {
         agent.speed = speed;
     }
@@ -114,19 +136,24 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator AttackPlayer()
     {
+
+        //TODO: attack sound
         if (distanceToPlayer <= shootingDistance)
         {
+
             isAttackReady = false;
             animator.SetBool("IsAttacking", true);
-
+            Debug.Log("Distance when attacking: " + distanceToPlayer);
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
+            Debug.Log("Distance when doing damage: " + distanceToPlayer);
             if (distanceToPlayer <= minDistForMeleeAttack)
             {
                 //player.GetComponent<HurtEffect>().Hit();
+                //TODO: play player melee hit sound
                 if (PhotonNetwork.IsMasterClient)
                 { 
-                    HitPlayer(player.gameObject, -attackDamage);
+                    HitPlayer(player.gameObject, -meleeDamage);
                 }
             }
             else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
@@ -134,10 +161,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 GameObject projectile;
                 projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
                 projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
-                projectile.GetComponent<EnemyProjectile>().damage = this.attackDamage;
+                projectile.GetComponent<EnemyProjectile>().damage = this.projectileDamage;
                 projectile.GetComponent<EnemyProjectile>().target = player;
                 projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
-                projectile.GetComponent<EnemyProjectile>().Launch();
+                projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
             }
 
             //Wait for attack animation to finish
