@@ -102,7 +102,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             isAttackReady = false; 
             animator.SetBool("IsAttacking", true);
-            StartCoroutine(doAttack());
+            StartCoroutine(AttackPlayer());
         }
     }
 
@@ -111,7 +111,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthCol, maxHealthCol, health / maxHealth);
     }
 
-    IEnumerator doAttack()
+    IEnumerator AttackPlayer()
     {
         //Time damage effect delay to when attack happens
         yield return new WaitForSeconds(attackAnimationDelay);
