@@ -92,7 +92,7 @@ ModelImporter:
       takeName: Cube|eyes_death
       internalID: 0
       firstFrame: 0
-      lastFrame: 79
+      lastFrame: 109
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -179,7 +179,7 @@ ModelImporter:
       takeName: Armature|death
       internalID: 0
       firstFrame: 0
-      lastFrame: 79
+      lastFrame: 109
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
