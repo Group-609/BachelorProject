@@ -48,23 +48,54 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
             if (!isEnemySpawningInProgress && enemiesLeftToSpawnForArea > 0)
             {
-                StartCoroutine(SpawnEnemy());
+                if (GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
+                {
+                    StartCoroutine(InitialEnemySpawn());
+                }
+                else
+                {
+                    StartCoroutine(SpawnEnemy());
+                }
             }
             else if (enemiesLeftToSpawnForArea == 0 && GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
             {
                 LevelProgressionCondition.Instance.LevelFinished();
-                
+
                 try
                 {
                     ChangeEnemyCount(baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
-                } 
-                catch (IndexOutOfRangeException) 
+                }
+                catch (IndexOutOfRangeException)
                 {
-                    Debug.Log("Game is finished");    
+                    Debug.Log("Game is finished");
                 }
                 activeSpawnPointIndex++;
             }
         }
+    }
+
+    IEnumerator InitialEnemySpawn()
+    {
+        isEnemySpawningInProgress = true;
+        if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
+        {
+            foreach (EnemySpawnPoint spawnPoint in enemyProgressSpawnPoints[activeSpawnPointIndex])
+            {
+                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+            }
+            yield return new WaitForSeconds(spawnIntervalForProgress);
+        }
+        else
+        {
+            foreach (EnemySpawnPoint spawnPoint in enemyAreaSpawnPoints[activeSpawnPointIndex])
+            {
+                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                enemiesLeftToSpawnForArea--;
+            }
+            yield return new WaitForSeconds(spawnIntervalForArea);
+        }
+        isEnemySpawningInProgress = false;
     }
 
     IEnumerator SpawnEnemy()
@@ -73,20 +104,16 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         if (GameObject.FindGameObjectsWithTag("Enemy").Length < maxEnemyCount)
         {
             if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
-            {
-                List<EnemySpawnPoint> validProgressPointsList = enemyProgressSpawnPoints[activeSpawnPointIndex].ToListWithValidPoints();
-                if (validProgressPointsList.Count > 0)
-                {
-                    int locationIndex = new System.Random().Next(0, validProgressPointsList.Count - 1);
-                    Debug.Log("Enemy " + enemyCountForProgressSpawnPoints[activeSpawnPointIndex] + ". Location index: " + locationIndex);
-                    PhotonNetwork.Instantiate(enemyPrefab.name, validProgressPointsList[locationIndex].transform.position, Quaternion.identity);
-                    enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
-                    yield return new WaitForSeconds(spawnIntervalForProgress);
-                }
+            { 
+                // for now we just take the last progress point for spawning in process (should probably be changed later, but fits the current design)
+                EnemySpawnPoint spawnPoint = enemyProgressSpawnPoints[activeSpawnPointIndex].FindLast(delegate(EnemySpawnPoint point) { return true; });
+                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                yield return new WaitForSeconds(spawnIntervalForProgress);
             }
             else
             {
-                int locationIndex = new System.Random().Next(0, enemyAreaSpawnPoints[activeSpawnPointIndex].Count - 1);
+                int locationIndex = UnityEngine.Random.Range(0, enemyAreaSpawnPoints[activeSpawnPointIndex].Count - 1);
                 Debug.Log("Enemy " + enemiesLeftToSpawnForArea + ". Location index: " + locationIndex);
                 PhotonNetwork.Instantiate(enemyPrefab.name, enemyAreaSpawnPoints[activeSpawnPointIndex][locationIndex].transform.position, Quaternion.identity);
                 enemiesLeftToSpawnForArea--;
@@ -95,8 +122,6 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         }
         isEnemySpawningInProgress = false;
     }
-
-
     private void ChangeEnemyCount(int addToEnemyCount)
     {
         if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
