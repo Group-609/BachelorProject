@@ -74,6 +74,8 @@ namespace Photon.Pun.Demo.PunBasics
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
 
+        private Animator animator;
+
         private IEnumerator respawnCoroutine;
 
         #endregion
@@ -128,6 +130,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            animator = GetComponentInChildren<Animator>();
         }
 
 
@@ -148,6 +151,7 @@ namespace Photon.Pun.Demo.PunBasics
             // we only process Inputs and check health if we are the local player
             if (photonView.IsMine)
             {
+                AnimateCharacter();
                 this.ProcessInputs();
 
                 if (this.health <= 0f)
@@ -161,6 +165,41 @@ namespace Photon.Pun.Demo.PunBasics
             if (IsFiring && !waitingToShoot)
             {
                 StartCoroutine(ShootPaintball());
+            }
+        }
+
+        void AnimateCharacter()
+        {
+
+            if (Input.GetAxis("Vertical") > 0)
+            {
+                animator.SetBool("isMovingForward", true);
+                animator.SetBool("isMovingBackward", false);
+            }
+            else if (Input.GetAxis("Vertical") < 0)
+            {
+                animator.SetBool("isMovingForward", false);
+                animator.SetBool("isMovingBackward", true);
+            }
+            else
+            {
+                animator.SetBool("isMovingForward", false);
+                animator.SetBool("isMovingBackward", false);
+            }
+            if (Input.GetAxis("Horizontal") > 0)
+            {
+                animator.SetBool("isMovingRight", true);
+                animator.SetBool("isMovingLeft", false);
+            }
+            else if (Input.GetAxis("Horizontal") < 0)
+            {
+                animator.SetBool("isMovingRight", false);
+                animator.SetBool("isMovingLeft", true);
+            }
+            else
+            {
+                animator.SetBool("isMovingRight", false);
+                animator.SetBool("isMovingLeft", false);
             }
         }
 
