@@ -20,13 +20,18 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public int speed = 2;
     public float maxHealth = 50f;
     public float health = 50f;
+    public float shootingDistance = 25f;
     //-------------------------------------
+
+    [Tooltip("Prefab of projectile to shoot")]
+    [SerializeField]
+    private GameObject projectilePrefab;
 
     public Color maxHealthCol;
     public Color lowHealthCol;
 
     private NavMeshAgent agent;
-    public Animator animator;
+    private Animator animator;
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
 
@@ -52,10 +57,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 animator.SetBool("IsDead", true);
                 PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
             }
-            FindNavTarget();
-            distanceToPlayer = Vector3.Distance(player.position, transform.position);
-            SetSpeed();
-            Attack();
+        }
+        FindNavTarget();
+        distanceToPlayer = Vector3.Distance(player.position, transform.position);
+        SetSpeed();
+        if (isAttackReady)
+        {
+            StartCoroutine(AttackPlayer());
         }
     }
 
@@ -91,37 +99,44 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         return GameObject.FindGameObjectsWithTag("Player");
     }
 
-    void Attack()
-    {
-        if (isAttackReady && distanceToPlayer <= minDist)
-        {
-            isAttackReady = false; 
-            animator.SetBool("IsAttacking", true);
-            StartCoroutine(TriggerDamageEffect());
-        }
-    }
-
     public void OnDamageTaken()
     {
         gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthCol, maxHealthCol, health / maxHealth);
     }
 
-    IEnumerator TriggerDamageEffect()
+    IEnumerator AttackPlayer()
     {
-        //Time damage effect delay to when attack happens
-        yield return new WaitForSeconds(attackAnimationDelay);
-        if (distanceToPlayer <= minDist)
+        if (distanceToPlayer <= shootingDistance)
         {
-            //player.GetComponent<HurtEffect>().Hit();
-            HitPlayer(player.gameObject, -attackDamage);
-            Debug.LogError("Player is attacked");
+            isAttackReady = false;
+            animator.SetBool("IsAttacking", true);
+
+            //Time damage effect delay to when attack happens
+            yield return new WaitForSeconds(attackAnimationDelay);
+            if (distanceToPlayer <= minDist)
+            {
+                //player.GetComponent<HurtEffect>().Hit();
+                if (PhotonNetwork.IsMasterClient)
+                { 
+                    HitPlayer(player.gameObject, -attackDamage);
+                }
+            }
+            else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
+            {
+                GameObject projectile;
+                projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+                projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
+                projectile.GetComponent<EnemyProjectile>().damage = this.attackDamage;
+                projectile.GetComponent<EnemyProjectile>().target = player;
+                projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
+                projectile.GetComponent<EnemyProjectile>().Launch();
+            }
+
+            //Wait for attack animation to finish
+            yield return new WaitForSeconds(attackAnimationDelay);
+            animator.SetBool("IsAttacking", false);
+            isAttackReady = true;
         }
-
-        //Wait for attack animation to finish
-        yield return new WaitForSeconds(attackAnimationDelay);
-        animator.SetBool("IsAttacking", false);
-        isAttackReady = true;
-
         yield return null;
     }
 
@@ -137,7 +152,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public void ChangePlayerHealth(float value, int targetViewID)
     {
         PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
-        //PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().OnDamageTaken();   //Player hurt effect
+        //PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().OnDamageTaken();   //TODO: Player hurt effect
     }
 
     #region IPunObservable implementation
