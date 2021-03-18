@@ -7,53 +7,64 @@ using Photon.Pun.Demo.PunBasics;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [System.NonSerialized]
     public GameObject[] players;
+    [System.NonSerialized]
     public Transform player;
     private float distanceToPlayer;
-    public int minDistForMeleeAttack = 2;
-    public int minDistForMovement = 110;
-    
     private bool isAttackReady = true;
     private float attackAnimationDelay = 1.5f;
 
-    //DDA friendly variables--------------
-    public float attackDamage = 5f;
-    public int speed = 2;
+    [Header("DDA friendly variables - they might be changed by the DDAA")]
+    //the default values here should be used if DDA is not applied
+    public float meleeDamage = 90f;
+    public float projectileDamage = 30f;
+    public float speed = 3f;
     public float maxHealth = 50f;
-    public float health = 50f;
     public float shootingDistance = 25f;
+    public float minDistForMeleeAttack = 2;
+    [Tooltip("Stopping distance should be lower than minimum distance for melee")]
+    public float stoppingDistance = 2.5f;
+    public int minDistForMovement = 110;
     //-------------------------------------
+    [System.NonSerialized]
+    public float currentHealth = 50f;      //current player health
 
+    [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
     [SerializeField]
     private GameObject projectilePrefab;
 
-    public Color maxHealthCol;
-    public Color lowHealthCol;
+    private Color maxHealthColor;
+    private Color lowHealthColor;
 
     private NavMeshAgent agent;
     private Animator animator;
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
 
+    //Used for estimating where player will be when projectile hits
+    private Vector3 previousFramePlayerPosition;
+    private Vector3 playerVelocity = new Vector3(0,0,0);
+
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk_body");     //Walking animation
-        agent.stoppingDistance = minDistForMeleeAttack;
+        agent.stoppingDistance = stoppingDistance;
         players = findPlayers();
 
-        maxHealthCol = new Color(.19f, .1f, .2f); //Dark purple
-        lowHealthCol = new Color(.95f, .73f, 1f); //bright pink
-        health = maxHealth;
+        maxHealthColor = new Color(.19f, .1f, .2f); //Dark purple
+        lowHealthColor = new Color(.95f, .73f, 1f); //bright pink
+        currentHealth = maxHealth;
     }
 
     void Update()
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (health < 0)
+            if (currentHealth < 0)
             {
                 animator.SetBool("IsDead", true);
                 PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
@@ -75,7 +86,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void SetSpeed(int speed)
+    void FixedUpdate()
+    {
+        if (player != null)
+        {
+            playerVelocity = (player.position - previousFramePlayerPosition) / Time.fixedDeltaTime;
+            previousFramePlayerPosition = player.position;
+        }
+    }
+
+    void SetSpeed(float speed)
     {
         agent.speed = speed;
     }
@@ -109,24 +129,27 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnDamageTaken()
     {
-        gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthCol, maxHealthCol, health / maxHealth);
+        gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
 
     IEnumerator AttackPlayer()
     {
+
+        //TODO: attack sound
         if (distanceToPlayer <= shootingDistance)
         {
+
             isAttackReady = false;
             animator.SetBool("IsAttacking", true);
-
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
             if (distanceToPlayer <= minDistForMeleeAttack)
             {
                 //player.GetComponent<HurtEffect>().Hit();
+                //TODO: play player melee hit sound
                 if (PhotonNetwork.IsMasterClient)
                 { 
-                    HitPlayer(player.gameObject, -attackDamage);
+                    HitPlayer(player.gameObject, -meleeDamage);
                 }
             }
             else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
@@ -134,10 +157,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 GameObject projectile;
                 projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
                 projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
-                projectile.GetComponent<EnemyProjectile>().damage = this.attackDamage;
+                projectile.GetComponent<EnemyProjectile>().damage = this.projectileDamage;
                 projectile.GetComponent<EnemyProjectile>().target = player;
                 projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
-                projectile.GetComponent<EnemyProjectile>().Launch();
+                projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
             }
 
             //Wait for attack animation to finish
@@ -170,12 +193,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             // We own this player: send the others our data
-            stream.SendNext(this.health);
+            stream.SendNext(this.currentHealth);
         }
         else
         {
             // Network player, receive data
-            this.health = (float)stream.ReceiveNext();
+            this.currentHealth = (float)stream.ReceiveNext();
         }
     }
 

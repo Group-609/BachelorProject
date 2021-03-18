@@ -35,7 +35,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float startingHealth = 100f;
 
         [Tooltip("Speed of this player's paintballs")]
-        public float paintBallSpeed = 50f;
+        public float paintBallSpeed = 15f;
 
         [Tooltip("Speed of this player's paintballs")]
         public float paintballDamage;
@@ -44,7 +44,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float respawnTime;
 
         [Tooltip("Time between 2 shots")]
-        public float shootWaitTime = 0.5f;
+        public float shootWaitTime = 0.9f;
         //---------------------------------------------------------
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
@@ -73,6 +73,8 @@ namespace Photon.Pun.Demo.PunBasics
 
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
+
+        private Animator animator;
 
         private IEnumerator respawnCoroutine;
 
@@ -128,6 +130,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            animator = GetComponentInChildren<Animator>();
         }
 
 
@@ -148,6 +151,7 @@ namespace Photon.Pun.Demo.PunBasics
             // we only process Inputs and check health if we are the local player
             if (photonView.IsMine)
             {
+                AnimateWalking();
                 this.ProcessInputs();
 
                 if (this.health <= 0f)
@@ -160,9 +164,12 @@ namespace Photon.Pun.Demo.PunBasics
             }
             if (IsFiring && !waitingToShoot)
             {
+                AnimateShoot();
                 StartCoroutine(ShootPaintball());
             }
         }
+
+        
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
         //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
@@ -191,8 +198,14 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeEnemyHealth(float value, int targetViewID)
         {
-            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().health += value;
+            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().currentHealth += value;
             PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().OnDamageTaken();
+        }
+
+        [PunRPC]
+        public void AnimateShoot()
+        {
+            animator.Play("Shoot");
         }
 
         #endregion
@@ -221,6 +234,40 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     this.IsFiring = false;
                 }
+            }
+        }
+
+        void AnimateWalking()
+        {
+            if (Input.GetAxis("Vertical") > 0)
+            {
+                animator.SetBool("isMovingForward", true);
+                animator.SetBool("isMovingBackward", false);
+            }
+            else if (Input.GetAxis("Vertical") < 0)
+            {
+                animator.SetBool("isMovingForward", false);
+                animator.SetBool("isMovingBackward", true);
+            }
+            else
+            {
+                animator.SetBool("isMovingForward", false);
+                animator.SetBool("isMovingBackward", false);
+            }
+            if (Input.GetAxis("Horizontal") > 0)
+            {
+                animator.SetBool("isMovingRight", true);
+                animator.SetBool("isMovingLeft", false);
+            }
+            else if (Input.GetAxis("Horizontal") < 0)
+            {
+                animator.SetBool("isMovingRight", false);
+                animator.SetBool("isMovingLeft", true);
+            }
+            else
+            {
+                animator.SetBool("isMovingRight", false);
+                animator.SetBool("isMovingLeft", false);
             }
         }
 
