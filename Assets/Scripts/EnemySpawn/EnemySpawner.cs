@@ -124,19 +124,27 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         isEnemySpawning = true;
         if (IsProgressCleared)
         {
-            int locationIndex = UnityEngine.Random.Range(0, enemyAreaSpawnPoints[activeSpawnPointIndex].Count);
-            PhotonNetwork.Instantiate(enemyPrefab.name, enemyAreaSpawnPoints[activeSpawnPointIndex][locationIndex].transform.position, Quaternion.identity);
-            enemiesLeftToSpawnForArea--;
-            yield return new WaitForSeconds(spawnIntervalForArea);
+            List<EnemySpawnPoint> validSpawnPoints = enemyAreaSpawnPoints[activeSpawnPointIndex].ToValidSpawnPoints();
+            if (validSpawnPoints.Count > 0)
+            {
+                EnemySpawnPoint spawnPoint = validSpawnPoints[UnityEngine.Random.Range(0, validSpawnPoints.Count)];
+                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                enemiesLeftToSpawnForArea--;
+                yield return new WaitForSeconds(spawnIntervalForArea);
+            }
+            
         }
         else
         {
             // for now we just take the last progress point for spawning in process (should probably be changed later, but it fits the current design)
             EnemySpawnPoint spawnPoint = enemyProgressSpawnPoints[activeSpawnPointIndex].FindLast(delegate (EnemySpawnPoint point) { return true; });
-            PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
-            enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
-            isInitialSpawnMade = !IsProgressCleared;
-            yield return new WaitForSeconds(spawnIntervalForProgress);
+            if (!spawnPoint.IsEnemyTooClose())
+            {
+                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                isInitialSpawnMade = !IsProgressCleared;
+                yield return new WaitForSeconds(spawnIntervalForProgress);
+            }
         }
         isEnemySpawning = false;
     }
