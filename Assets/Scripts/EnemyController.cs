@@ -10,7 +10,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public GameObject[] players;
     public Transform player;
     private float distanceToPlayer;
-    public int minDist = 2;
+    public int minDistForMeleeAttack = 2;
+    public int minDistForMovement = 110;
     
     private bool isAttackReady = true;
     private float attackAnimationDelay = 1.5f;
@@ -40,7 +41,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk_body");     //Walking animation
-        agent.stoppingDistance = minDist;
+        agent.stoppingDistance = minDistForMeleeAttack;
         players = findPlayers();
 
         maxHealthCol = new Color(.19f, .1f, .2f); //Dark purple
@@ -60,14 +61,21 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
         FindNavTarget();
         distanceToPlayer = Vector3.Distance(player.position, transform.position);
-        SetSpeed();
-        if (isAttackReady)
+        if (distanceToPlayer <= minDistForMovement)
         {
-            StartCoroutine(AttackPlayer());
+            SetSpeed(speed);
+            if (isAttackReady)
+            {
+                StartCoroutine(AttackPlayer());
+            }
+        }
+        else
+        {
+            SetSpeed(0);
         }
     }
 
-    void SetSpeed()
+    void SetSpeed(int speed)
     {
         agent.speed = speed;
     }
@@ -113,7 +121,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
-            if (distanceToPlayer <= minDist)
+            if (distanceToPlayer <= minDistForMeleeAttack)
             {
                 //player.GetComponent<HurtEffect>().Hit();
                 if (PhotonNetwork.IsMasterClient)
