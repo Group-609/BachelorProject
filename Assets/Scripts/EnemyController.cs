@@ -143,10 +143,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
             isAttackReady = false;
             animator.SetBool("IsAttacking", true);
-            Debug.Log("Distance when attacking: " + distanceToPlayer);
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
-            Debug.Log("Distance when doing damage: " + distanceToPlayer);
             if (distanceToPlayer <= minDistForMeleeAttack)
             {
                 //player.GetComponent<HurtEffect>().Hit();
