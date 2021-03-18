@@ -40,6 +40,7 @@ public class PaintBall : MonoBehaviour
                 playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
             }
         }
+        //TODO: paintball hit sound
         Destroy(gameObject);
     }
 }
