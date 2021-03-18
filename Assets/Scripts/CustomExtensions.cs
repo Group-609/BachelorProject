@@ -9,9 +9,19 @@ public static class CustomExtensions
         {
             spawnPointList[spawnPointToAdd.areaIndex].Add(spawnPointToAdd);
         } 
-        catch(ArgumentOutOfRangeException e)
+        catch(ArgumentOutOfRangeException)
         {
             spawnPointList.Add(new List<EnemySpawnPoint>() { spawnPointToAdd });
         }
+    }
+
+    public static List<EnemySpawnPoint> ToValidSpawnPoints(this List<EnemySpawnPoint> spawnPointList)
+    {
+        return spawnPointList.FindAll(
+            delegate(EnemySpawnPoint spawnPoint)
+            {
+                return !spawnPoint.IsEnemyTooClose();
+            }
+        );
     }
 }
