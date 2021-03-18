@@ -61,7 +61,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         FindNavTarget();
         distanceToPlayer = Vector3.Distance(player.position, transform.position);
         SetSpeed();
-        Attack();
+        if (isAttackReady)
+        {
+            StartCoroutine(AttackPlayer());
+        }
     }
 
     void SetSpeed()
@@ -96,16 +99,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         return GameObject.FindGameObjectsWithTag("Player");
     }
 
-    void Attack()
-    {
-        if (isAttackReady && distanceToPlayer <= shootingDistance)
-        {
-            isAttackReady = false; 
-            animator.SetBool("IsAttacking", true);
-            StartCoroutine(AttackPlayer());
-        }
-    }
-
     public void OnDamageTaken()
     {
         gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthCol, maxHealthCol, health / maxHealth);
@@ -113,32 +106,37 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator AttackPlayer()
     {
-        //Time damage effect delay to when attack happens
-        yield return new WaitForSeconds(attackAnimationDelay);
-        if (distanceToPlayer <= minDist)
+        if (distanceToPlayer <= shootingDistance)
         {
-            //player.GetComponent<HurtEffect>().Hit();
-            if (PhotonNetwork.IsMasterClient)
-            { 
-                HitPlayer(player.gameObject, -attackDamage);
+            isAttackReady = false;
+            animator.SetBool("IsAttacking", true);
+
+            //Time damage effect delay to when attack happens
+            yield return new WaitForSeconds(attackAnimationDelay);
+            if (distanceToPlayer <= minDist)
+            {
+                //player.GetComponent<HurtEffect>().Hit();
+                if (PhotonNetwork.IsMasterClient)
+                { 
+                    HitPlayer(player.gameObject, -attackDamage);
+                }
             }
-        }
-        else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
-        {
-            GameObject projectile;
-            projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-            projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
-            projectile.GetComponent<EnemyProjectile>().damage = this.attackDamage;
-            projectile.GetComponent<EnemyProjectile>().target = player;
-            projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
-            projectile.GetComponent<EnemyProjectile>().Launch();
-        }
+            else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
+            {
+                GameObject projectile;
+                projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+                projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
+                projectile.GetComponent<EnemyProjectile>().damage = this.attackDamage;
+                projectile.GetComponent<EnemyProjectile>().target = player;
+                projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
+                projectile.GetComponent<EnemyProjectile>().Launch();
+            }
 
-        //Wait for attack animation to finish
-        yield return new WaitForSeconds(attackAnimationDelay);
-        animator.SetBool("IsAttacking", false);
-        isAttackReady = true;
-
+            //Wait for attack animation to finish
+            yield return new WaitForSeconds(attackAnimationDelay);
+            animator.SetBool("IsAttacking", false);
+            isAttackReady = true;
+        }
         yield return null;
     }
 
