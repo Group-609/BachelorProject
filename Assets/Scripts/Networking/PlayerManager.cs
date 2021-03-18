@@ -65,10 +65,6 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField]
         private GameObject paintballPrefab;
 
-        [Tooltip("Prefab of paintball to shoot for other players")]
-        [SerializeField]
-        private GameObject paintballPrefabClient;
-
         [Tooltip("Transform the paint balls come from")]
         private Transform paintGun;
 
@@ -77,7 +73,6 @@ namespace Photon.Pun.Demo.PunBasics
 
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
-
 
         private IEnumerator respawnCoroutine;
 
@@ -243,18 +238,10 @@ namespace Photon.Pun.Demo.PunBasics
             waitingToShoot = true;
            
             GameObject paintball;
-            if (photonView.IsMine)  //We check if this is the local player shooting
-            {
-                paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
-                paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
-                paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
-            }
-            else //we spawn fake bullets for other players
-            {
-                paintball = Instantiate(paintballPrefabClient, paintGun.transform.position, Quaternion.identity);
-                paintball.GetComponent<PaintballClientSide>().playerWhoShot = this.gameObject;
-            }
-            
+            paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
+            paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
+            paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
+            paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
             yield return new WaitForSeconds(shootWaitTime);
             waitingToShoot = false;
