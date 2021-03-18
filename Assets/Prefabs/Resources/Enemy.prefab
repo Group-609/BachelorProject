@@ -732,7 +732,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   players: []
   player: {fileID: 0}
-  minDist: 3
+  minDistForMeleeAttack: 2
+  minDistForMovement: 110
   attackDamage: 5
   speed: 2
   maxHealth: 50

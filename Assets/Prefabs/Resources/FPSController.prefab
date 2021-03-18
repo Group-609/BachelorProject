@@ -314,7 +314,7 @@ MonoBehaviour:
   paintBallSpeed: 50
   paintballDamage: 10
   respawnTime: 0.5
-  shootWaitTime: 0.2
+  shootWaitTime: 1
   gameManager: {fileID: 0}
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}
   paintballPrefab: {fileID: 909444189230491489, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}
@@ -406,9 +406,18 @@ MonoBehaviour:
   - Type: 1
     SynchronizeType: 2
     Name: RotateX
-  - Type: 1
+  - Type: 4
     SynchronizeType: 0
-    Name: Velocity
+    Name: isMovingLeft
+  - Type: 4
+    SynchronizeType: 0
+    Name: isMovingRight
+  - Type: 4
+    SynchronizeType: 0
+    Name: isMovingForward
+  - Type: 4
+    SynchronizeType: 0
+    Name: isMovingBackward
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
