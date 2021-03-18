@@ -198,7 +198,7 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeEnemyHealth(float value, int targetViewID)
         {
-            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().health += value;
+            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().currentHealth += value;
             PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().OnDamageTaken();
         }
 

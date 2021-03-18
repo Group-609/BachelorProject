@@ -28,17 +28,15 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public int minDistForMovement = 110;
     //-------------------------------------
     [System.NonSerialized]
-    public float health = 50f;      //current player health
+    public float currentHealth = 50f;      //current player health
 
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
     [SerializeField]
     private GameObject projectilePrefab;
 
-    [System.NonSerialized]
-    public Color maxHealthCol;
-    [System.NonSerialized]
-    public Color lowHealthCol;
+    private Color maxHealthColor;
+    private Color lowHealthColor;
 
     private NavMeshAgent agent;
     private Animator animator;
@@ -57,16 +55,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         agent.stoppingDistance = stoppingDistance;
         players = findPlayers();
 
-        maxHealthCol = new Color(.19f, .1f, .2f); //Dark purple
-        lowHealthCol = new Color(.95f, .73f, 1f); //bright pink
-        health = maxHealth;
+        maxHealthColor = new Color(.19f, .1f, .2f); //Dark purple
+        lowHealthColor = new Color(.95f, .73f, 1f); //bright pink
+        currentHealth = maxHealth;
     }
 
     void Update()
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            if (health < 0)
+            if (currentHealth < 0)
             {
                 animator.SetBool("IsDead", true);
                 PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
@@ -131,7 +129,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnDamageTaken()
     {
-        gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthCol, maxHealthCol, health / maxHealth);
+        gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
 
     IEnumerator AttackPlayer()
@@ -195,12 +193,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             // We own this player: send the others our data
-            stream.SendNext(this.health);
+            stream.SendNext(this.currentHealth);
         }
         else
         {
             // Network player, receive data
-            this.health = (float)stream.ReceiveNext();
+            this.currentHealth = (float)stream.ReceiveNext();
         }
     }
 
