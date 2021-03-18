@@ -10,4 +10,6 @@ public class EnemySpawnPoint : MonoBehaviour
 
     [Tooltip("Defines, which area this spawn point is assigned to")]
     public int areaIndex;
+
+    // TODO: Add check if enemy is too close to spawn another one
 }
