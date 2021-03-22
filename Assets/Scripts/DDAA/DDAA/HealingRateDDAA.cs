@@ -38,7 +38,7 @@ public sealed class HealingRateDDAA : IDDAA
     private static readonly float baseHealingPoint = 1f;
     private static readonly float minHealingRate = 5f;
     private static readonly float dpgContribution = 0.1f;
-    private static readonly float healingPointContribution = 1f;
+    private static readonly float healingPointContribution = 1.5f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] levelProgression = new float[] { 0.5f, 0.75f, 0f, 1.25f, 1.5f }; // how many times were they faster than needed
