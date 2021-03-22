@@ -36,15 +36,15 @@ public sealed class HealingRateDDAA : IDDAA
 
     //static parameters
     private static readonly float baseHealingPoint = 1f;
-    private static readonly int minHealingRate = 8;
+    private static readonly float minHealingRate = 5f;
     private static readonly float dpgContribution = 0.1f;
-    private static readonly float healingPointContribution = 2f;
+    private static readonly float healingPointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] levelProgression = new float[] { 0.5f, 0.75f, 0f, 1.25f, 1.5f }; // how many times were they faster than needed
 
-    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
-    private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { 1f, 0.5f, 0f, -1.5f, -2f }; // additive values to multiplier
+    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
+    private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { -2f, 1.5f, 0f, 0.5f, 1f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
@@ -52,7 +52,7 @@ public sealed class HealingRateDDAA : IDDAA
     private float healingPoint = baseHealingPoint;
 
     // THE IN-GAME VALUE USED
-    public int healingRate = (int) DDAEngine.Instance.CalculateInGameValue(baseHealingPoint, healingPointContribution, dpgContribution, minHealingRate);
+    public float healingRate = DDAEngine.Instance.CalculateInGameValue(baseHealingPoint, healingPointContribution, dpgContribution, minHealingRate);
 
     // This listener is important if some action has to take place, when the IN-GAME VALUE is changed.
     // Otherwise the variable, which uses it (e.g. PlayerController), will not be notified.
@@ -73,7 +73,7 @@ public sealed class HealingRateDDAA : IDDAA
         healingPoint = baseHealingPoint * healingMultiplier; // possible to add value directly
 
         //set healing rate
-        healingRate = (int)DDAEngine.Instance.CalculateInGameValue(healingPoint, healingPointContribution, dpgContribution, minHealingRate + addToInGameValue);
+        healingRate = DDAEngine.Instance.CalculateInGameValue(healingPoint, healingPointContribution, dpgContribution, minHealingRate + addToInGameValue);
 
         if (healingListener != null)
         {
