@@ -50,7 +50,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private void Awake()
 		{
-			DDAEngine.Instance.isDynamicAdjustmentEnabled = IsDDAEnabled;
+			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
 		}
 
 		/// <summary>

@@ -54,7 +54,7 @@ public sealed class LevelProgressionCondition : ICondition
         {
             // should start the configuration of every DDAA here
             currentConditionalValue = value;
-            DDAEngine.Instance.AdjustDPG(currentConditionalValue, dpgValues, dpgAdditiveValues);
+            DDAEngine.AdjustDPG(currentConditionalValue, dpgValues, dpgAdditiveValues);
         }
     }
 
@@ -69,7 +69,7 @@ public sealed class LevelProgressionCondition : ICondition
         if (currentLevel < expectedFinishTimes.Length)
         {
             Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedFinishTimes[currentLevel]);
-            if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
+            if (DDAEngine.isDynamicAdjustmentEnabled)
                 ConditionValue = time / expectedFinishTimes[currentLevel];
             currentLevel++;
             //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);

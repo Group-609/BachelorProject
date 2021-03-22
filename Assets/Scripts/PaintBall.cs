@@ -24,7 +24,7 @@ public class PaintBall : MonoBehaviour
 
     void Start()
     {
-        if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
+        if (DDAEngine.isDynamicAdjustmentEnabled)
             paintballHealingRate = HealingRateDDAA.Instance.healingRate;
         else paintballHealingRate = basePaintballHealingRate;
        

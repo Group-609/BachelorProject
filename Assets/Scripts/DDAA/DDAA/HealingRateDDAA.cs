@@ -52,7 +52,7 @@ public sealed class HealingRateDDAA : IDDAA
     private float healingPoint = baseHealingPoint;
 
     // THE IN-GAME VALUE USED
-    public float healingRate = DDAEngine.Instance.CalculateInGameValue(baseHealingPoint, healingPointContribution, dpgContribution, minHealingRate);
+    public float healingRate = DDAEngine.CalculateInGameValue(baseHealingPoint, healingPointContribution, dpgContribution, minHealingRate);
 
     // This listener is important if some action has to take place, when the IN-GAME VALUE is changed.
     // Otherwise the variable, which uses it (e.g. PlayerController), will not be notified.
@@ -64,7 +64,7 @@ public sealed class HealingRateDDAA : IDDAA
     }
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
-        healingMultiplier += DDAEngine.Instance.GetAdditiveValue(
+        healingMultiplier += DDAEngine.GetAdditiveValue(
                 LevelProgressionCondition.Instance.ConditionValue,
                 levelProgression,
                 levelProgressionMultiplierAdditiveValues
@@ -73,7 +73,7 @@ public sealed class HealingRateDDAA : IDDAA
         healingPoint = baseHealingPoint * healingMultiplier; // possible to add value directly
 
         //set healing rate
-        healingRate = DDAEngine.Instance.CalculateInGameValue(healingPoint, healingPointContribution, dpgContribution, minHealingRate + addToInGameValue);
+        healingRate = DDAEngine.CalculateInGameValue(healingPoint, healingPointContribution, dpgContribution, minHealingRate + addToInGameValue);
 
         if (healingListener != null)
         {
