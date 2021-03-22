@@ -53,8 +53,10 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("The game manager object.")]
         public GameManager gameManager;
 
-        
-        
+        //where the player will respawn after both players get stunned
+        [System.NonSerialized]
+        public Transform respawnTransform;
+
 
         #endregion
 
@@ -78,8 +80,6 @@ namespace Photon.Pun.Demo.PunBasics
         bool waitingToShoot = false;
 
         private Animator animator;
-
-        public Transform respawnTransform;
 
         #endregion
 
@@ -110,7 +110,7 @@ namespace Photon.Pun.Demo.PunBasics
         public void Start()
         {
             CameraWork _cameraWork = gameObject.GetComponent<CameraWork>();
-            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
+
             if (_cameraWork != null)
             {
                 if (photonView.IsMine)
@@ -134,6 +134,7 @@ namespace Photon.Pun.Demo.PunBasics
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
             animator = GetComponentInChildren<Animator>();
+            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
         }
 
 
@@ -151,7 +152,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Update()
         {
-            // we only process Inputs and check health if we are the local player
+            // local player
             if (photonView.IsMine)
             {
                 if (this.health <= 0f)
@@ -174,6 +175,7 @@ namespace Photon.Pun.Demo.PunBasics
         //Called when all players are stunned 
         public void Respawn()
         {
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             gameObject.GetComponent<FirstPersonController>().isStunned = false;
             gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
             transform.position = respawnTransform.position;
@@ -226,6 +228,7 @@ namespace Photon.Pun.Demo.PunBasics
         void Stun()
         {
             gameObject.GetComponent<FirstPersonController>().isStunned = true;
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
         }
 
         /// <summary>
