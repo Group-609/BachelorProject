@@ -22,7 +22,7 @@ namespace Photon.Pun.Demo.PunBasics
     /// Player manager.
     /// Handles fire Input.
     /// </summary>
-    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
+    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable, LevelProgressionCondition.LevelProgressionListener
     {
         #region Public Fields
 
@@ -37,7 +37,7 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Speed of this player's paintballs")]
         public float paintBallSpeed = 15f;
 
-        [Tooltip("Speed of this player's paintballs")]
+        [Tooltip("Damage of this player's paintballs")]
         public float paintballDamage;
 
         [Tooltip("Time it takes for the player to get control back after dying")]
@@ -95,6 +95,11 @@ namespace Photon.Pun.Demo.PunBasics
                 LocalPlayerInstance = gameObject;
             }
             paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("PaintGun");
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
+            }
 
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
@@ -206,6 +211,11 @@ namespace Photon.Pun.Demo.PunBasics
         public void AnimateShoot()
         {
             animator.Play("Shoot");
+        }
+
+        public void OnLevelFinished()
+        {
+            HealingRateDDAA.Instance.AdjustInGameValue();
         }
 
         #endregion

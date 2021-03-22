@@ -47,7 +47,7 @@ public sealed class HealingRateDDAA : IDDAA
     private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { 1f, 0.5f, 0f, -1.5f, -2f }; // additive values to multiplier
 
     // Mutable parameters. 
-    // Do not ajust these, it will change during the gameplay
+    // Do not ajust these, they will change during the gameplay
     private float healingMultiplier = 1f;
     private float healingPoint = baseHealingPoint;
 

@@ -73,6 +73,8 @@ public sealed class LevelProgressionCondition : ICondition
                 ConditionValue = time / expectedFinishTimes[currentLevel];
             currentLevel++;
             Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
+
+            levelProgressionListeners.ForEach(listener => listener.OnLevelFinished());
         } 
         else
         {
@@ -80,4 +82,19 @@ public sealed class LevelProgressionCondition : ICondition
             isGameFinished = true;
         }
     }
+
+
+    //listener implementation, to notify different parts of the game that the level has finished
+    private List<LevelProgressionListener> levelProgressionListeners = new List<LevelProgressionListener>();
+
+    public interface LevelProgressionListener
+    {
+        void OnLevelFinished();
+    }
+
+    public void AddLevelProgressionListener(LevelProgressionListener listener)
+    {
+        levelProgressionListeners.Add(listener);
+    }
+
 }

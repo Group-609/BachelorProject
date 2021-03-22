@@ -15,6 +15,9 @@ public class PaintBall : MonoBehaviour
     public float paintballDamage; //Damage this specific paintball does
 
     [System.NonSerialized]
+    private float paintballHealingRate = HealingRateDDAA.Instance.healingRate; //Healing power that this specific paintball does
+
+    [System.NonSerialized]
     public bool isLocal; //true if this is a real bullet that does damage
 
     void Start()
@@ -31,11 +34,11 @@ public class PaintBall : MonoBehaviour
         }
         else if (isLocal)
         {
-            if (collision.collider.gameObject.tag == "Player")
+            if (collision.collider.gameObject.CompareTag("Player"))
             {
-                playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, paintballDamage);      //We heal friend :)
+                playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, paintballHealingRate);   //We heal friend :)
             }
-            else if (collision.collider.gameObject.tag == "Enemy")
+            else if (collision.collider.gameObject.CompareTag("Enemy"))
             {
                 playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
             }
