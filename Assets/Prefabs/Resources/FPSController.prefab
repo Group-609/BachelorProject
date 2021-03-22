@@ -318,6 +318,7 @@ MonoBehaviour:
   gameManager: {fileID: 0}
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}
   paintballPrefab: {fileID: 909444189230491489, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}
+  respawnTransform: {fileID: 0}
 --- !u!114 &-4129676564591277995
 MonoBehaviour:
   m_ObjectHideFlags: 0

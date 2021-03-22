@@ -109,9 +109,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             Transform closestPlayer = players[0].transform;
             //find player closest to enemy
-            for(int i = 0; i < players.Length; i++)
+            for (int i = 0; i < players.Length; i++)
             {
-                if(Vector3.Distance(players[i].transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
+                if (players[i].GetComponent<PlayerManager>().health > 0 && Vector3.Distance(players[i].transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
                 {
                     closestPlayer = players[i].transform;
                 }
@@ -176,7 +176,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     // healthChange - the effect on the enemies health (negative values for hurting)
     public void HitPlayer(GameObject player, float healthChange)
     {
-        photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+        if(player.GetComponent<PlayerManager>().health > 0)
+        {
+            photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+        }
     }
 
     [PunRPC]
