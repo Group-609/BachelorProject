@@ -52,7 +52,7 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     // THE IN-GAME VALUE USED
     // I gave it initial value as minimum reload time, though it could be any we wish (probably somewhere in the middle)
-    public int spawnAmount = (int) DDAEngine.Instance.CalculateInGameValue(baseSpawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
+    public int spawnAmount = (int) DDAEngine.CalculateInGameValue(baseSpawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount);
 
     // This listener is important if some action has to take place, when the reload time is changed.
     // Otherwise the variable, which holds reload time, will not be notified.
@@ -65,7 +65,7 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
-        spawnMultiplier += DDAEngine.Instance.GetAdditiveValue(
+        spawnMultiplier += DDAEngine.GetAdditiveValue(
                 LevelProgressionCondition.Instance.ConditionValue,
                 levelProgression,
                 levelProgressionMultiplierAdditiveValues
@@ -74,7 +74,7 @@ public sealed class EnemySpawnDDAA : IDDAA
         spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
 
         //set reloadTime
-        spawnAmount = (int) DDAEngine.Instance.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
+        spawnAmount = (int) DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
 
         if (spawnListener != null)
         {
