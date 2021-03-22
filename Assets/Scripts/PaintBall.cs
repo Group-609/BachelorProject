@@ -14,14 +14,21 @@ public class PaintBall : MonoBehaviour
     [System.NonSerialized]
     public float paintballDamage; //Damage this specific paintball does
 
+    private static readonly float basePaintballHealingRate = 6f;
+
     [System.NonSerialized]
-    private float paintballHealingRate = HealingRateDDAA.Instance.healingRate; //Healing power that this specific paintball does
+    private float paintballHealingRate; //Healing power that this specific paintball does
 
     [System.NonSerialized]
     public bool isLocal; //true if this is a real bullet that does damage
 
     void Start()
     {
+        if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
+            paintballHealingRate = HealingRateDDAA.Instance.healingRate;
+        else paintballHealingRate = basePaintballHealingRate;
+       
+
         Destroy(gameObject, despawnTime);
     }
 
