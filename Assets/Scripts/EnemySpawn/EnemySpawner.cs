@@ -53,7 +53,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     void Start()
     {
-        Debug.Log(enemiesLeftToSpawnForArea + " enemies to spawn");
+        //Debug.Log(enemiesLeftToSpawnForArea + " enemies to spawn");
         SetSpawnPoints(GameObject.FindGameObjectsWithTag("EnemySpawnPoint"));
         EnemySpawnDDAA.Instance.SetSpawnListener(this);
     }
@@ -163,7 +163,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     public void OnValueChanged(float value)
     {
-        Debug.Log("Active point: " + activeSpawnPointIndex + ". " + value + " enemies to spawn");
+        //Debug.Log("Active point: " + activeSpawnPointIndex + ". " + value + " enemies to spawn");
         enemiesLeftToSpawnForArea = (int) value;
     }
 

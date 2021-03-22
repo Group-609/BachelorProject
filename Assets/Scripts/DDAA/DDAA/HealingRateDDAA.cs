@@ -44,7 +44,7 @@ public sealed class HealingRateDDAA : IDDAA
     private static readonly float[] levelProgression = new float[] { 0.5f, 0.75f, 0f, 1.25f, 1.5f }; // how many times were they faster than needed
 
     private static readonly float[] levelProgressionPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
-    private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { -2f, 1.5f, 0f, 0.5f, 1f }; // additive values to multiplier
+    private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { -2f, -1.5f, 0f, 1f, 2f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay

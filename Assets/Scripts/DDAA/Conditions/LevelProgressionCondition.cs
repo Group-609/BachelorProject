@@ -72,7 +72,7 @@ public sealed class LevelProgressionCondition : ICondition
             if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
                 ConditionValue = time / expectedFinishTimes[currentLevel];
             currentLevel++;
-            Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
+            //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
 
             levelProgressionListeners.ForEach(listener => listener.OnLevelFinished());
         } 

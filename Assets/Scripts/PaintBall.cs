@@ -34,6 +34,7 @@ public class PaintBall : MonoBehaviour
         }
         else if (isLocal)
         {
+            Debug.Log("Healing rate: " + paintballHealingRate);
             if (collision.collider.gameObject.CompareTag("Player"))
             {
                 playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, paintballHealingRate);   //We heal friend :)
