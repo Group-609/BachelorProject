@@ -15,7 +15,8 @@ public class ApplyPostProcessing : MonoBehaviour
     {
         playerManager = transform.parent.GetComponent<PlayerManager>();
         PostProcessVolume volume = transform.GetComponent<PostProcessVolume>();
-        volume.profile.TryGetSettings(out vignetteLayer);
+        //Get variables for adjusting post processing effects
+        volume.profile.TryGetSettings(out vignetteLayer);   
         volume.profile.TryGetSettings(out grayscaleLayer);
     }
 

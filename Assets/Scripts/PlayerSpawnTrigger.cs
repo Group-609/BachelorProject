@@ -14,7 +14,7 @@ public class PlayerSpawnTrigger : MonoBehaviour
 	void OnTriggerEnter(Collider collider)
 	{
 		//If the object is the player who shot
-		if (collider.gameObject.tag == "Player")
+		if (collider.gameObject.CompareTag("Player"))
 		{
 			playerRespawnTransform.transform.position = transform.parent.position;
 			playerRespawnTransform.transform.rotation = transform.parent.rotation;

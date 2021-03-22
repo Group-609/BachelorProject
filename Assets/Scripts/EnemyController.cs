@@ -107,13 +107,24 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
         if (refreshTargetTimer <= 0)
         {
-            Transform closestPlayer = players[0].transform;
-            //find player closest to enemy
-            for (int i = 0; i < players.Length; i++)
+            Transform closestPlayer = null; 
+            List<GameObject> alivePlayers = new List<GameObject>();
+            foreach (GameObject player in players)
             {
-                if (players[i].GetComponent<PlayerManager>().health > 0 && Vector3.Distance(players[i].transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
+                if (player.GetComponent<PlayerManager>().health > 0)
                 {
-                    closestPlayer = players[i].transform;
+                    alivePlayers.Add(player);
+                }
+            }
+            if (alivePlayers.Count != 0)  //If we found alive players, find the closest player
+            {
+                closestPlayer = alivePlayers[0].transform;
+                foreach (GameObject player in alivePlayers)
+                {
+                    if (Vector3.Distance(player.transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
+                    {
+                        closestPlayer = player.transform;
+                    }
                 }
             }
             player = closestPlayer;
