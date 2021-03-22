@@ -7,8 +7,7 @@ using Photon.Pun.Demo.PunBasics;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
-    [System.NonSerialized]
-    public GameObject[] players;
+    private List<GameObject> players;
     [System.NonSerialized]
     public Transform player;
     private float distanceToPlayer;
@@ -107,15 +106,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
         if (refreshTargetTimer <= 0)
         {
-            Transform closestPlayer = null; 
-            List<GameObject> alivePlayers = new List<GameObject>();
-            foreach (GameObject player in players)
-            {
-                if (player.GetComponent<PlayerManager>().health > 0)
-                {
-                    alivePlayers.Add(player);
-                }
-            }
+            Transform closestPlayer = null;
+            List<GameObject> alivePlayers = players.FindAll(
+               delegate (GameObject player)
+               {
+                   return player.GetComponent<PlayerManager>().health > 0;
+               }
+            );
             if (alivePlayers.Count != 0)  //If we found alive players, find the closest player
             {
                 closestPlayer = alivePlayers[0].transform;
@@ -133,9 +130,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    GameObject[] findPlayers()
+    List<GameObject> findPlayers()
     {
-        return GameObject.FindGameObjectsWithTag("Player");
+        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
     }
 
     public void OnDamageTaken()
