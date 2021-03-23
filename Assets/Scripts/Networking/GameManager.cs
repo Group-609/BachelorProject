@@ -50,7 +50,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private void Awake()
 		{
-			DDAEngine.Instance.isDynamicAdjustmentEnabled = IsDDAEnabled;
+			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
 		}
 
 		/// <summary>
@@ -60,6 +60,7 @@ namespace Photon.Pun.Demo.PunBasics
 		{
 			//Ignore the collisions between layer 8 (Enemy) and layer 9 (Enemy projectile)
 			Physics.IgnoreLayerCollision(8, 9);
+			Physics.IgnoreLayerCollision(9, 9);
 			Instance = this;
 
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
@@ -78,7 +79,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 				if (PlayerManager.LocalPlayerInstance==null)
 				{
-				    Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
+				    //Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
 
 
 					// we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
@@ -101,6 +102,10 @@ namespace Photon.Pun.Demo.PunBasics
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
 				QuitApplication();
+			}
+			if(PhotonNetwork.IsMasterClient)
+            {
+				RespawnCheck();
 			}
 		}
 
@@ -165,6 +170,24 @@ namespace Photon.Pun.Demo.PunBasics
 		#endregion
 
 		#region Private Methods
+		
+		void RespawnCheck()
+        {
+			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+			//Check if any player is still alive
+			foreach(GameObject player in players)
+            {
+				if (player.GetComponent<PlayerManager>().health > 0)
+				{
+					return;
+				}
+			}
+            //if not, respawn all players
+            foreach (GameObject player in players)
+            {
+				player.GetComponent<PlayerManager>().Respawn();
+			}
+		}
 
 		void LoadArena()
 		{

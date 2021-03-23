@@ -44,7 +44,7 @@ public sealed class KillCountCondition : ICondition
         {
             // should start the configuration of every DDAA here
             currentKillCount = (int) value;
-            DDAEngine.Instance.AdjustDPG(value, dpgValues, dpgAdditiveValues);
+            DDAEngine.AdjustDPG(value, dpgValues, dpgAdditiveValues);
         }
     }
 }

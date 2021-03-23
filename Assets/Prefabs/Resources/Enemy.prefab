@@ -730,19 +730,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fcc50922fb3e0245ae7ef0d71bfb81b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  players: []
-  player: {fileID: 0}
-  minDistForMeleeAttack: 2
-  minDistForMovement: 110
-  attackDamage: 5
-  speed: 2
+  meleeDamage: 90
+  projectileDamage: 30
+  speed: 5
   maxHealth: 50
-  health: 50
   shootingDistance: 25
+  minDistForMeleeAttack: 4
+  stoppingDistance: 3
+  minDistForMovement: 110
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
-  maxHealthCol: {r: 48, g: 25, b: 52, a: 1}
-  lowHealthCol: {r: 244, g: 187, b: 255, a: 1}
-  refreshTargetTimerLimit: 50
+  refreshTargetTimerLimit: 20
 --- !u!195 &5732855970157686023
 NavMeshAgent:
   m_ObjectHideFlags: 0
