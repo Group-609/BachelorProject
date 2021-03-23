@@ -736,7 +736,7 @@ MonoBehaviour:
   maxHealth: 50
   shootingDistance: 25
   minDistForMeleeAttack: 4
-  stoppingDistance: 2.5
+  stoppingDistance: 3
   minDistForMovement: 110
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimerLimit: 20

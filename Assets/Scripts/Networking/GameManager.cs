@@ -103,6 +103,10 @@ namespace Photon.Pun.Demo.PunBasics
 			{
 				QuitApplication();
 			}
+			if(PhotonNetwork.IsMasterClient)
+            {
+				RespawnCheck();
+			}
 		}
 
         #endregion
@@ -166,6 +170,24 @@ namespace Photon.Pun.Demo.PunBasics
 		#endregion
 
 		#region Private Methods
+		
+		void RespawnCheck()
+        {
+			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+			//Check if any player is still alive
+			foreach(GameObject player in players)
+            {
+				if (player.GetComponent<PlayerManager>().health > 0)
+				{
+					return;
+				}
+			}
+            //if not, respawn all players
+            foreach (GameObject player in players)
+            {
+				player.GetComponent<PlayerManager>().Respawn();
+			}
+		}
 
 		void LoadArena()
 		{

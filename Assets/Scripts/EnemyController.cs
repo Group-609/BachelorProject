@@ -7,8 +7,7 @@ using Photon.Pun.Demo.PunBasics;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
-    [System.NonSerialized]
-    public GameObject[] players;
+    private List<GameObject> players;
     [System.NonSerialized]
     public Transform player;
     private float distanceToPlayer;
@@ -107,13 +106,22 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
         if (refreshTargetTimer <= 0)
         {
-            Transform closestPlayer = players[0].transform;
-            //find player closest to enemy
-            for(int i = 0; i < players.Length; i++)
+            Transform closestPlayer = null;
+            List<GameObject> alivePlayers = players.FindAll(
+               delegate (GameObject player)
+               {
+                   return player.GetComponent<PlayerManager>().health > 0;
+               }
+            );
+            if (alivePlayers.Count != 0)  //If we found alive players, find the closest player
             {
-                if(Vector3.Distance(players[i].transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
+                closestPlayer = alivePlayers[0].transform;
+                foreach (GameObject player in alivePlayers)
                 {
-                    closestPlayer = players[i].transform;
+                    if (Vector3.Distance(player.transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
+                    {
+                        closestPlayer = player.transform;
+                    }
                 }
             }
             player = closestPlayer;
@@ -122,9 +130,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    GameObject[] findPlayers()
+    List<GameObject> findPlayers()
     {
-        return GameObject.FindGameObjectsWithTag("Player");
+        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
     }
 
     public void OnDamageTaken()
@@ -176,7 +184,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     // healthChange - the effect on the enemies health (negative values for hurting)
     public void HitPlayer(GameObject player, float healthChange)
     {
-        photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+        if(player.GetComponent<PlayerManager>().health > 0)
+        {
+            photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+        }
     }
 
     [PunRPC]

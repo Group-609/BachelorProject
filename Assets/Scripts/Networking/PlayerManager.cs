@@ -53,6 +53,11 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("The game manager object.")]
         public GameManager gameManager;
 
+        //where the player will respawn after both players get stunned
+        [System.NonSerialized]
+        public Transform respawnTransform;
+
+
         #endregion
 
         #region Private Fields
@@ -76,8 +81,6 @@ namespace Photon.Pun.Demo.PunBasics
 
         private Animator animator;
 
-        private IEnumerator respawnCoroutine;
-
         #endregion
 
         #region MonoBehaviour CallBacks
@@ -87,7 +90,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Awake()
         {
-
+            
             // #Important
             // used in GameManager.cs: we keep track of the localPlayer instance to prevent instanciation when levels are synchronized
             if (photonView.IsMine)
@@ -136,6 +139,7 @@ namespace Photon.Pun.Demo.PunBasics
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
             animator = GetComponentInChildren<Animator>();
+            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
         }
 
 
@@ -153,28 +157,36 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Update()
         {
-            // we only process Inputs and check health if we are the local player
+            // local player
             if (photonView.IsMine)
             {
-                AnimateWalking();
-                this.ProcessInputs();
-
                 if (this.health <= 0f)
                 {
-                    gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
-                    transform.position = gameManager.transform.position;
-                    this.health = startingHealth;
-                    StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
+                    Stun();
+                }
+                else
+                {
+                    AnimateWalking();
+                    this.ProcessInputs();
                 }
             }
-            if (IsFiring && !waitingToShoot)
+            if (IsFiring && !waitingToShoot && health > 0)
             {
                 AnimateShoot();
                 StartCoroutine(ShootPaintball());
             }
         }
 
-        
+        //Called when all players are stunned 
+        public void Respawn()
+        {
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
+            gameObject.GetComponent<FirstPersonController>().isStunned = false;
+            gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
+            transform.position = respawnTransform.position;
+            this.health = startingHealth;
+            StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
+        }
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
         //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
@@ -221,6 +233,13 @@ namespace Photon.Pun.Demo.PunBasics
         #endregion
 
         #region Private Methods
+
+        //Disables movement
+        void Stun()
+        {
+            gameObject.GetComponent<FirstPersonController>().isStunned = true;
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
+        }
 
         /// <summary>
         /// Processes the inputs. This MUST ONLY BE USED when the player has authority over this Networked GameObject (photonView.isMine == true)
