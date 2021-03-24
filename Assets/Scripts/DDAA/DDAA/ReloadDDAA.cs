@@ -52,7 +52,7 @@ public sealed class ReloadDDAA: IDDAA
 
     // THE IN-GAME VALUE USED
     // I gave it initial value as minimum reload time, though it could be any we wish (probably somewhere in the middle)
-    public float reloadTime = DDAEngine.Instance.CalculateInGameValue(baseReloadPoint, reloadPointContribution, dpgContribution, minReloadTime);
+    public float reloadTime = DDAEngine.CalculateInGameValue(baseReloadPoint, reloadPointContribution, dpgContribution, minReloadTime);
 
     // This listener is important if some action has to take place, when the reload time is changed.
     // Otherwise the variable, which holds reload time, will not be notified.
@@ -65,7 +65,7 @@ public sealed class ReloadDDAA: IDDAA
 
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
-        reloadMultiplier += DDAEngine.Instance.GetAdditiveValue(
+        reloadMultiplier += DDAEngine.GetAdditiveValue(
                 KillCountCondition.Instance.ConditionValue, 
                 killCountValues, 
                 killCountMultiplierAdditiveValues
@@ -75,7 +75,7 @@ public sealed class ReloadDDAA: IDDAA
         Debug.Log("Reload point = " + reloadPoint);
 
         //set reloadTime
-        reloadTime = DDAEngine.Instance.CalculateInGameValue(reloadPoint, reloadPointContribution, dpgContribution, minReloadTime + addToInGameValue);
+        reloadTime = DDAEngine.CalculateInGameValue(reloadPoint, reloadPointContribution, dpgContribution, minReloadTime + addToInGameValue);
 
         if (reloadListener != null)
         {

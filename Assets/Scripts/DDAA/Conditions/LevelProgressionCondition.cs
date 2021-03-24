@@ -33,7 +33,7 @@ public sealed class LevelProgressionCondition : ICondition
     }
 
     public int currentLevel;
-    private static readonly int[] expectedFinishTimes = new int[] { 25, 50, 75 }; // adjust these. Expected time (in sec), when player should complete level
+    private static readonly int[] expectedFinishTimes = new int[] { 150, 330, 550 }; // adjust these. Expected time (in sec), when player should complete level
 
     // IMPORTANT! Both arrays have to be the same length
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
@@ -54,7 +54,7 @@ public sealed class LevelProgressionCondition : ICondition
         {
             // should start the configuration of every DDAA here
             currentConditionalValue = value;
-            DDAEngine.Instance.AdjustDPG(currentConditionalValue, dpgValues, dpgAdditiveValues);
+            DDAEngine.AdjustDPG(currentConditionalValue, dpgValues, dpgAdditiveValues);
         }
     }
 
@@ -69,10 +69,12 @@ public sealed class LevelProgressionCondition : ICondition
         if (currentLevel < expectedFinishTimes.Length)
         {
             Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedFinishTimes[currentLevel]);
-            if (DDAEngine.Instance.isDynamicAdjustmentEnabled)
+            if (DDAEngine.isDynamicAdjustmentEnabled)
                 ConditionValue = time / expectedFinishTimes[currentLevel];
             currentLevel++;
-            Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
+            //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
+
+            levelProgressionListeners.ForEach(listener => listener.OnLevelFinished());
         } 
         else
         {
@@ -80,4 +82,19 @@ public sealed class LevelProgressionCondition : ICondition
             isGameFinished = true;
         }
     }
+
+
+    //listener implementation, to notify different parts of the game that the level has finished
+    private List<LevelProgressionListener> levelProgressionListeners = new List<LevelProgressionListener>();
+
+    public interface LevelProgressionListener
+    {
+        void OnLevelFinished();
+    }
+
+    public void AddLevelProgressionListener(LevelProgressionListener listener)
+    {
+        levelProgressionListeners.Add(listener);
+    }
+
 }
