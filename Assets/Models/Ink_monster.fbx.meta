@@ -30,6 +30,21 @@ ModelImporter:
   - first:
       74: -4799524434163024911
     second: Armature|walk
+  - first:
+      74: -5546213070115797796
+    second: Cube.001|roundEyes_attack
+  - first:
+      74: 1719466648631945102
+    second: Cube|eyes_attack
+  - first:
+      74: 1180599271568011988
+    second: Cube|Eyes_walk
+  - first:
+      74: -3004408782755770771
+    second: Cube.001|roundEyes_death
+  - first:
+      74: 8411513251811950556
+    second: Cube.001|roundEyes_walk
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -59,11 +74,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Cube|Eyes_attack
-      takeName: Cube|Eyes_attack
+      name: Cube|eyes_attack
+      takeName: Cube|eyes_attack
       internalID: 0
       firstFrame: 0
-      lastFrame: 74
+      lastFrame: 64
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -117,11 +132,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Cube|eyes_walk
-      takeName: Cube|eyes_walk
+      name: Cube|Eyes_walk
+      takeName: Cube|Eyes_walk
       internalID: 0
       firstFrame: 0
-      lastFrame: 64
+      lastFrame: 74
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -206,6 +221,93 @@ ModelImporter:
     - serializedVersion: 16
       name: Armature|walk
       takeName: Armature|walk
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 74
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Cube.001|roundEyes_attack
+      takeName: Cube.001|roundEyes_attack
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 64
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Cube.001|roundEyes_death
+      takeName: Cube.001|roundEyes_death
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 109
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Cube.001|roundEyes_walk
+      takeName: Cube.001|roundEyes_walk
       internalID: 0
       firstFrame: 0
       lastFrame: 74
