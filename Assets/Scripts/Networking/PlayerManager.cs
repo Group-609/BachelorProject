@@ -11,8 +11,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
-using UnityStandardAssets.Characters.FirstPerson;   
-
+using UnityStandardAssets.Characters.FirstPerson;
+using Photon.Pun;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -147,7 +149,8 @@ namespace Photon.Pun.Demo.PunBasics
 		{
 			// Always call the base to remove callbacks
 			base.OnDisable ();
-		}
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
 
 
         /// <summary>
@@ -182,18 +185,12 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonNetwork.AddCallbackTarget(this);
         }
 
-        private void OnDisable()
-        {
-            PhotonNetwork.RemoveCallbackTarget(this);
-        }
-
         public void OnEvent(EventData photonEvent)
         {
             byte eventCode = photonEvent.Code;
 
-            if (eventCode == MoveUnitsToTargetPositionEvent)
+            if (eventCode == GameManager.respawnEvent) //Respawn event
             {
-                Debug.LogError("Received event");
                 if (photonView.IsMine)
                 { 
                     Respawn();

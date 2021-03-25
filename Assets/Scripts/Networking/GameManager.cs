@@ -13,6 +13,7 @@ using UnityEngine.SceneManagement;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Photon.Pun;
+using System.Collections;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -35,7 +36,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		#region Private Fields
 
-		public const byte Respawn = 1;
+		public const byte respawnEvent = 1;
 
 		private GameObject instance;
 
@@ -47,6 +48,9 @@ namespace Photon.Pun.Demo.PunBasics
 		[Tooltip("The prefab to use for representing the player")]
         [SerializeField]
         private GameObject playerPrefab;
+
+		bool isRespawning = false;
+		float respawnCheckTime = 1f;
 
 		#endregion
 
@@ -107,9 +111,9 @@ namespace Photon.Pun.Demo.PunBasics
 			{
 				QuitApplication();
 			}
-			if(PhotonNetwork.IsMasterClient)
+			if(PhotonNetwork.IsMasterClient && !isRespawning)
             {
-				RespawnCheck();
+				StartCoroutine(RespawnCheck());
 			}
 		}
 
@@ -174,25 +178,24 @@ namespace Photon.Pun.Demo.PunBasics
 		#endregion
 
 		#region Private Methods
-		
-		void RespawnCheck()
+
+		IEnumerator RespawnCheck()
         {
+			isRespawning = true;
 			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 			//Check if any player is still alive
 			foreach(GameObject player in players)
             {
 				if (player.GetComponent<PlayerManager>().health > 0)
 				{
-					return;
+					isRespawning = false;
+					yield break;
 				}
 			}
-            //if not, respawn all players
-            foreach (GameObject player in players)
-            {
-				//player.GetComponent<PlayerManager>().Respawn();
-				RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
-				PhotonNetwork.RaiseEvent(Respawn,0, raiseEventOptions, SendOptions.SendReliable);
-			}
+			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+			PhotonNetwork.RaiseEvent(respawnEvent,0, raiseEventOptions, SendOptions.SendReliable);
+			yield return new WaitForSeconds(respawnCheckTime);
+			isRespawning = false;
 		}
 
 		void LoadArena()
