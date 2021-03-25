@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: -2781562190664306553}
   - component: {fileID: 6669901714281856914}
   - component: {fileID: 6772185480401051037}
+  - component: {fileID: -6251046704174626426}
   m_Layer: 0
   m_Name: FPSController
   m_TagString: Player
@@ -444,6 +445,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-6251046704174626426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e84c83f3aee6d64b80b1f9899ed7909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isTechnicalTesting: 1
+  shakeIntensity: 3.48
+  shakeDecay: 0.68
+  hurtTexture: {fileID: 0}
+  hurtSound:
+  - {fileID: 0}
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0
