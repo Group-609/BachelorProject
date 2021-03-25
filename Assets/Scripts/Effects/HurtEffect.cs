@@ -1,39 +1,46 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
+[RequireComponent(typeof (FirstPersonController))]
 public class HurtEffect : MonoBehaviour
 {
     private bool isDisplayingEffect = false;
 
-    public float movementSpeedChange = 0.8f;
+    public float minMovementSpeedMultiplier = 0.5f;
 
     public Texture hurtTexture;
-    private float alpha = 1f;
+    public float textureFadeOutSpeed = 1f;
+    private float opacity = 1f;
 
+    [SerializeField] 
+    private AudioClip[] hurtSound = new AudioClip[0];
     private AudioSource audioSource;
-    [SerializeField] AudioClip[] hurtSound = new AudioClip[0];
+
+    private FirstPersonController controller;
 
     private void Start()
     {
+        controller = gameObject.GetComponent<FirstPersonController>();
         audioSource = gameObject.GetComponent<AudioSource>();
     }
 
-    IEnumerator ApplyEffect()
+    private IEnumerator ApplyEffect()
     {
-        while (alpha > 0)
+        isDisplayingEffect = true;
+        controller.speedMultiplier = minMovementSpeedMultiplier;
+
+        while (opacity > 0 || controller.speedMultiplier < 1f)
         {
-            alpha -= Time.deltaTime;
-            
+            if (opacity > 0)
+                opacity -= textureFadeOutSpeed * Time.deltaTime;
+            if (controller.speedMultiplier < 1f)
+                controller.speedMultiplier = Mathf.Max(minMovementSpeedMultiplier, controller.speedMultiplier);
+
             yield return null;
         }
         isDisplayingEffect = false;
-        ResetEffect();
-    }
-
-    private void ResetEffect()
-    {
-        alpha = 1f;
     }
 
     void OnGUI()
@@ -42,7 +49,7 @@ public class HurtEffect : MonoBehaviour
         {
             // apply alpha for fade out
             Vector4 tempColor = GUI.color;
-            tempColor.w = alpha;
+            tempColor.w = opacity;
             GUI.color = tempColor;
 
             //draw texture to GUI
@@ -50,7 +57,6 @@ public class HurtEffect : MonoBehaviour
         }
     }
 
-    // call this function from the follower's (bee swarm) script, when the distance is close enough
     public void Hit()
     {
         if (audioSource != null && !audioSource.isPlaying)
@@ -60,11 +66,10 @@ public class HurtEffect : MonoBehaviour
         }
         if (isDisplayingEffect)
         {
-            ResetEffect();
+            opacity = Mathf.Min(1f, opacity + 0.5f);
         }
         else
         {
-            isDisplayingEffect = true;
             StartCoroutine(ApplyEffect());
         }
     }

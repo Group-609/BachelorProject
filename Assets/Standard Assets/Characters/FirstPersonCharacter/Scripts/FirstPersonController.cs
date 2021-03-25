@@ -14,8 +14,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private bool m_IsWalking;
         private float m_WalkSpeed;
         [SerializeField] private float m_RunSpeed;
+        public float speedMultiplier = 1f;
         [SerializeField] private float walkingBackMultiplier = 0.5f;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
+
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
@@ -222,7 +224,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             
 
             // set the desired speed to be walking or running
-            speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+            speed = (m_IsWalking ? m_WalkSpeed : m_RunSpeed) * speedMultiplier;
             m_Input = new Vector2(horizontal, vertical);
 
             // normalize input if it exceeds 1 in combined length:
