@@ -8,7 +8,8 @@ public class HurtEffect : MonoBehaviour
 {
     private bool isDisplayingEffect = false;
 
-    public float minMovementSpeedMultiplier = 0.5f;
+    public float minMovementMultiplier = 0.5f;
+    public float movementMultiplierFadeOutSpeed = 0.5f;
 
     public Texture hurtTexture;
     public float textureFadeOutSpeed = 1f;
@@ -29,14 +30,14 @@ public class HurtEffect : MonoBehaviour
     private IEnumerator ApplyEffect()
     {
         isDisplayingEffect = true;
-        controller.speedMultiplier = minMovementSpeedMultiplier;
+        controller.speedMultiplier = minMovementMultiplier;
 
         while (opacity > 0 || controller.speedMultiplier < 1f)
         {
             if (opacity > 0)
                 opacity -= textureFadeOutSpeed * Time.deltaTime;
             if (controller.speedMultiplier < 1f)
-                controller.speedMultiplier = Mathf.Max(minMovementSpeedMultiplier, controller.speedMultiplier);
+                controller.speedMultiplier = Mathf.Max(minMovementMultiplier, controller.speedMultiplier + movementMultiplierFadeOutSpeed * Time.deltaTime);
 
             yield return null;
         }
