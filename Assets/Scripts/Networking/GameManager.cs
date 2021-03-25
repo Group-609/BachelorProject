@@ -10,7 +10,9 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ExitGames.Client.Photon;
 using Photon.Realtime;
+using Photon.Pun;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -32,6 +34,8 @@ namespace Photon.Pun.Demo.PunBasics
 		#endregion
 
 		#region Private Fields
+
+		public const byte Respawn = 1;
 
 		private GameObject instance;
 
@@ -185,7 +189,9 @@ namespace Photon.Pun.Demo.PunBasics
             //if not, respawn all players
             foreach (GameObject player in players)
             {
-				player.GetComponent<PlayerManager>().Respawn();
+				//player.GetComponent<PlayerManager>().Respawn();
+				RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+				PhotonNetwork.RaiseEvent(Respawn,0, raiseEventOptions, SendOptions.SendReliable);
 			}
 		}
 

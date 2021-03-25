@@ -22,7 +22,7 @@ namespace Photon.Pun.Demo.PunBasics
     /// Player manager.
     /// Handles fire Input.
     /// </summary>
-    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable, LevelProgressionCondition.LevelProgressionListener
+    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable, LevelProgressionCondition.LevelProgressionListener, IOnEventCallback
     {
         #region Public Fields
 
@@ -174,6 +174,30 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 AnimateShoot();
                 StartCoroutine(ShootPaintball());
+            }
+        }
+
+        private void OnEnable()
+        {
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        private void OnDisable()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            byte eventCode = photonEvent.Code;
+
+            if (eventCode == MoveUnitsToTargetPositionEvent)
+            {
+                Debug.LogError("Received event");
+                if (photonView.IsMine)
+                { 
+                    Respawn();
+                }
             }
         }
 

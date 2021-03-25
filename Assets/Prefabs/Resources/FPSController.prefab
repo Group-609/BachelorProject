@@ -631,7 +631,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585375687ea1aa04d82db53a0c3ad155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vignetteLayer: {fileID: 0}
 --- !u!1 &5126392717192139234
 GameObject:
   m_ObjectHideFlags: 0
