@@ -41,6 +41,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private Animator animator;
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
+    private bool isBlobified = false;
+
 
     //Used for estimating where player will be when projectile hits
     private Vector3 previousFramePlayerPosition;
@@ -65,24 +67,59 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (currentHealth < 0)
             {
-                animator.SetBool("IsDead", true);
-                PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
+                photonView.RPC("Blobify", RpcTarget.All);
+                //  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
             }
         }
-        FindNavTarget();
-        distanceToPlayer = Vector3.Distance(player.position, transform.position);
-        if (distanceToPlayer <= minDistForMovement)
+        if (!isBlobified)
         {
-            SetSpeed(speed);
-            if (isAttackReady)
+            FindNavTarget();
+            distanceToPlayer = Vector3.Distance(player.position, transform.position);
+            if (distanceToPlayer <= minDistForMovement)
             {
-                StartCoroutine(AttackPlayer());
+                SetSpeed(speed);
+                if (isAttackReady)
+                {
+                    StartCoroutine(AttackPlayer());
+                }
+            }
+            else
+            {
+                SetSpeed(0);
             }
         }
-        else
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (PhotonNetwork.IsMasterClient && collision.collider.gameObject.CompareTag("Fountain"))
         {
-            SetSpeed(0);
+            PhotonNetwork.Destroy(gameObject);
         }
+    }
+
+    [PunRPC]
+    void Blobify()
+    {
+        animator.SetBool("IsDead", true);
+        isBlobified = true;
+        agent.destination = GetNearestFountain().position;
+        SetSpeed(speed);
+        //TODO?: set color to nice pink
+    }
+
+    Transform GetNearestFountain()
+    {
+        GameObject[] fountains = GameObject.FindGameObjectsWithTag("Fountain");
+        GameObject closestFountain = fountains[0];
+        foreach(GameObject fountain in fountains)
+        {
+            if (Vector3.Distance(closestFountain.transform.position, transform.position) < Vector3.Distance(fountain.transform.position, transform.position)) 
+            {
+                closestFountain = fountain;
+            }
+        }
+        return closestFountain.transform;
     }
 
     void FixedUpdate()
@@ -149,6 +186,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
             isAttackReady = false;
             animator.SetBool("IsAttacking", true);
+
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
             if (distanceToPlayer <= minDistForMeleeAttack)
