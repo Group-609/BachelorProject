@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class HurtEffect : MonoBehaviour
 {
-
-    public bool isTechnicalTesting; //only for testing purposes
-
     private bool isDisplayingEffect = false;
 
     public float movementSpeedChange = 0.8f;
@@ -22,21 +19,16 @@ public class HurtEffect : MonoBehaviour
         audioSource = gameObject.GetComponent<AudioSource>();
     }
 
-    void Update()
-    {
-        if (isTechnicalTesting)
-            Hit();
-    }
-
     IEnumerator ApplyEffect()
     {
         while (alpha > 0)
         {
             alpha -= Time.deltaTime;
+            
             yield return null;
         }
-        ResetEffect();
         isDisplayingEffect = false;
+        ResetEffect();
     }
 
     private void ResetEffect()
@@ -61,9 +53,7 @@ public class HurtEffect : MonoBehaviour
     // call this function from the follower's (bee swarm) script, when the distance is close enough
     public void Hit()
     {
-        isDisplayingEffect = true;
-
-        if (audioSource != null)
+        if (audioSource != null && !audioSource.isPlaying)
         {
             audioSource.clip = hurtSound[Random.Range(0, hurtSound.Length)];
             audioSource.Play();
@@ -74,6 +64,7 @@ public class HurtEffect : MonoBehaviour
         }
         else
         {
+            isDisplayingEffect = true;
             StartCoroutine(ApplyEffect());
         }
     }

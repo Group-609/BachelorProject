@@ -26,11 +26,6 @@ public class EnemyProjectile : MonoBehaviour
         Destroy(gameObject, despawnTime);
     }
 
-    void Update()
-    {
-
-    }
-
     void OnCollisionEnter(Collision collision)
     {
 		GameObject hitObject = collision.collider.gameObject;

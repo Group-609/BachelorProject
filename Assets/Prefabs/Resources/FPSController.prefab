@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e84c83f3aee6d64b80b1f9899ed7909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTechnicalTesting: 1
+  isTechnicalTesting: 0
   movementSpeedChange: 0.8
   hurtTexture: {fileID: 2800000, guid: 18a81fbc885737e459b47c8be4f4f35d, type: 3}
   hurtSound:

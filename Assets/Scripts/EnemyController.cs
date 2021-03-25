@@ -153,7 +153,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             yield return new WaitForSeconds(attackAnimationDelay);
             if (distanceToPlayer <= minDistForMeleeAttack)
             {
-                //player.GetComponent<HurtEffect>().Hit();
+                player.GetComponent<HurtEffect>().Hit();
                 //TODO: play player melee hit sound
                 if (PhotonNetwork.IsMasterClient)
                 { 
