@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: -9015750094166818286}
   - component: {fileID: 1943105344044795887}
   - component: {fileID: -2781562190664306553}
+  - component: {fileID: -2975776995482497162}
   m_Layer: 0
   m_Name: FPSController
   m_TagString: Player
@@ -74,6 +75,8 @@ MonoBehaviour:
   m_IsWalking: 0
   m_WalkSpeed: 5
   m_RunSpeed: 10
+  isPlayerKeyLocXPositive: 0
+  isPlayerKeyLocZPositive: 0
   m_RunstepLenghten: 0.7
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
@@ -382,6 +385,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-2975776995482497162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdbc08cb7e275164c9e4e02596a63712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0

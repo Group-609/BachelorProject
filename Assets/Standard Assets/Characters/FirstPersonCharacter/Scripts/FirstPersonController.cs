@@ -14,6 +14,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private bool m_IsWalking;
         [SerializeField] private float m_WalkSpeed;
         [SerializeField] private float m_RunSpeed;
+        [NonSerialized] public float keyLocationSpeedMod = 1;
+        [SerializeField] public bool isPlayerKeyLocXPositive;
+        [SerializeField] public bool isPlayerKeyLocZPositive;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
@@ -42,6 +45,26 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+
+        public GameObject FindClosestKeyLocation()
+        {
+            GameObject[] gos;
+            gos = GameObject.FindGameObjectsWithTag("KeyLocation");
+            GameObject closest = null;
+            float distance = Mathf.Infinity;
+            Vector3 position = transform.position;
+            foreach (GameObject go in gos)
+            {
+                Vector3 diff = go.transform.position - position;
+                float curDistance = diff.sqrMagnitude;
+                if (curDistance < distance)
+                {
+                    closest = go;
+                    distance = curDistance;
+                }
+            }
+            return closest;
+        }
 
         // Use this for initialization
         private void Start()
@@ -108,6 +131,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             m_MoveDir.x = desiredMove.x*speed;
             m_MoveDir.z = desiredMove.z*speed;
+
+            if (isPlayerKeyLocXPositive && m_MoveDir.x < 0 || !isPlayerKeyLocXPositive && m_MoveDir.x > 0)
+            {
+                m_MoveDir.x *= keyLocationSpeedMod;
+            }
+            if (isPlayerKeyLocZPositive && m_MoveDir.z < 0 || !isPlayerKeyLocZPositive && m_MoveDir.z > 0)
+            {
+                m_MoveDir.z *= keyLocationSpeedMod;
+            }
 
 
             if (m_CharacterController.isGrounded)
