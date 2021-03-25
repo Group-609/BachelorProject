@@ -6,7 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Character
-  - KeyLocation
+  - EnemySpawnPoint
   layers:
   - Default
   - TransparentFX
@@ -18,7 +18,7 @@ TagManager:
   - 
   - Enemy
   - EnemyProjectile
-  - 
+  - PostProcessing
   - 
   - 
   - 
