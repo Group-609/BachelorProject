@@ -407,16 +407,16 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: RotateX
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingLeft
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingRight
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingForward
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingBackward
   m_SynchronizeLayers:
   - SynchronizeType: 1
