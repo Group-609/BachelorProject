@@ -43,6 +43,14 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private Animator animator;
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
+    [System.NonSerialized]
+    public bool isBlobified = false;
+
+    [SerializeField]
+    private float distanceToKeyLocationToDespawn = 1f;
+
+    private List<GameObject> keyLocations;
+
 
     //Used for estimating where player will be when projectile hits
     private Vector3 previousFramePlayerPosition;
@@ -50,9 +58,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
+        keyLocations = new List<GameObject>(GameObject.FindGameObjectsWithTag("KeyLocation"));
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        animator.Play("Walk_body");     //Walking animation
+        animator.Play("Walk");     //Walking animation
         agent.stoppingDistance = stoppingDistance;
         players = findPlayers();
 
@@ -74,23 +83,53 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (PhotonNetwork.IsMasterClient && currentHealth < 0)
         {
-            animator.SetBool("IsDead", true);
-            PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
-        }
-        FindNavTarget();
-        distanceToPlayer = Vector3.Distance(player.position, transform.position);
-        if (distanceToPlayer <= minDistForMovement)
-        {
-            SetSpeed(speed);
-            if (isAttackReady)
+            photonView.RPC("Blobify", RpcTarget.All);
+            if(isBlobified && distanceToKeyLocationToDespawn > Vector3.Distance(GetNearestKeyLocation().position, transform.position))
             {
-                StartCoroutine(AttackPlayer());
+                PhotonNetwork.Destroy(gameObject);
             }
         }
-        else
+        if (!isBlobified)
         {
-            SetSpeed(0);
+            FindNavTarget();
+            distanceToPlayer = Vector3.Distance(player.position, transform.position);
+            if (distanceToPlayer <= minDistForMovement)
+            {
+                SetSpeed(speed);
+                if (isAttackReady)
+                {
+                    StartCoroutine(AttackPlayer());
+                }
+            }
+            else
+            {
+                SetSpeed(0);
+            }
         }
+    }
+
+    [PunRPC]
+    void Blobify()
+    {
+        animator.SetBool("IsDead", true);
+        isBlobified = true;
+        agent.stoppingDistance = 0;
+        agent.destination = GetNearestKeyLocation().position;
+        SetSpeed(speed);
+        //TODO?: set color to nice pink
+    }
+
+    Transform GetNearestKeyLocation()
+    {
+        GameObject closestKeyLocation = keyLocations[0];
+        foreach(GameObject keyLocation in keyLocations)
+        {
+            if (Vector3.Distance(closestKeyLocation.transform.position, transform.position) < Vector3.Distance(keyLocation.transform.position, transform.position)) 
+            {
+                closestKeyLocation = keyLocation;
+            }
+        }
+        return closestKeyLocation.transform;
     }
 
     void FixedUpdate()
@@ -158,6 +197,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
             isAttackReady = false;
             animator.SetBool("IsAttacking", true);
+
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
             if (distanceToPlayer <= minDistForMeleeAttack)
