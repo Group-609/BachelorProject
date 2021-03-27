@@ -189,12 +189,9 @@ namespace Photon.Pun.Demo.PunBasics
         {
             byte eventCode = photonEvent.Code;
 
-            if (eventCode == GameManager.respawnEvent) //Respawn event
+            if (photonView.IsMine && eventCode == GameManager.respawnEvent) //Respawn event
             {
-                if (photonView.IsMine)
-                { 
-                    Respawn();
-                }
+                 Respawn();
             }
         }
 

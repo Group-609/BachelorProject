@@ -123,13 +123,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                         closestPlayer = player.transform;
                     }
                 }
+                player = closestPlayer;
+                agent.destination = closestPlayer.position;
             }
-            if (closestPlayer == null)
-            {
-                return;
-            }
-            player = closestPlayer;
-            agent.destination = closestPlayer.position;
             refreshTargetTimer = refreshTargetTimerLimit;
         }
     }
