@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
     private List<GameObject> players;
     [System.NonSerialized]
-    public Transform player;
+    public Transform closestPlayer;
     private float distanceToPlayer;
     private bool isAttackReady = true;
     private float attackAnimationDelay = 1.5f;
@@ -63,7 +63,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk");     //Walking animation
         agent.stoppingDistance = stoppingDistance;
-        players = findPlayers();
+        players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
 
         try
         {
@@ -83,8 +83,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (PhotonNetwork.IsMasterClient && currentHealth < 0)
         {
-            photonView.RPC("Blobify", RpcTarget.All);
-            if(isBlobified && distanceToKeyLocationToDespawn > Vector3.Distance(GetNearestKeyLocation().position, transform.position))
+            if (!isBlobified)
+            {
+                photonView.RPC("Blobify", RpcTarget.All);
+            }
+            
+            if(distanceToKeyLocationToDespawn > Vector3.Distance(gameObject.FindClosestObject(keyLocations).transform.position, transform.position))
             {
                 PhotonNetwork.Destroy(gameObject);
             }
@@ -92,7 +96,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (!isBlobified)
         {
             FindNavTarget();
-            distanceToPlayer = Vector3.Distance(player.position, transform.position);
+            distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
             if (distanceToPlayer <= minDistForMovement)
             {
                 SetSpeed(speed);
@@ -114,30 +118,17 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         animator.SetBool("IsDead", true);
         isBlobified = true;
         agent.stoppingDistance = 0;
-        agent.destination = GetNearestKeyLocation().position;
+        agent.destination = gameObject.FindClosestObject(keyLocations).transform.position;
         SetSpeed(speed);
         //TODO?: set color to nice pink
     }
 
-    Transform GetNearestKeyLocation()
-    {
-        GameObject closestKeyLocation = keyLocations[0];
-        foreach(GameObject keyLocation in keyLocations)
-        {
-            if (Vector3.Distance(closestKeyLocation.transform.position, transform.position) < Vector3.Distance(keyLocation.transform.position, transform.position)) 
-            {
-                closestKeyLocation = keyLocation;
-            }
-        }
-        return closestKeyLocation.transform;
-    }
-
     void FixedUpdate()
     {
-        if (player != null)
+        if (closestPlayer != null)
         {
-            playerVelocity = (player.position - previousFramePlayerPosition) / Time.fixedDeltaTime;
-            previousFramePlayerPosition = player.position;
+            playerVelocity = (closestPlayer.position - previousFramePlayerPosition) / Time.fixedDeltaTime;
+            previousFramePlayerPosition = closestPlayer.position;
         }
     }
 
@@ -153,33 +144,28 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
         if (refreshTargetTimer <= 0)
         {
-            Transform closestPlayer = null;
-            List<GameObject> alivePlayers = players.FindAll(
-               delegate (GameObject player)
-               {
-                   return player.GetComponent<PlayerManager>().health > 0;
-               }
-            );
-            if (alivePlayers.Count != 0)  //If we found alive players, find the closest player
+            List<GameObject> alivePlayers = GetAlivePlayers();
+
+            //If we found alive players, find the closest player, else make it null
+            if (alivePlayers.Count != 0)  
             {
-                closestPlayer = alivePlayers[0].transform;
-                foreach (GameObject player in alivePlayers)
-                {
-                    if (Vector3.Distance(player.transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
-                    {
-                        closestPlayer = player.transform;
-                    }
-                }
-                player = closestPlayer;
+                closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
                 agent.destination = closestPlayer.position;
             }
+            else closestPlayer = null;
+            
             refreshTargetTimer = refreshTargetTimerLimit;
         }
     }
 
-    List<GameObject> findPlayers()
+    private List<GameObject> GetAlivePlayers()
     {
-        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        return players.FindAll(
+                   delegate (GameObject player)
+                   {
+                       return player.GetComponent<PlayerManager>().health > 0;
+                   }
+                );
     }
 
     public void OnDamageTaken()
@@ -202,11 +188,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             yield return new WaitForSeconds(attackAnimationDelay);
             if (distanceToPlayer <= minDistForMeleeAttack)
             {
-                player.GetComponent<HurtEffect>().Hit();
+                closestPlayer.GetComponent<HurtEffect>().Hit();
                 //TODO: play player melee hit sound
                 if (PhotonNetwork.IsMasterClient)
                 { 
-                    HitPlayer(player.gameObject, -meleeDamage);
+                    HitPlayer(closestPlayer.gameObject, -meleeDamage);
                 }
             }
             else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
@@ -215,7 +201,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
                 projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
                 projectile.GetComponent<EnemyProjectile>().damage = this.projectileDamage;
-                projectile.GetComponent<EnemyProjectile>().target = player;
+                projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
                 projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
                 projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
             }
