@@ -8851,6 +8851,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 771553834, guid: b7fe671fa5d4d4772a4b20715fb9b0ff, type: 3}
       propertyPath: viewIdField
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3616947406978246319, guid: b7fe671fa5d4d4772a4b20715fb9b0ff, type: 3}
+      propertyPath: viewIdField
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
