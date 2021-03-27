@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System;
 using System.Collections;
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
@@ -55,11 +56,15 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         agent.stoppingDistance = stoppingDistance;
         players = findPlayers();
 
-        if (gameObject.GetComponentInChildren<SkinnedMeshRenderer>() != null)
+        try
         {
             meshRenderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
             maxHealthColor = meshRenderer.material.color; //initial color
             lowHealthColor = new Color(.95f, .73f, 1f); //bright pink
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Could not find enemy's mesh renderer");
         }
         
         currentHealth = maxHealth;
