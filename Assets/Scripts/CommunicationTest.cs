@@ -9,6 +9,6 @@ public class CommunicationTest : MonoBehaviour
 
     void Start()
     {
-        ShowMessage("Greetings world!");
+        ShowMessage("{ name: \"Red\", town: \"kanto\" }");
     }
 }
