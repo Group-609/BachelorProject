@@ -52,18 +52,17 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         public GameObject FindClosestKeyLocation()
         {
-            GameObject[] gos;
-            gos = GameObject.FindGameObjectsWithTag("KeyLocation");
+            GameObject[] keyLocations = GameObject.FindGameObjectsWithTag("KeyLocation");
             GameObject closest = null;
             float distance = Mathf.Infinity;
             Vector3 position = transform.position;
-            foreach (GameObject go in gos)
+            foreach (GameObject keyLocation in keyLocations)
             {
-                Vector3 diff = go.transform.position - position;
+                Vector3 diff = keyLocation.transform.position - position;
                 float curDistance = diff.sqrMagnitude;
                 if (curDistance < distance)
                 {
-                    closest = go;
+                    closest = keyLocation;
                     distance = curDistance;
                 }
             }
