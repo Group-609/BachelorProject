@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5014250319179593954}
   - component: {fileID: 1992424575875697468}
   m_Layer: 0
-  m_Name: KeyLocation 1
+  m_Name: KeyLocation
   m_TagString: KeyLocation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,7 +142,7 @@ GameObject:
   - component: {fileID: 3160322863983682612}
   m_Layer: 0
   m_Name: Visuals
-  m_TagString: Untagged
+  m_TagString: KeyLocation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

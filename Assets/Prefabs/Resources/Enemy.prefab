@@ -740,6 +740,7 @@ MonoBehaviour:
   minDistForMovement: 110
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimerLimit: 20
+  distanceToKeyLocationToDespawn: 1
 --- !u!195 &5732855970157686023
 NavMeshAgent:
   m_ObjectHideFlags: 0

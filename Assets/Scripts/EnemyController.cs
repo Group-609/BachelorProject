@@ -41,7 +41,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private Animator animator;
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
-    private bool isBlobified = false;
+    [System.NonSerialized]
+    public bool isBlobified = false;
+
+    [SerializeField]
+    private float distanceToKeyLocationToDespawn = 1f;
 
 
     //Used for estimating where player will be when projectile hits
@@ -52,7 +56,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     {
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        animator.Play("Walk_body");     //Walking animation
+        animator.Play("Walk");     //Walking animation
         agent.stoppingDistance = stoppingDistance;
         players = findPlayers();
 
@@ -69,6 +73,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             {
                 photonView.RPC("Blobify", RpcTarget.All);
                 //  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
+            }
+            if(isBlobified && distanceToKeyLocationToDespawn > Vector3.Distance(GetNearestKeyLocation().position, transform.position))
+            {
+                PhotonNetwork.Destroy(gameObject);
             }
         }
         if (!isBlobified)
@@ -90,36 +98,29 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        if (PhotonNetwork.IsMasterClient && collision.collider.gameObject.CompareTag("Fountain"))
-        {
-            PhotonNetwork.Destroy(gameObject);
-        }
-    }
-
     [PunRPC]
     void Blobify()
     {
         animator.SetBool("IsDead", true);
         isBlobified = true;
-        agent.destination = GetNearestFountain().position;
+        agent.stoppingDistance = 0;
+        agent.destination = GetNearestKeyLocation().position;
         SetSpeed(speed);
         //TODO?: set color to nice pink
     }
 
-    Transform GetNearestFountain()
+    Transform GetNearestKeyLocation()
     {
-        GameObject[] fountains = GameObject.FindGameObjectsWithTag("Fountain");
-        GameObject closestFountain = fountains[0];
-        foreach(GameObject fountain in fountains)
+        GameObject[] keyLocations = GameObject.FindGameObjectsWithTag("KeyLocation");
+        GameObject closestKeyLocation = keyLocations[0];
+        foreach(GameObject keyLocation in keyLocations)
         {
-            if (Vector3.Distance(closestFountain.transform.position, transform.position) < Vector3.Distance(fountain.transform.position, transform.position)) 
+            if (Vector3.Distance(closestKeyLocation.transform.position, transform.position) < Vector3.Distance(keyLocation.transform.position, transform.position)) 
             {
-                closestFountain = fountain;
+                closestKeyLocation = keyLocation;
             }
         }
-        return closestFountain.transform;
+        return closestKeyLocation.transform;
     }
 
     void FixedUpdate()
