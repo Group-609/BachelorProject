@@ -34,16 +34,16 @@ public static class CustomExtensions
             .FirstOrDefault();
     }
 
-    public static GameObject FindClosestObject(this GameObject targetObject, GameObject[] ojbects)
+    public static GameObject FindClosestObject(this GameObject targetObject, GameObject[] objects)
     {
-        return ojbects
+        return objects
             .OrderBy(gameObject => (gameObject.transform.position - targetObject.transform.position).sqrMagnitude)
             .FirstOrDefault();
     }
 
-    public static GameObject FindClosestObject(this GameObject targetObject, List<GameObject> ojbects)
+    public static GameObject FindClosestObject(this GameObject targetObject, List<GameObject> objects)
     {
-        return ojbects
+        return objects
             .OrderBy(gameObject => (gameObject.transform.position - targetObject.transform.position).sqrMagnitude)
             .FirstOrDefault();
     }
