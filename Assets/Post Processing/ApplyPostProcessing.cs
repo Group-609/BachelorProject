@@ -7,6 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
 public class ApplyPostProcessing : MonoBehaviour
 {
     PlayerManager playerManager;
+    [System.NonSerialized]
     public Vignette vignetteLayer;
     Grayscale grayscaleLayer;
 
