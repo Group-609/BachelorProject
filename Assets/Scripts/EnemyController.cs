@@ -47,6 +47,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField]
     private float distanceToKeyLocationToDespawn = 1f;
 
+    private List<GameObject> keyLocations;
+
 
     //Used for estimating where player will be when projectile hits
     private Vector3 previousFramePlayerPosition;
@@ -54,6 +56,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
+        keyLocations = new List<GameObject>(GameObject.FindGameObjectsWithTag("KeyLocation"));
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk");     //Walking animation
@@ -111,7 +114,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     Transform GetNearestKeyLocation()
     {
-        GameObject[] keyLocations = GameObject.FindGameObjectsWithTag("KeyLocation");
         GameObject closestKeyLocation = keyLocations[0];
         foreach(GameObject keyLocation in keyLocations)
         {
