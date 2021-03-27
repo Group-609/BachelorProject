@@ -132,7 +132,6 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
                 enemiesLeftToSpawnForArea--;
                 yield return new WaitForSeconds(spawnIntervalForArea);
             }
-            
         }
         else
         {
