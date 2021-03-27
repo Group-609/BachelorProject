@@ -11,8 +11,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
-using UnityStandardAssets.Characters.FirstPerson;   
-
+using UnityStandardAssets.Characters.FirstPerson;
+using Photon.Pun;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -22,7 +24,7 @@ namespace Photon.Pun.Demo.PunBasics
     /// Player manager.
     /// Handles fire Input.
     /// </summary>
-    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable
+    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable, LevelProgressionCondition.LevelProgressionListener, IOnEventCallback
     {
         #region Public Fields
 
@@ -35,16 +37,16 @@ namespace Photon.Pun.Demo.PunBasics
         public float startingHealth = 100f;
 
         [Tooltip("Speed of this player's paintballs")]
-        public float paintBallSpeed = 50f;
+        public float paintBallSpeed = 15f;
 
-        [Tooltip("Speed of this player's paintballs")]
+        [Tooltip("Damage of this player's paintballs")]
         public float paintballDamage;
 
         [Tooltip("Time it takes for the player to get control back after dying")]
         public float respawnTime;
 
         [Tooltip("Time between 2 shots")]
-        public float shootWaitTime = 0.5f;
+        public float shootWaitTime = 0.9f;
         //---------------------------------------------------------
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
@@ -52,6 +54,11 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("The game manager object.")]
         public GameManager gameManager;
+
+        //where the player will respawn after both players get stunned
+        [System.NonSerialized]
+        public Transform respawnTransform;
+
 
         #endregion
 
@@ -65,10 +72,6 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField]
         private GameObject paintballPrefab;
 
-        [Tooltip("Prefab of paintball to shoot for other players")]
-        [SerializeField]
-        private GameObject paintballPrefabClient;
-
         [Tooltip("Transform the paint balls come from")]
         private Transform paintGun;
 
@@ -78,8 +81,7 @@ namespace Photon.Pun.Demo.PunBasics
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
 
-
-        private IEnumerator respawnCoroutine;
+        private Animator animator;
 
         #endregion
 
@@ -90,7 +92,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Awake()
         {
-
+            
             // #Important
             // used in GameManager.cs: we keep track of the localPlayer instance to prevent instanciation when levels are synchronized
             if (photonView.IsMine)
@@ -98,6 +100,11 @@ namespace Photon.Pun.Demo.PunBasics
                 LocalPlayerInstance = gameObject;
             }
             paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("PaintGun");
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
+            }
 
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
@@ -133,6 +140,8 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            animator = GetComponentInChildren<Animator>();
+            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
         }
 
 
@@ -140,7 +149,8 @@ namespace Photon.Pun.Demo.PunBasics
 		{
 			// Always call the base to remove callbacks
 			base.OnDisable ();
-		}
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
 
 
         /// <summary>
@@ -150,23 +160,50 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Update()
         {
-            // we only process Inputs and check health if we are the local player
+            // local player
             if (photonView.IsMine)
             {
-                this.ProcessInputs();
-
                 if (this.health <= 0f)
                 {
-                    gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
-                    transform.position = gameManager.transform.position;
-                    this.health = startingHealth;
-                    StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
+                    Stun();
+                }
+                else
+                {
+                    AnimateWalking();
+                    this.ProcessInputs();
                 }
             }
-            if (IsFiring && !waitingToShoot)
+            if (IsFiring && !waitingToShoot && health > 0)
             {
+                AnimateShoot();
                 StartCoroutine(ShootPaintball());
             }
+        }
+
+        private void OnEnable()
+        {
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            byte eventCode = photonEvent.Code;
+
+            if (photonView.IsMine && eventCode == GameManager.respawnEvent) //Respawn event
+            {
+                 Respawn();
+            }
+        }
+
+        //Called when all players are stunned 
+        public void Respawn()
+        {
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
+            gameObject.GetComponent<FirstPersonController>().isStunned = false;
+            gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
+            transform.position = respawnTransform.position;
+            this.health = startingHealth;
+            StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
         }
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
@@ -196,12 +233,31 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeEnemyHealth(float value, int targetViewID)
         {
-            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().health += value;
+            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().currentHealth += value;
+            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().OnDamageTaken();
+        }
+
+        [PunRPC]
+        public void AnimateShoot()
+        {
+            animator.Play("Shoot");
+        }
+
+        public void OnLevelFinished()
+        {
+            HealingRateDDAA.Instance.AdjustInGameValue();
         }
 
         #endregion
 
         #region Private Methods
+
+        //Disables movement
+        void Stun()
+        {
+            gameObject.GetComponent<FirstPersonController>().isStunned = true;
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
+        }
 
         /// <summary>
         /// Processes the inputs. This MUST ONLY BE USED when the player has authority over this Networked GameObject (photonView.isMine == true)
@@ -228,6 +284,40 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
+        void AnimateWalking()
+        {
+            if (Input.GetAxis("Vertical") > 0)
+            {
+                animator.SetBool("isMovingForward", true);
+                animator.SetBool("isMovingBackward", false);
+            }
+            else if (Input.GetAxis("Vertical") < 0)
+            {
+                animator.SetBool("isMovingForward", false);
+                animator.SetBool("isMovingBackward", true);
+            }
+            else
+            {
+                animator.SetBool("isMovingForward", false);
+                animator.SetBool("isMovingBackward", false);
+            }
+            if (Input.GetAxis("Horizontal") > 0)
+            {
+                animator.SetBool("isMovingRight", true);
+                animator.SetBool("isMovingLeft", false);
+            }
+            else if (Input.GetAxis("Horizontal") < 0)
+            {
+                animator.SetBool("isMovingRight", false);
+                animator.SetBool("isMovingLeft", true);
+            }
+            else
+            {
+                animator.SetBool("isMovingRight", false);
+                animator.SetBool("isMovingLeft", false);
+            }
+        }
+
         private IEnumerator ReturnPlayerControl(float waitTime)
         {
             while (true)
@@ -242,18 +332,10 @@ namespace Photon.Pun.Demo.PunBasics
             waitingToShoot = true;
            
             GameObject paintball;
-            if (photonView.IsMine)  //We check if this is the local player shooting
-            {
-                paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
-                paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
-                paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
-            }
-            else //we spawn fake bullets for other players
-            {
-                paintball = Instantiate(paintballPrefabClient, paintGun.transform.position, Quaternion.identity);
-                paintball.GetComponent<PaintballClientSide>().playerWhoShot = this.gameObject;
-            }
-            
+            paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
+            paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
+            paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
+            paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
             yield return new WaitForSeconds(shootWaitTime);
             waitingToShoot = false;

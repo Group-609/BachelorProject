@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Character
+  - KeyLocation
+  - EnemySpawnPoint
   layers:
   - Default
   - TransparentFX
@@ -14,9 +17,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Enemy
+  - EnemyProjectile
+  - PostProcessing
   - 
   - 
   - 

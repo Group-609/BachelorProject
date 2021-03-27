@@ -10,7 +10,10 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ExitGames.Client.Photon;
 using Photon.Realtime;
+using Photon.Pun;
+using System.Collections;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -33,21 +36,39 @@ namespace Photon.Pun.Demo.PunBasics
 
 		#region Private Fields
 
+		public const byte respawnEvent = 1;
+
 		private GameObject instance;
 
-        [Tooltip("The prefab to use for representing the player")]
+
+		[Tooltip("Check to change the condition")]
+		[SerializeField]
+		private bool IsDDAEnabled = true;
+
+		[Tooltip("The prefab to use for representing the player")]
         [SerializeField]
         private GameObject playerPrefab;
 
-        #endregion
+		bool isRespawning = false;
+		float respawnCheckTime = 1f;
 
-        #region MonoBehaviour CallBacks
+		#endregion
 
-        /// <summary>
-        /// MonoBehaviour method called on GameObject by Unity during initialization phase.
-        /// </summary>
-        void Start()
+		#region MonoBehaviour CallBacks
+
+		private void Awake()
 		{
+			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
+		}
+
+		/// <summary>
+		/// MonoBehaviour method called on GameObject by Unity during initialization phase.
+		/// </summary>
+		void Start()
+		{
+			//Ignore the collisions between layer 8 (Enemy) and layer 9 (Enemy projectile)
+			Physics.IgnoreLayerCollision(8, 9);
+			Physics.IgnoreLayerCollision(9, 9);
 			Instance = this;
 
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
@@ -66,7 +87,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 				if (PlayerManager.LocalPlayerInstance==null)
 				{
-				    Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
+				    //Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
 
 
 					// we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
@@ -89,6 +110,10 @@ namespace Photon.Pun.Demo.PunBasics
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
 				QuitApplication();
+			}
+			if(PhotonNetwork.IsMasterClient && !isRespawning)
+            {
+				StartCoroutine(RespawnCheck());
 			}
 		}
 
@@ -153,6 +178,25 @@ namespace Photon.Pun.Demo.PunBasics
 		#endregion
 
 		#region Private Methods
+
+		IEnumerator RespawnCheck()
+        {
+			isRespawning = true;
+			GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+			//Check if any player is still alive
+			foreach(GameObject player in players)
+            {
+				if (player.GetComponent<PlayerManager>().health > 0)
+				{
+					isRespawning = false;
+					yield break;
+				}
+			}
+			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+			PhotonNetwork.RaiseEvent(respawnEvent,0, raiseEventOptions, SendOptions.SendReliable);
+			yield return new WaitForSeconds(respawnCheckTime);
+			isRespawning = false;
+		}
 
 		void LoadArena()
 		{

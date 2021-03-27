@@ -14,8 +14,21 @@ public class PaintBall : MonoBehaviour
     [System.NonSerialized]
     public float paintballDamage; //Damage this specific paintball does
 
+    private static readonly float basePaintballHealingRate = 6f;
+
+    [System.NonSerialized]
+    private float paintballHealingRate; //Healing power that this specific paintball does
+
+    [System.NonSerialized]
+    public bool isLocal; //true if this is a real bullet that does damage
+
     void Start()
     {
+        if (DDAEngine.isDynamicAdjustmentEnabled)
+            paintballHealingRate = HealingRateDDAA.Instance.healingRate;
+        else paintballHealingRate = basePaintballHealingRate;
+       
+
         Destroy(gameObject, despawnTime);
     }
 
@@ -26,16 +39,18 @@ public class PaintBall : MonoBehaviour
         {
             return;
         }
-        //Is it a different player
-        else if (collision.collider.gameObject.tag == "Player")
+        else if (isLocal)
         {
-            playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, -paintballDamage);      //We damage friend :( for now for testing reasons. Later change to heal friend :)
+            if (collision.collider.gameObject.CompareTag("Player"))
+            {
+                playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, paintballHealingRate);   //We heal friend :)
+            }
+            else if (collision.collider.gameObject.CompareTag("Enemy") && !collision.collider.gameObject.GetComponent<EnemyController>().isBlobified)
+            {
+                playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
+            }
         }
-        //Code for when we create an enemy
-        else if (collision.collider.gameObject.tag == "Enemy")
-        {
-            playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
-        }
+        //TODO: paintball hit sound
         Destroy(gameObject);
     }
 }
