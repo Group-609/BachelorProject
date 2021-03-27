@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class CustomExtensions
 {
@@ -23,5 +25,26 @@ public static class CustomExtensions
                 return !spawnPoint.IsEnemyTooClose();
             }
         );
+    }
+
+    public static GameObject FindClosestObject(this GameObject targetObject, string tag)
+    {
+        return GameObject.FindGameObjectsWithTag(tag)
+            .OrderBy(gameObject => (gameObject.transform.position - targetObject.transform.position).sqrMagnitude)
+            .FirstOrDefault();
+    }
+
+    public static GameObject FindClosestObject(this GameObject targetObject, GameObject[] ojbects)
+    {
+        return ojbects
+            .OrderBy(gameObject => (gameObject.transform.position - targetObject.transform.position).sqrMagnitude)
+            .FirstOrDefault();
+    }
+
+    public static GameObject FindClosestObject(this GameObject targetObject, List<GameObject> ojbects)
+    {
+        return ojbects
+            .OrderBy(gameObject => (gameObject.transform.position - targetObject.transform.position).sqrMagnitude)
+            .FirstOrDefault();
     }
 }
