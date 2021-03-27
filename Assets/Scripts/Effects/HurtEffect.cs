@@ -1,88 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
 
+[RequireComponent(typeof (FirstPersonController))]
 public class HurtEffect : MonoBehaviour
 {
-    private const float SHAKE_DEFORM_COEF = .2f;
+    private bool isDisplayingEffect = false;
 
-    public bool isTechnicalTesting; //only for testing purposes
-
-
-    private bool displayEffect = false;
-
-    public float shakeIntensity;
-    public float shakeDecay;
-    private float currentShakeIntensity;
-    private Vector3 originalPos;
-    private Quaternion originalRot;
+    public float minMovementMultiplier = 0.5f;
+    public float movementMultiplierFadeOutSpeed = 0.5f;
 
     public Texture hurtTexture;
-    private float alpha = 1f;
+    public float textureFadeOutSpeed = 1f;
+    private float opacity = 1f;
 
+    [SerializeField] 
+    private AudioClip[] hurtSound = new AudioClip[0];
     private AudioSource audioSource;
-    [SerializeField] AudioClip[] hurtSound = new AudioClip[0];
 
-    private bool deformPosition = true;
+    private FirstPersonController controller;
 
     private void Start()
     {
+        controller = gameObject.GetComponent<FirstPersonController>();
         audioSource = gameObject.GetComponent<AudioSource>();
     }
 
-    void Update()
+    private IEnumerator ApplyEffect()
     {
-        if (isTechnicalTesting)
-            Hit();
-    }
+        isDisplayingEffect = true;
+        controller.speedMultiplier = minMovementMultiplier;
 
-    IEnumerator ApplyEffect()
-    {
-        while (alpha > 0)
+        while (opacity > 0 || controller.speedMultiplier < 1f)
         {
-            alpha -= Time.deltaTime;
-            Shake();
+            if (opacity > 0)
+                opacity -= textureFadeOutSpeed * Time.deltaTime;
+            if (controller.speedMultiplier < 1f)
+                controller.speedMultiplier = Mathf.Max(minMovementMultiplier, controller.speedMultiplier + movementMultiplierFadeOutSpeed * Time.deltaTime);
+
             yield return null;
         }
-        ResetEffect();
-    }
-
-    private void ResetEffect()
-    {
-        currentShakeIntensity = shakeIntensity;
-        displayEffect = false;
-        alpha = 1f;
-    }
-
-    private void Shake()
-    {
-        if (currentShakeIntensity > 0)
-        {
-            if (deformPosition)
-                transform.position = originalPos + Random.insideUnitSphere * shakeIntensity;
-            transform.rotation = new Quaternion(
-               GetDeformedRotation(originalRot.x),
-               GetDeformedRotation(originalRot.y),
-               GetDeformedRotation(originalRot.z),
-               GetDeformedRotation(originalRot.w)
-            );
-
-            currentShakeIntensity -= shakeDecay * Time.deltaTime;
-        }
-    }
-
-    private float GetDeformedRotation(float axisValue)
-    {
-        return axisValue + Random.Range(-shakeIntensity, shakeIntensity) * SHAKE_DEFORM_COEF;
+        isDisplayingEffect = false;
     }
 
     void OnGUI()
     {
-        if (displayEffect == true)
+        if (isDisplayingEffect == true)
         {
             // apply alpha for fade out
             Vector4 tempColor = GUI.color;
-            tempColor.w = alpha;
+            tempColor.w = opacity;
             GUI.color = tempColor;
 
             //draw texture to GUI
@@ -90,23 +58,19 @@ public class HurtEffect : MonoBehaviour
         }
     }
 
-    // call this function from the follower's (bee swarm) script, when the distance is close enough
-    public void Hit(bool deformPosition = true)
+    public void Hit()
     {
-        if (!displayEffect)
+        if (audioSource != null && !audioSource.isPlaying)
         {
-            this.deformPosition = deformPosition;
-            displayEffect = true;
-            if (deformPosition)
-                originalPos = transform.position;
-            originalRot = transform.rotation;
-
-            if (audioSource != null)
-            {
-                audioSource.clip = hurtSound[Random.Range(0, hurtSound.Length)];
-                audioSource.Play();
-            }
-
+            audioSource.clip = hurtSound[Random.Range(0, hurtSound.Length)];
+            audioSource.Play();
+        }
+        if (isDisplayingEffect)
+        {
+            opacity = Mathf.Min(1f, opacity + 0.5f);
+        }
+        else
+        {
             StartCoroutine(ApplyEffect());
         }
     }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
+using UnityEngine.Rendering.PostProcessing;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -61,10 +62,12 @@ namespace Photon.Pun.Demo.PunBasics
 
 		void Follow()
 		{
-			//cameraTransform.gameObject.SetActive(true);
 			cameraTransform.gameObject.GetComponent<Camera>().enabled = true;
 			cameraTransform.gameObject.GetComponent<AudioListener>().enabled = true;
 			cameraTransform.gameObject.GetComponent<FlareLayer>().enabled = true;
+			cameraTransform.gameObject.GetComponent<PostProcessLayer>().enabled = true;
+			cameraTransform.gameObject.GetComponent<PostProcessVolume>().enabled = true;
+			cameraTransform.gameObject.GetComponent<ApplyPostProcessing>().enabled = true;
 		}
 		#endregion
 	}
