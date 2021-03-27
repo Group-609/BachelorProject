@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System;
 using System.Collections;
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
@@ -21,9 +22,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public float speed = 3f;
     public float maxHealth = 50f;
     public float shootingDistance = 25f;
-    public float minDistForMeleeAttack = 2;
+    public float minDistForMeleeAttack = 2.5f;
     [Tooltip("Stopping distance should be lower than minimum distance for melee")]
-    public float stoppingDistance = 2.5f;
+    public float stoppingDistance = 2f;
     public int minDistForMovement = 110;
     //-------------------------------------
     [System.NonSerialized]
@@ -34,6 +35,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField]
     private GameObject projectilePrefab;
 
+    private SkinnedMeshRenderer meshRenderer;
     private Color maxHealthColor;
     private Color lowHealthColor;
 
@@ -63,20 +65,25 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         agent.stoppingDistance = stoppingDistance;
         players = findPlayers();
 
-        maxHealthColor = new Color(.19f, .1f, .2f); //Dark purple
-        lowHealthColor = new Color(.95f, .73f, 1f); //bright pink
+        try
+        {
+            meshRenderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+            maxHealthColor = meshRenderer.material.color; //initial color
+            lowHealthColor = new Color(.95f, .73f, 1f); //bright pink
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Could not find enemy's mesh renderer");
+        }
+        
         currentHealth = maxHealth;
     }
 
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && currentHealth < 0)
         {
-            if (currentHealth < 0)
-            {
-                photonView.RPC("Blobify", RpcTarget.All);
-                //  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
-            }
+            photonView.RPC("Blobify", RpcTarget.All);
             if(isBlobified && distanceToKeyLocationToDespawn > Vector3.Distance(GetNearestKeyLocation().position, transform.position))
             {
                 PhotonNetwork.Destroy(gameObject);
@@ -177,7 +184,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnDamageTaken()
     {
-        gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
+        if (meshRenderer != null)
+            meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
 
     IEnumerator AttackPlayer()
@@ -194,7 +202,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             yield return new WaitForSeconds(attackAnimationDelay);
             if (distanceToPlayer <= minDistForMeleeAttack)
             {
-                //player.GetComponent<HurtEffect>().Hit();
+                player.GetComponent<HurtEffect>().Hit();
                 //TODO: play player melee hit sound
                 if (PhotonNetwork.IsMasterClient)
                 { 
