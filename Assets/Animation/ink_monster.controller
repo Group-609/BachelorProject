@@ -26,8 +26,8 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 50, y: 20, z: 0}
-  m_EntryPosition: {x: 90, y: 120, z: 0}
+  m_AnyStatePosition: {x: 230, y: 10, z: 0}
+  m_EntryPosition: {x: 420, y: 110, z: 0}
   m_ExitPosition: {x: 980, y: -30, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 7914153121218233053}
@@ -139,7 +139,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack_body
+  m_Name: Attack
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -323,21 +323,21 @@ AnimatorStateMachine:
     m_Position: {x: 374.41403, y: -78.49498, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4891408017557006441}
-    m_Position: {x: 384.41403, y: 131.50502, z: 0}
+    m_Position: {x: 590, y: -40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8262612612835611834}
     m_Position: {x: 370, y: 20, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3963655521034190473}
-    m_Position: {x: 390, y: 190, z: 0}
+    m_Position: {x: 630, y: 70, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 50, y: 20, z: 0}
-  m_EntryPosition: {x: 50, y: 120, z: 0}
-  m_ExitPosition: {x: 800, y: 120, z: 0}
+  m_AnyStatePosition: {x: 160, y: -30, z: 0}
+  m_EntryPosition: {x: 150, y: 70, z: 0}
+  m_ExitPosition: {x: 860, y: 20, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -8262612612835611834}
 --- !u!1101 &-2263160007835847120
@@ -400,10 +400,22 @@ AnimatorController:
     m_Name: eyes
     m_StateMachine: {fileID: 3671211715662277654}
     m_Mask: {fileID: 0}
-    m_Motions: []
+    m_Motions:
+    - serializedVersion: 2
+      m_State: {fileID: 7914153121218233053}
+      m_Motion: {fileID: 1180599271568011988, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: -5503442128949825503}
+      m_Motion: {fileID: 1719466648631945102, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 4990437990612527987}
+      m_Motion: {fileID: -8760976560609858742, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 3858948015607694742}
+      m_Motion: {fileID: -7584386681315553426, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
     m_Behaviours: []
     m_BlendingMode: 1
-    m_SyncedLayerIndex: -1
+    m_SyncedLayerIndex: 0
     m_DefaultWeight: 1
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
@@ -412,10 +424,22 @@ AnimatorController:
     m_Name: round eyes
     m_StateMachine: {fileID: -2558158258327254273}
     m_Mask: {fileID: 0}
-    m_Motions: []
+    m_Motions:
+    - serializedVersion: 2
+      m_State: {fileID: 7914153121218233053}
+      m_Motion: {fileID: 8411513251811950556, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: -5503442128949825503}
+      m_Motion: {fileID: -5546213070115797796, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 4990437990612527987}
+      m_Motion: {fileID: -3004408782755770771, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 3858948015607694742}
+      m_Motion: {fileID: -964943998105100266, guid: d7a3ba0db252183458f8ac3bc61e1e91, type: 3}
     m_Behaviours: []
     m_BlendingMode: 1
-    m_SyncedLayerIndex: -1
+    m_SyncedLayerIndex: 0
     m_DefaultWeight: 1
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
@@ -459,10 +483,10 @@ AnimatorStateMachine:
     m_Position: {x: 380, y: -20, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6755220651403421022}
-    m_Position: {x: 390, y: 170, z: 0}
+    m_Position: {x: 560, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4078547632301807396}
-    m_Position: {x: 390, y: 220, z: 0}
+    m_Position: {x: 620, y: 150, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -480,7 +504,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Death_eyes
+  m_Name: blob_walk
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -557,7 +581,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Death_body
+  m_Name: Death
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -637,7 +661,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Walk_body
+  m_Name: Walk
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

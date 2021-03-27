@@ -16,6 +16,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private float m_RunSpeed;
         public float speedMultiplier = 1f;
         [SerializeField] private float walkingBackMultiplier = 0.5f;
+        [NonSerialized] public float keyLocationSpeedMod = 1;
+        [SerializeField] public bool isPlayerKeyLocXPositive;
+        [SerializeField] public bool isPlayerKeyLocZPositive;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
 
         [SerializeField] private float m_JumpSpeed;
@@ -48,6 +51,25 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         [System.NonSerialized]
         public bool isStunned;
+
+        public GameObject FindClosestKeyLocation()
+        {
+            GameObject[] keyLocations = GameObject.FindGameObjectsWithTag("KeyLocation");
+            GameObject closest = null;
+            float distance = Mathf.Infinity;
+            Vector3 position = transform.position;
+            foreach (GameObject keyLocation in keyLocations)
+            {
+                Vector3 diff = keyLocation.transform.position - position;
+                float curDistance = diff.sqrMagnitude;
+                if (curDistance < distance)
+                {
+                    closest = keyLocation;
+                    distance = curDistance;
+                }
+            }
+            return closest;
+        }
 
         // Use this for initialization
         private void Start()
@@ -118,6 +140,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             m_MoveDir.x = desiredMove.x*speed;
             m_MoveDir.z = desiredMove.z*speed;
+
+            if (isPlayerKeyLocXPositive && m_MoveDir.x < 0 || !isPlayerKeyLocXPositive && m_MoveDir.x > 0)
+            {
+                m_MoveDir.x *= keyLocationSpeedMod;
+            }
+            if (isPlayerKeyLocZPositive && m_MoveDir.z < 0 || !isPlayerKeyLocZPositive && m_MoveDir.z > 0)
+            {
+                m_MoveDir.z *= keyLocationSpeedMod;
+            }
 
             if (!isStunned)
             {
