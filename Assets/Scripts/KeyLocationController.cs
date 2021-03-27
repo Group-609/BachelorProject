@@ -8,7 +8,7 @@ public class KeyLocationController : MonoBehaviour
 {
     private float radius;
     public GameObject sphere;
-    public List<GameObject> players;
+    public List<GameObject> players = new List<GameObject>();
     private float speedMod;
 
     void Start()
@@ -19,11 +19,9 @@ public class KeyLocationController : MonoBehaviour
 
     void Update()
     {
-        //players = GameObject.FindGameObjectsWithTag("Player"); //Locate in start/singlerun instead. Idk with Photon stuff
-
         foreach (GameObject player in players)
         {
-            if (player.GetComponent<FirstPersonController>().FindClosestKeyLocation() == gameObject) //Only run if this is the closest keyLocation.
+            if (player.FindClosestObject("KeyLocation") == gameObject) //Only run if this is the closest keyLocation.
             {
                 float dist = Vector3.Distance(player.transform.position, transform.position);
                 if (dist <= radius && dist > radius - 1)
@@ -59,9 +57,12 @@ public class KeyLocationController : MonoBehaviour
         }
     }
 
-    IEnumerator GetPlayers()
+    private IEnumerator GetPlayers()
     {
-        yield return new WaitForSeconds(0.5f);
-        players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        while (players.Count == 0)
+        {
+            yield return new WaitForSeconds(0.5f);
+            players.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+        }
     }
 }

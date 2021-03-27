@@ -52,25 +52,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [System.NonSerialized]
         public bool isStunned;
 
-        public GameObject FindClosestKeyLocation()
-        {
-            GameObject[] keyLocations = GameObject.FindGameObjectsWithTag("KeyLocation");
-            GameObject closest = null;
-            float distance = Mathf.Infinity;
-            Vector3 position = transform.position;
-            foreach (GameObject keyLocation in keyLocations)
-            {
-                Vector3 diff = keyLocation.transform.position - position;
-                float curDistance = diff.sqrMagnitude;
-                if (curDistance < distance)
-                {
-                    closest = keyLocation;
-                    distance = curDistance;
-                }
-            }
-            return closest;
-        }
-
         // Use this for initialization
         private void Start()
         {
