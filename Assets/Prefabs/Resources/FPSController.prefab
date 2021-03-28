@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5400000}
   - component: {fileID: 8200000}
   - component: {fileID: 2573107618479437793}
+  - component: {fileID: -6251046704174626426}
   - component: {fileID: -4129676564591277995}
   - component: {fileID: -9015750094166818286}
   - component: {fileID: 1943105344044795887}
@@ -75,7 +76,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IsWalking: 0
   m_RunSpeed: 6
+  speedMultiplier: 1
   walkingBackMultiplier: 0.75
+  isPlayerKeyLocXPositive: 0
+  isPlayerKeyLocZPositive: 0
   m_RunstepLenghten: 0.481
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
@@ -318,6 +322,24 @@ MonoBehaviour:
   gameManager: {fileID: 0}
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}
   paintballPrefab: {fileID: 909444189230491489, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}
+--- !u!114 &-6251046704174626426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e84c83f3aee6d64b80b1f9899ed7909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minMovementMultiplier: 0.5
+  movementMultiplierFadeOutSpeed: 0.5
+  hurtTexture: {fileID: 2800000, guid: 18a81fbc885737e459b47c8be4f4f35d, type: 3}
+  textureFadeOutSpeed: 1
+  hurtSound:
+  - {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
 --- !u!114 &-4129676564591277995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,16 +429,16 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: RotateX
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingLeft
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingRight
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingForward
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: isMovingBackward
   m_SynchronizeLayers:
   - SynchronizeType: 1
@@ -547,7 +569,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100002}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
   m_Name: 
@@ -609,7 +631,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100002}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
   m_Name: 
@@ -626,12 +648,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100002}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 585375687ea1aa04d82db53a0c3ad155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vignetteLayer: {fileID: 0}
 --- !u!1 &5126392717192139234
 GameObject:
   m_ObjectHideFlags: 0
