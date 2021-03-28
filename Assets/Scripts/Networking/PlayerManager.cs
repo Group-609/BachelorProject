@@ -166,9 +166,11 @@ namespace Photon.Pun.Demo.PunBasics
                 if (this.health <= 0f)
                 {
                     Stun();
+                    animator.SetBool("isDown", true);
                 }
                 else
                 {
+                    animator.SetBool("isDown", false);
                     AnimateWalking();
                     this.ProcessInputs();
                 }
