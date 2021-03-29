@@ -1,0 +1,285 @@
+fileFormatVersion: 2
+guid: 374949c1d4905ec428284100b698bcbe
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: barrier
+    100002: bench_long
+    100004: border
+    100006: bus_stop
+    100008: fire_hydrant
+    100010: holder
+    100012: lantern
+    100014: light
+    100016: mailbox
+    100018: octagon_sign
+    100020: pedestrian light
+    100022: pile
+    100024: pillar
+    100026: //RootNode
+    100028: road_+
+    100030: road_+_1
+    100032: road_+_2
+    100034: road_+_3
+    100036: road_+_4
+    100038: road_cone
+    100040: road_I
+    100042: road_I_1
+    100044: road_I_2
+    100046: road_r
+    100048: road_r_1
+    100050: road_r_2
+    100052: road_T
+    100054: road_T_1
+    100056: road_T_2
+    100058: road_T_3
+    100060: round_sign
+    100062: round_sign01
+    100064: sidewalk
+    100066: sidewalk2
+    100068: square_sign01
+    100070: square_sign02
+    100072: square_sign03
+    100074: square_sign04
+    100076: street _phone
+    100078: traffic lights
+    100080: trashcan
+    100082: trashcan01
+    100084: triangle_sign
+    100086: triangle_sign01
+    400000: barrier
+    400002: bench_long
+    400004: border
+    400006: bus_stop
+    400008: fire_hydrant
+    400010: holder
+    400012: lantern
+    400014: light
+    400016: mailbox
+    400018: octagon_sign
+    400020: pedestrian light
+    400022: pile
+    400024: pillar
+    400026: //RootNode
+    400028: road_+
+    400030: road_+_1
+    400032: road_+_2
+    400034: road_+_3
+    400036: road_+_4
+    400038: road_cone
+    400040: road_I
+    400042: road_I_1
+    400044: road_I_2
+    400046: road_r
+    400048: road_r_1
+    400050: road_r_2
+    400052: road_T
+    400054: road_T_1
+    400056: road_T_2
+    400058: road_T_3
+    400060: round_sign
+    400062: round_sign01
+    400064: sidewalk
+    400066: sidewalk2
+    400068: square_sign01
+    400070: square_sign02
+    400072: square_sign03
+    400074: square_sign04
+    400076: street _phone
+    400078: traffic lights
+    400080: trashcan
+    400082: trashcan01
+    400084: triangle_sign
+    400086: triangle_sign01
+    2300000: barrier
+    2300002: bench_long
+    2300004: border
+    2300006: bus_stop
+    2300008: fire_hydrant
+    2300010: holder
+    2300012: lantern
+    2300014: light
+    2300016: mailbox
+    2300018: octagon_sign
+    2300020: pedestrian light
+    2300022: pile
+    2300024: pillar
+    2300026: road_+
+    2300028: road_+_1
+    2300030: road_+_2
+    2300032: road_+_3
+    2300034: road_+_4
+    2300036: road_cone
+    2300038: road_I
+    2300040: road_I_1
+    2300042: road_I_2
+    2300044: road_r
+    2300046: road_r_1
+    2300048: road_r_2
+    2300050: road_T
+    2300052: road_T_1
+    2300054: road_T_2
+    2300056: road_T_3
+    2300058: round_sign
+    2300060: round_sign01
+    2300062: sidewalk
+    2300064: sidewalk2
+    2300066: square_sign01
+    2300068: square_sign02
+    2300070: square_sign03
+    2300072: square_sign04
+    2300074: street _phone
+    2300076: traffic lights
+    2300078: trashcan
+    2300080: trashcan01
+    2300082: triangle_sign
+    2300084: triangle_sign01
+    3300000: barrier
+    3300002: bench_long
+    3300004: border
+    3300006: bus_stop
+    3300008: fire_hydrant
+    3300010: holder
+    3300012: lantern
+    3300014: light
+    3300016: mailbox
+    3300018: octagon_sign
+    3300020: pedestrian light
+    3300022: pile
+    3300024: pillar
+    3300026: road_+
+    3300028: road_+_1
+    3300030: road_+_2
+    3300032: road_+_3
+    3300034: road_+_4
+    3300036: road_cone
+    3300038: road_I
+    3300040: road_I_1
+    3300042: road_I_2
+    3300044: road_r
+    3300046: road_r_1
+    3300048: road_r_2
+    3300050: road_T
+    3300052: road_T_1
+    3300054: road_T_2
+    3300056: road_T_3
+    3300058: round_sign
+    3300060: round_sign01
+    3300062: sidewalk
+    3300064: sidewalk2
+    3300066: square_sign01
+    3300068: square_sign02
+    3300070: square_sign03
+    3300072: square_sign04
+    3300074: street _phone
+    3300076: traffic lights
+    3300078: trashcan
+    3300080: trashcan01
+    3300082: triangle_sign
+    3300084: triangle_sign01
+    4300000: pillar
+    4300002: road_I
+    4300004: road_r
+    4300006: road_+
+    4300008: road_T
+    4300010: lantern
+    4300012: traffic lights
+    4300014: pedestrian light
+    4300016: holder
+    4300018: light
+    4300020: sidewalk
+    4300022: sidewalk2
+    4300024: road_I_1
+    4300026: road_I_2
+    4300028: road_r_1
+    4300030: road_r_2
+    4300032: road_+_1
+    4300034: road_+_2
+    4300036: road_+_3
+    4300038: road_+_4
+    4300040: road_T_1
+    4300042: road_T_2
+    4300044: road_T_3
+    4300046: road_cone
+    4300048: fire_hydrant
+    4300050: barrier
+    4300052: mailbox
+    4300054: pile
+    4300056: square_sign02
+    4300058: octagon_sign
+    4300060: round_sign
+    4300062: triangle_sign
+    4300064: square_sign01
+    4300066: square_sign03
+    4300068: square_sign04
+    4300070: triangle_sign01
+    4300072: border
+    4300074: street _phone
+    4300076: bus_stop
+    4300078: trashcan
+    4300080: trashcan01
+    4300082: bench_long
+    4300084: round_sign01
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .100000001
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

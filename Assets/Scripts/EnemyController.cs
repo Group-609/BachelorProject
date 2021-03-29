@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System;
 using System.Collections;
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
@@ -9,7 +10,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
     private List<GameObject> players;
     [System.NonSerialized]
-    public Transform player;
+    public Transform closestPlayer;
     private float distanceToPlayer;
     private bool isAttackReady = true;
     private float attackAnimationDelay = 1.5f;
@@ -21,9 +22,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public float speed = 3f;
     public float maxHealth = 50f;
     public float shootingDistance = 25f;
-    public float minDistForMeleeAttack = 2;
+    public float minDistForMeleeAttack = 2.5f;
     [Tooltip("Stopping distance should be lower than minimum distance for melee")]
-    public float stoppingDistance = 2.5f;
+    public float stoppingDistance = 2f;
     public int minDistForMovement = 110;
     //-------------------------------------
     [System.NonSerialized]
@@ -34,6 +35,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField]
     private GameObject projectilePrefab;
 
+    private SkinnedMeshRenderer meshRenderer;
     private Color maxHealthColor;
     private Color lowHealthColor;
 
@@ -41,6 +43,14 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private Animator animator;
     private int refreshTargetTimer = 0;
     public int refreshTargetTimerLimit = 50;
+    [System.NonSerialized]
+    public bool isBlobified = false;
+
+    [SerializeField]
+    private float distanceToKeyLocationToDespawn = 1f;
+
+    private List<GameObject> keyLocations;
+
 
     //Used for estimating where player will be when projectile hits
     private Vector3 previousFramePlayerPosition;
@@ -48,49 +58,77 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
+        keyLocations = new List<GameObject>(GameObject.FindGameObjectsWithTag("KeyLocation"));
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        animator.Play("Walk_body");     //Walking animation
+        animator.Play("Walk");     //Walking animation
         agent.stoppingDistance = stoppingDistance;
-        players = findPlayers();
+        players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
 
-        maxHealthColor = new Color(.19f, .1f, .2f); //Dark purple
-        lowHealthColor = new Color(.95f, .73f, 1f); //bright pink
+        try
+        {
+            meshRenderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+            maxHealthColor = meshRenderer.material.color; //initial color
+            lowHealthColor = new Color(.95f, .73f, 1f); //bright pink
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Could not find enemy's mesh renderer");
+        }
+        
         currentHealth = maxHealth;
     }
 
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient && currentHealth < 0)
         {
-            if (currentHealth < 0)
+            if (!isBlobified)
             {
-                animator.SetBool("IsDead", true);
-                PhotonNetwork.Destroy(gameObject);  //TODO: Replace with running away logic. Only destroy when the exit point(fountain of color) is reached.
+                photonView.RPC("Blobify", RpcTarget.All);
+            }
+            
+            if(distanceToKeyLocationToDespawn > Vector3.Distance(gameObject.FindClosestObject(keyLocations).transform.position, transform.position))
+            {
+                PhotonNetwork.Destroy(gameObject);
             }
         }
-        FindNavTarget();
-        distanceToPlayer = Vector3.Distance(player.position, transform.position);
-        if (distanceToPlayer <= minDistForMovement)
+        if (!isBlobified)
         {
-            SetSpeed(speed);
-            if (isAttackReady)
+            FindNavTarget();
+            distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
+            if (distanceToPlayer <= minDistForMovement)
             {
-                StartCoroutine(AttackPlayer());
+                SetSpeed(speed);
+                if (isAttackReady)
+                {
+                    StartCoroutine(AttackPlayer());
+                }
+            }
+            else
+            {
+                SetSpeed(0);
             }
         }
-        else
-        {
-            SetSpeed(0);
-        }
+    }
+
+    [PunRPC]
+    void Blobify()
+    {
+        animator.SetBool("IsDead", true);
+        isBlobified = true;
+        agent.stoppingDistance = 0;
+        agent.destination = gameObject.FindClosestObject(keyLocations).transform.position;
+        SetSpeed(speed);
+        //TODO?: set color to nice pink
     }
 
     void FixedUpdate()
     {
-        if (player != null)
+        if (closestPlayer != null)
         {
-            playerVelocity = (player.position - previousFramePlayerPosition) / Time.fixedDeltaTime;
-            previousFramePlayerPosition = player.position;
+            playerVelocity = (closestPlayer.position - previousFramePlayerPosition) / Time.fixedDeltaTime;
+            previousFramePlayerPosition = closestPlayer.position;
         }
     }
 
@@ -106,38 +144,34 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
         if (refreshTargetTimer <= 0)
         {
-            Transform closestPlayer = null;
-            List<GameObject> alivePlayers = players.FindAll(
-               delegate (GameObject player)
-               {
-                   return player.GetComponent<PlayerManager>().health > 0;
-               }
-            );
-            if (alivePlayers.Count != 0)  //If we found alive players, find the closest player
+            List<GameObject> alivePlayers = GetAlivePlayers();
+
+            //If we found alive players, find the closest player, else make it null
+            if (alivePlayers.Count != 0)  
             {
-                closestPlayer = alivePlayers[0].transform;
-                foreach (GameObject player in alivePlayers)
-                {
-                    if (Vector3.Distance(player.transform.position, transform.position) < Vector3.Distance(closestPlayer.position, transform.position)) //We can add in DDA here by multiplying the distances based on the player with a multiplier
-                    {
-                        closestPlayer = player.transform;
-                    }
-                }
+                closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
+                agent.destination = closestPlayer.position;
             }
-            player = closestPlayer;
-            agent.destination = closestPlayer.position;
+            else closestPlayer = null;
+            
             refreshTargetTimer = refreshTargetTimerLimit;
         }
     }
 
-    List<GameObject> findPlayers()
+    private List<GameObject> GetAlivePlayers()
     {
-        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        return players.FindAll(
+                   delegate (GameObject player)
+                   {
+                       return player.GetComponent<PlayerManager>().health > 0;
+                   }
+                );
     }
 
     public void OnDamageTaken()
     {
-        gameObject.GetComponent<Renderer>().material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
+        if (meshRenderer != null)
+            meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
 
     IEnumerator AttackPlayer()
@@ -149,15 +183,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
             isAttackReady = false;
             animator.SetBool("IsAttacking", true);
+
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
             if (distanceToPlayer <= minDistForMeleeAttack)
             {
-                //player.GetComponent<HurtEffect>().Hit();
+                closestPlayer.GetComponent<HurtEffect>().Hit();
                 //TODO: play player melee hit sound
                 if (PhotonNetwork.IsMasterClient)
                 { 
-                    HitPlayer(player.gameObject, -meleeDamage);
+                    HitPlayer(closestPlayer.gameObject, -meleeDamage);
                 }
             }
             else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
@@ -166,7 +201,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
                 projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
                 projectile.GetComponent<EnemyProjectile>().damage = this.projectileDamage;
-                projectile.GetComponent<EnemyProjectile>().target = player;
+                projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
                 projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
                 projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
             }

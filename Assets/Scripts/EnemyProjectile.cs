@@ -26,24 +26,19 @@ public class EnemyProjectile : MonoBehaviour
         Destroy(gameObject, despawnTime);
     }
 
-    void Update()
-    {
-
-    }
-
     void OnCollisionEnter(Collision collision)
     {
-		//If the object is the player who shot
-		if (collision.collider.gameObject.tag == "Enemy")
+		GameObject hitObject = collision.collider.gameObject;
+
+		//If the object is the enemy, who shot
+		if (hitObject.CompareTag("Enemy"))
 		{
 			return;
 		}
-		else if (isLocal)
+		else if (isLocal && hitObject.CompareTag("Player"))
 		{
-			if (collision.collider.gameObject.tag == "Player")
-			{
-				enemyWhoShot.GetComponent<EnemyController>().HitPlayer(collision.collider.gameObject, -damage);
-			}
+			enemyWhoShot.GetComponent<EnemyController>().HitPlayer(hitObject, -damage);
+			hitObject.GetComponent<HurtEffect>().Hit();
 		}
 		//TODO: projectile hit sound
 		Destroy(gameObject);

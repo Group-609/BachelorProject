@@ -392,13 +392,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2060972908484607535}
-  m_LocalRotation: {x: 0.007052942, y: 0.026631622, z: 0.8586074, w: 0.51189286}
-  m_LocalPosition: {x: -0.011420779, y: 0.020118982, z: 0.04511905}
+  m_LocalRotation: {x: -0.2123615, y: 0.020013398, z: -0.00008187906, w: 0.9769863}
+  m_LocalPosition: {x: -0, y: 0.0206, z: 0.0428}
   m_LocalScale: {x: 0.49391383, y: 1.304374, z: 1.0190058}
   m_Children: []
   m_Father: {fileID: 1341112667890719370}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -24.516, y: 2.466, z: -0.545}
 --- !u!33 &642779583649634132
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -732,6 +732,7 @@ MonoBehaviour:
   minDistForMovement: 110
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimerLimit: 20
+  distanceToKeyLocationToDespawn: 1
 --- !u!195 &5732855970157686023
 NavMeshAgent:
   m_ObjectHideFlags: 0
