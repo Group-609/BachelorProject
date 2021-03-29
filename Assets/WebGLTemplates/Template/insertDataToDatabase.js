@@ -8,10 +8,3 @@ function insertData(message)
     console.log("${data} and status is ${status}")
   }); 
 }
-
-function addToGlobalScope()
-{
-  window.insertData = insertData;
-  window.alert("Added insertData to global scope"); 
-}
-
