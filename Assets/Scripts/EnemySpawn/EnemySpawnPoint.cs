@@ -16,13 +16,6 @@ public class EnemySpawnPoint : MonoBehaviour
 
     public bool IsEnemyTooClose()
     {
-        foreach(GameObject targetObject in GameObject.FindGameObjectsWithTag("Enemy"))
-        {
-            if (Vector3.Distance(transform.position, targetObject.transform.position) < minDistToEnemy)
-            {
-                return true;
-            }
-        }
-        return false;
+        return Vector3.Distance(gameObject.FindClosestObject("Enemy").transform.position, transform.position) < minDistToEnemy;
     }
 }

@@ -11,8 +11,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
-using UnityStandardAssets.Characters.FirstPerson;   
-
+using UnityStandardAssets.Characters.FirstPerson;
+using Photon.Pun;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -22,7 +24,7 @@ namespace Photon.Pun.Demo.PunBasics
     /// Player manager.
     /// Handles fire Input.
     /// </summary>
-    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable, LevelProgressionCondition.LevelProgressionListener
+    public class PlayerManager : MonoBehaviourPunCallbacks, IPunObservable, LevelProgressionCondition.LevelProgressionListener, IOnEventCallback
     {
         #region Public Fields
 
@@ -147,7 +149,8 @@ namespace Photon.Pun.Demo.PunBasics
 		{
 			// Always call the base to remove callbacks
 			base.OnDisable ();
-		}
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
 
 
         /// <summary>
@@ -163,9 +166,11 @@ namespace Photon.Pun.Demo.PunBasics
                 if (this.health <= 0f)
                 {
                     Stun();
+                    animator.SetBool("isDown", true);
                 }
                 else
                 {
+                    animator.SetBool("isDown", false);
                     AnimateWalking();
                     this.ProcessInputs();
                 }
@@ -174,6 +179,21 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 AnimateShoot();
                 StartCoroutine(ShootPaintball());
+            }
+        }
+
+        private void OnEnable()
+        {
+            PhotonNetwork.AddCallbackTarget(this);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            byte eventCode = photonEvent.Code;
+
+            if (photonView.IsMine && eventCode == GameManager.respawnEvent) //Respawn event
+            {
+                 Respawn();
             }
         }
 
