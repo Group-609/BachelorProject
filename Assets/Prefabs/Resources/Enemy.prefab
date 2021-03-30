@@ -730,6 +730,8 @@ MonoBehaviour:
   minDistForMeleeAttack: 4
   stoppingDistance: 3
   minDistForMovement: 110
+  turningHappyClip: {fileID: 8300000, guid: 0237a17b6fea25848a390e40c029602a, type: 3}
+  shrinkingClip: {fileID: 8300000, guid: 9617f752cafb47e49816edc66707ceb4, type: 3}
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimerLimit: 20
   distanceToKeyLocationToDespawn: 1

@@ -185,8 +185,8 @@ MonoBehaviour:
     BobAmount: 0.1
   m_StepInterval: 2
   m_FootstepSounds:
-  - {fileID: 8300000, guid: 42e65e088b3f4374e851b8dbd38f3df9, type: 3}
-  - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
+  - {fileID: 8300000, guid: 9bc96086eaf81fa41a3ab2100d6477cb, type: 3}
+  - {fileID: 8300000, guid: cae5fd800708d964b8d16ca32d6bc6b5, type: 3}
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
 --- !u!54 &5400000
@@ -339,7 +339,7 @@ MonoBehaviour:
   hurtTexture: {fileID: 2800000, guid: 18a81fbc885737e459b47c8be4f4f35d, type: 3}
   textureFadeOutSpeed: 1
   hurtSound:
-  - {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
+  - {fileID: 8300000, guid: 87b8635485830fd47b817fa57880a2b8, type: 3}
 --- !u!114 &-4129676564591277995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,6 +440,9 @@ MonoBehaviour:
   - Type: 4
     SynchronizeType: 2
     Name: isMovingBackward
+  - Type: 4
+    SynchronizeType: 0
+    Name: isDown
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0

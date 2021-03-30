@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private float distanceToPlayer;
     private bool isAttackReady = true;
     private float attackAnimationDelay = 1.5f;
+    
 
     [Header("DDA friendly variables - they might be changed by the DDAA")]
     //the default values here should be used if DDA is not applied
@@ -29,6 +30,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     //-------------------------------------
     [System.NonSerialized]
     public float currentHealth = 50f;      //current player health
+
+    [Header("Sounds")]
+    public AudioClip turningHappyClip;
+    public AudioClip shrinkingClip;
+
+    private AudioSource audioSource;
 
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
@@ -58,6 +65,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         keyLocations = new List<GameObject>(GameObject.FindGameObjectsWithTag("KeyLocation"));
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -85,6 +93,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (!isBlobified)
             {
+                PlayBlobifySound();
                 photonView.RPC("Blobify", RpcTarget.All);
             }
             
@@ -121,6 +130,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         agent.destination = gameObject.FindClosestObject(keyLocations).transform.position;
         SetSpeed(speed);
         //TODO?: set color to nice pink
+    }
+
+    private void PlayBlobifySound()
+    {
+        audioSource.clip = shrinkingClip;
+        audioSource.Play();
     }
 
     void FixedUpdate()
