@@ -33,15 +33,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     [Header("Sounds")]
     public AudioClip spawningClip;
-
     public AudioClip dyingClip;
     public AudioClip turningHappyClip;
     public AudioClip shrinkingClip;
-
     public AudioClip hitClip;
-
     public AudioClip shootClip;
-
     public AudioClip roarClip;
 
     private AudioSource audioSource;
