@@ -2,17 +2,18 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public static class CustomExtensions
 {
     public static object GetRandomItem(this List<object> objects)
     {
-        return objects[UnityEngine.Random.Range(0, objects.Count)];
+        return objects[Random.Range(0, objects.Count)];
     }
 
     public static object GetRandomItem(this object[] objects)
     {
-        return objects[UnityEngine.Random.Range(0, objects.Length)];
+        return objects[Random.Range(0, objects.Length)];
     }
 
     public static void AddToEnemySpawnPointList(this List<List<EnemySpawnPoint>> spawnPointList, EnemySpawnPoint spawnPointToAdd)
