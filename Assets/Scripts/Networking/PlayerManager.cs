@@ -88,6 +88,7 @@ namespace Photon.Pun.Demo.PunBasics
         private bool isReturningControl = false;
 
         private Animator animator;
+        private Animator animatorHands;
 
         #endregion
 
@@ -105,7 +106,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 LocalPlayerInstance = gameObject;
             }
-            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("PaintGun");
+            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("hand_right.001").Find("PaintGun");
 
             if (PhotonNetwork.IsMasterClient)
             {
@@ -146,7 +147,9 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
-            animator = GetComponentInChildren<Animator>();
+
+            animator = GetComponent<Animator>();
+            animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();
             fpsController = GetComponent<FirstPersonController>();
             respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
         }
@@ -177,6 +180,7 @@ namespace Photon.Pun.Demo.PunBasics
                         if (fpsController.isStunned)
                         {
                             animator.SetBool("isDown", false);
+                            animatorHands.SetBool("isDown", false);
                             StartCoroutine(ReturnPlayerControl(standUpAnimationTime));
                         }
                         else
@@ -196,6 +200,8 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     Stun();
                     animator.SetBool("isDown", true);
+                    animatorHands.SetBool("isDown", true);
+
                 }   
             }
         }
@@ -223,6 +229,7 @@ namespace Photon.Pun.Demo.PunBasics
             transform.position = respawnTransform.position;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
+            animatorHands.SetBool("isDown", false);
             StartCoroutine(ReturnPlayerControl(respawnTime + standUpAnimationTime)); //we reenable the FirstPersonController script after the respawn time is done
         }
 
@@ -261,6 +268,8 @@ namespace Photon.Pun.Demo.PunBasics
         public void AnimateShoot()
         {
             animator.Play("Shoot");
+            animatorHands.Play("Shoot");
+          
         }
 
         public void OnLevelFinished()
@@ -310,31 +319,43 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 animator.SetBool("isMovingForward", true);
                 animator.SetBool("isMovingBackward", false);
+                animatorHands.SetBool("isMovingForward", true);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             else if (Input.GetAxis("Vertical") < 0)
             {
                 animator.SetBool("isMovingForward", false);
                 animator.SetBool("isMovingBackward", true);
+                animatorHands.SetBool("isMovingForward", false);
+                animatorHands.SetBool("isMovingBackward", true);
             }
             else
             {
                 animator.SetBool("isMovingForward", false);
                 animator.SetBool("isMovingBackward", false);
+                animatorHands.SetBool("isMovingForward", false);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             if (Input.GetAxis("Horizontal") > 0)
             {
                 animator.SetBool("isMovingRight", true);
                 animator.SetBool("isMovingLeft", false);
+                animatorHands.SetBool("isMovingRight", true);
+                animatorHands.SetBool("isMovingLeft", false);
             }
             else if (Input.GetAxis("Horizontal") < 0)
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", true);
+                animatorHands.SetBool("isMovingRight", false);
+                animatorHands.SetBool("isMovingLeft", true);
             }
             else
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", false);
+                animatorHands.SetBool("isMovingRight", false);
+                animatorHands.SetBool("isMovingLeft", false);
             }
         }
 
