@@ -138,8 +138,8 @@ ModelImporter:
       name: Armature|Idle
       takeName: Armature|ArmatureAction
       internalID: 0
-      firstFrame: 169
-      lastFrame: 224
+      firstFrame: 170
+      lastFrame: 225
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
