@@ -29,11 +29,20 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public int minDistForMovement = 110;
     //-------------------------------------
     [System.NonSerialized]
-    public float currentHealth = 50f;      //current player health
+    public float currentHealth = 50f;
 
     [Header("Sounds")]
+    public AudioClip spawningClip;
+
+    public AudioClip dyingClip;
     public AudioClip turningHappyClip;
     public AudioClip shrinkingClip;
+
+    public AudioClip hitClip;
+
+    public AudioClip shootClip;
+
+    public AudioClip roarClip;
 
     private AudioSource audioSource;
 
@@ -65,7 +74,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
         keyLocations = new List<GameObject>(GameObject.FindGameObjectsWithTag("KeyLocation"));
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -85,6 +93,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
         
         currentHealth = maxHealth;
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.PlayOneShot(spawningClip);
     }
 
     void Update()
@@ -93,7 +104,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (!isBlobified)
             {
-                PlayBlobifySound();
+                audioSource.PlayOneShot(shrinkingClip);
                 photonView.RPC("Blobify", RpcTarget.All);
             }
             
@@ -130,12 +141,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         agent.destination = gameObject.FindClosestObject(keyLocations).transform.position;
         SetSpeed(speed);
         //TODO?: set color to nice pink
-    }
-
-    private void PlayBlobifySound()
-    {
-        audioSource.clip = shrinkingClip;
-        audioSource.Play();
     }
 
     void FixedUpdate()
@@ -185,14 +190,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnDamageTaken()
     {
+        audioSource.PlayOneShot(hitClip);
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
 
     IEnumerator AttackPlayer()
     {
-
-        //TODO: attack sound
         if (distanceToPlayer <= shootingDistance)
         {
 
@@ -219,6 +223,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
                 projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
                 projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
+
+                audioSource.PlayOneShot(shootClip);
             }
 
             //Wait for attack animation to finish
