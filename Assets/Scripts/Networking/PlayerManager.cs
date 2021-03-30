@@ -28,7 +28,7 @@ namespace Photon.Pun.Demo.PunBasics
     {
         #region Public Fields
 
-        //DDA friendly variables
+        [Header("DDA friendly variables")]
         //---------------------------------------------------------
         [Tooltip("The current Health of our player")]
         public float health = 100f;
@@ -47,19 +47,22 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("Time between 2 shots")]
         public float shootWaitTime = 0.9f;
-        //---------------------------------------------------------
 
-        [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
-        public static GameObject LocalPlayerInstance;
+        [Header("Sounds")]
+
+        public AudioClip shootingClip;
+
+        [Header("Other")]
 
         [Tooltip("The game manager object.")]
         public GameManager gameManager;
 
+        [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
+        public static GameObject LocalPlayerInstance;
+
         //where the player will respawn after both players get stunned
         [System.NonSerialized]
         public Transform respawnTransform;
-
-
         #endregion
 
         #region Private Fields
@@ -272,6 +275,11 @@ namespace Photon.Pun.Demo.PunBasics
           
         }
 
+        private void PlayShootingSound()
+        {
+            GetComponent<AudioSource>().PlayOneShot(shootingClip);
+        }
+
         public void OnLevelFinished()
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
@@ -372,13 +380,14 @@ namespace Photon.Pun.Demo.PunBasics
         private IEnumerator ShootPaintball()
         {
             waitingToShoot = true;
-           
+            
             GameObject paintball;
             paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
             paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
             paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
             paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
+            PlayShootingSound();
             yield return new WaitForSeconds(shootWaitTime);
             waitingToShoot = false;
         }
