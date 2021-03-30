@@ -75,11 +75,17 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Transform the paint balls come from")]
         private Transform paintGun;
 
+        private FirstPersonController fpsController;
+
+        private float standUpAnimationTime = 1f;
+
         //True, when the user is firing
         bool IsFiring;
 
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
+
+        private bool isReturningControl = false;
 
         private Animator animator;
 
@@ -141,6 +147,7 @@ namespace Photon.Pun.Demo.PunBasics
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
             animator = GetComponentInChildren<Animator>();
+            fpsController = GetComponent<FirstPersonController>();
             respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
         }
 
@@ -163,22 +170,33 @@ namespace Photon.Pun.Demo.PunBasics
             // local player
             if (photonView.IsMine)
             {
-                if (this.health <= 0f)
+                if (health > 0f)
+                {
+                    if (!isReturningControl)
+                    {
+                        if (fpsController.isStunned)
+                        {
+                            animator.SetBool("isDown", false);
+                            StartCoroutine(ReturnPlayerControl(standUpAnimationTime));
+                        }
+                        else
+                        {
+                            AnimateWalking();
+                            ProcessInputs();
+                        }
+                    }
+
+                    if (IsFiring && !waitingToShoot)
+                    {
+                        AnimateShoot();
+                        StartCoroutine(ShootPaintball());
+                    }
+                }
+                else if (!fpsController.isStunned)
                 {
                     Stun();
                     animator.SetBool("isDown", true);
-                }
-                else
-                {
-                    animator.SetBool("isDown", false);
-                    AnimateWalking();
-                    this.ProcessInputs();
-                }
-            }
-            if (IsFiring && !waitingToShoot && health > 0)
-            {
-                AnimateShoot();
-                StartCoroutine(ShootPaintball());
+                }   
             }
         }
 
@@ -201,11 +219,11 @@ namespace Photon.Pun.Demo.PunBasics
         public void Respawn()
         {
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
-            gameObject.GetComponent<FirstPersonController>().isStunned = false;
-            gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
+            fpsController.enabled = false;   //We disable the script so that we can teleport the player
             transform.position = respawnTransform.position;
             this.health = startingHealth;
-            StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
+            animator.SetBool("isDown", false);
+            StartCoroutine(ReturnPlayerControl(respawnTime + standUpAnimationTime)); //we reenable the FirstPersonController script after the respawn time is done
         }
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
@@ -214,7 +232,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
-
+        
         /// <summary>
         /// Change the player's health.
         /// </summary>
@@ -257,7 +275,7 @@ namespace Photon.Pun.Demo.PunBasics
         //Disables movement
         void Stun()
         {
-            gameObject.GetComponent<FirstPersonController>().isStunned = true;
+            fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
         }
 
@@ -322,12 +340,13 @@ namespace Photon.Pun.Demo.PunBasics
 
         private IEnumerator ReturnPlayerControl(float waitTime)
         {
-            while (true)
-            {
-                yield return new WaitForSeconds(waitTime);
-                gameObject.GetComponent<FirstPersonController>().enabled = true;
-            }
+            isReturningControl = true;
+            fpsController.enabled = true;
+            yield return new WaitForSeconds(waitTime);
+            fpsController.isStunned = false;
+            isReturningControl = false;
         }
+        
 
         private IEnumerator ShootPaintball()
         {

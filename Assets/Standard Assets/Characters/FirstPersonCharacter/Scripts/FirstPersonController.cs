@@ -119,41 +119,47 @@ namespace UnityStandardAssets.Characters.FirstPerson
                                m_CharacterController.height/2f, Physics.AllLayers, QueryTriggerInteraction.Ignore);
             desiredMove = Vector3.ProjectOnPlane(desiredMove, hitInfo.normal).normalized;
 
-            m_MoveDir.x = desiredMove.x*speed;
-            m_MoveDir.z = desiredMove.z*speed;
 
-            if (isPlayerKeyLocXPositive && m_MoveDir.x < 0 || !isPlayerKeyLocXPositive && m_MoveDir.x > 0)
+            if (isStunned)
             {
-                m_MoveDir.x *= keyLocationSpeedMod;
-            }
-            if (isPlayerKeyLocZPositive && m_MoveDir.z < 0 || !isPlayerKeyLocZPositive && m_MoveDir.z > 0)
+                m_MoveDir.x = 0f;
+                m_MoveDir.z = 0f;
+            } 
+            else
             {
-                m_MoveDir.z *= keyLocationSpeedMod;
-            }
+                m_MoveDir.x = desiredMove.x * speed;
+                m_MoveDir.z = desiredMove.z * speed;
 
-            if (!isStunned)
-            {
-                if (m_CharacterController.isGrounded)
+                if (isPlayerKeyLocXPositive && m_MoveDir.x < 0 || !isPlayerKeyLocXPositive && m_MoveDir.x > 0)
                 {
-                    m_MoveDir.y = -m_StickToGroundForce;
-
-                    if (m_Jump)
-                    {
-                        m_MoveDir.y = m_JumpSpeed;
-                        PlayJumpSound();
-                        m_Jump = false;
-                        m_Jumping = true;
-                    }
+                    m_MoveDir.x *= keyLocationSpeedMod;
                 }
-                else
+                if (isPlayerKeyLocZPositive && m_MoveDir.z < 0 || !isPlayerKeyLocZPositive && m_MoveDir.z > 0)
                 {
-                    m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
+                    m_MoveDir.z *= keyLocationSpeedMod;
                 }
-                m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
-
-                ProgressStepCycle(speed);
-                UpdateCameraPosition(speed);
             }
+
+            if (m_CharacterController.isGrounded && !isStunned)
+            {
+                m_MoveDir.y = -m_StickToGroundForce;
+
+                if (m_Jump)
+                {
+                    m_MoveDir.y = m_JumpSpeed;
+                    PlayJumpSound();
+                    m_Jump = false;
+                    m_Jumping = true;
+                }
+            }
+            else
+            {
+                m_MoveDir += Physics.gravity * m_GravityMultiplier * Time.fixedDeltaTime;
+            }
+            
+            m_CollisionFlags = m_CharacterController.Move(m_MoveDir * Time.fixedDeltaTime);
+            UpdateCameraPosition(speed);
+            ProgressStepCycle(speed);
 
             m_MouseLook.UpdateCursorLock();
         }
