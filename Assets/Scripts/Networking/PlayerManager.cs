@@ -263,6 +263,11 @@ namespace Photon.Pun.Demo.PunBasics
             animator.Play("Shoot");
         }
 
+        private void PlayShootingSound()
+        {
+            GameObject.Find("PaintGun").GetComponent<AudioSource>().Play();
+        }
+
         public void OnLevelFinished()
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
@@ -351,13 +356,14 @@ namespace Photon.Pun.Demo.PunBasics
         private IEnumerator ShootPaintball()
         {
             waitingToShoot = true;
-           
+            
             GameObject paintball;
             paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
             paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
             paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
             paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
+            PlayShootingSound();
             yield return new WaitForSeconds(shootWaitTime);
             waitingToShoot = false;
         }
