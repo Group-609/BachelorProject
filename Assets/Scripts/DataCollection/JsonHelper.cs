@@ -31,3 +31,18 @@ public static class JsonHelper
         public T[] Items;
     }
 }
+
+struct JsonDateTime
+{
+    public long dateTime;
+    public static implicit operator System.DateTime(JsonDateTime jdt)
+    {
+        return System.DateTime.FromFileTimeUtc(jdt.dateTime);
+    }
+    public static implicit operator JsonDateTime(System.DateTime dt)
+    {
+        JsonDateTime jdt = new JsonDateTime();
+        jdt.dateTime = dt.ToFileTimeUtc();
+        return jdt;
+    }
+}
