@@ -229,6 +229,7 @@ namespace Photon.Pun.Demo.PunBasics
             transform.position = respawnTransform.position;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
+            animatorHands.SetBool("isDown", false);
             StartCoroutine(ReturnPlayerControl(respawnTime + standUpAnimationTime)); //we reenable the FirstPersonController script after the respawn time is done
         }
 
