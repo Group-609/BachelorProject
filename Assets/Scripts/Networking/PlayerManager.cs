@@ -48,6 +48,12 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Time between 2 shots")]
         public float shootWaitTime = 0.9f;
 
+        [Header("DDA system variables")]
+        public int stunConditionTrackPeriod = 120000;
+
+        [System.NonSerialized]
+        public int stunCount;
+
         [Header("Sounds")]
 
         public AudioClip shootingClip;
@@ -63,6 +69,7 @@ namespace Photon.Pun.Demo.PunBasics
         //where the player will respawn after both players get stunned
         [System.NonSerialized]
         public Transform respawnTransform;
+
         #endregion
 
         #region Private Fields
