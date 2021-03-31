@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private float distanceToPlayer;
     private bool isAttackReady = true;
     private float attackAnimationDelay = 1.5f;
+    
 
     [Header("DDA friendly variables - they might be changed by the DDAA")]
     //the default values here should be used if DDA is not applied
@@ -28,7 +29,18 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public int minDistForMovement = 110;
     //-------------------------------------
     [System.NonSerialized]
-    public float currentHealth = 50f;      //current player health
+    public float currentHealth = 50f;
+
+    [Header("Sounds")]
+    public AudioClip spawningClip;
+    public AudioClip dyingClip;
+    public AudioClip turningHappyClip;
+    public AudioClip shrinkingClip;
+    public AudioClip hitClip;
+    public AudioClip shootClip;
+    public AudioClip roarClip;
+
+    private AudioSource audioSource;
 
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
@@ -77,6 +89,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
         
         currentHealth = maxHealth;
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.PlayOneShot(spawningClip);
     }
 
     void Update()
@@ -85,6 +100,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (!isBlobified)
             {
+                audioSource.PlayOneShot(shrinkingClip);
                 photonView.RPC("Blobify", RpcTarget.All);
             }
             
@@ -170,14 +186,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnDamageTaken()
     {
+        audioSource.PlayOneShot(hitClip);
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
 
     IEnumerator AttackPlayer()
     {
-
-        //TODO: attack sound
         if (distanceToPlayer <= shootingDistance)
         {
 
@@ -204,6 +219,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
                 projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
                 projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
+
+                audioSource.PlayOneShot(shootClip);
             }
 
             //Wait for attack animation to finish

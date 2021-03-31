@@ -730,6 +730,13 @@ MonoBehaviour:
   minDistForMeleeAttack: 4
   stoppingDistance: 3
   minDistForMovement: 110
+  spawningClip: {fileID: 8300000, guid: e0cde88a7b97b1e4fb237970fac30084, type: 3}
+  dyingClip: {fileID: 8300000, guid: f155785abb3e4734fb8ce796f15c1b2d, type: 3}
+  turningHappyClip: {fileID: 8300000, guid: 0237a17b6fea25848a390e40c029602a, type: 3}
+  shrinkingClip: {fileID: 8300000, guid: 9617f752cafb47e49816edc66707ceb4, type: 3}
+  hitClip: {fileID: 8300000, guid: d1efa627fb40a3f41ac2ed07e644c43e, type: 3}
+  shootClip: {fileID: 8300000, guid: 27a18335be5d36845a4ebe81eefc9761, type: 3}
+  roarClip: {fileID: 8300000, guid: cd3c67e3f6f47db4e89afd5dc64b6a1b, type: 3}
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimerLimit: 20
   distanceToKeyLocationToDespawn: 1
