@@ -45,10 +45,27 @@ public class PlayerDataRecorder : MonoBehaviour
     //Forms the JSON string to be send to the database
     string GetJsonToSend()
     {
-        return "[" +
-            JsonUtility.ToJson(sessionStartTime, true) + "," +
-            JsonHelper.ToJson(frames.ToArray(), true) + "]";
+        DataContainer data = new DataContainer();
+        data.frames = frames.ToArray();
+        data.sessionStartTime = sessionStartTime.dateTime.ToString();
+        return JsonUtility.ToJson(data);
     }
 }
 
+//This data container is needed as we should send the data as a single object for MongoDB to accept it
+class DataContainer{
+    public string sessionStartTime;
+    public FrameData[] frames;
+}
 
+struct JsonDateTime
+{
+    public long dateTime;
+
+    public static implicit operator JsonDateTime(System.DateTime dt)
+    {
+        JsonDateTime jdt = new JsonDateTime();
+        jdt.dateTime = dt.ToFileTimeUtc();
+        return jdt;
+    }
+}
