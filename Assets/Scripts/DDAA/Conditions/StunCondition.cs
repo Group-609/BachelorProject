@@ -51,10 +51,10 @@ public class StunCondition
         }
     }
 
-    public void UpdateConditionalValue(List<PlayerManager> teamPlayers)
+    public void UpdateConditionalValue(List<GameObject> teamPlayers)
     {
         int totalTeamStunCount = 0;
-        teamPlayers.ForEach(player => totalTeamStunCount += player.stunCount);
+        teamPlayers.ForEach(player => totalTeamStunCount += player.GetComponent<PlayerManager>().stunCount);
         float teamStunCountAverage = totalTeamStunCount / teamPlayers.Count;
         ConditionValue = localPlayerStuntCount / teamStunCountAverage;
     }
