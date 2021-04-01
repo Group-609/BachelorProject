@@ -62,7 +62,7 @@ public class HurtEffect : MonoBehaviour
     {
         if (audioSource != null && !audioSource.isPlaying)
         {
-            audioSource.clip = hurtSound[Random.Range(0, hurtSound.Length)];
+            audioSource.clip = (AudioClip) hurtSound.GetRandomItem();
             audioSource.Play();
         }
         if (isDisplayingEffect)

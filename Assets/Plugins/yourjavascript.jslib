@@ -1,5 +1,5 @@
 mergeInto(LibraryManager.library, {
-	ShowMessage: function (message) {
+	Save: function (message) {
 		insertData(Pointer_stringify(message));
-	},  
+	}, 
 });

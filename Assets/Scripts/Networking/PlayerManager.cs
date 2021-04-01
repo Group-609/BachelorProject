@@ -28,7 +28,7 @@ namespace Photon.Pun.Demo.PunBasics
     {
         #region Public Fields
 
-        //DDA friendly variables
+        [Header("DDA friendly variables")]
         //---------------------------------------------------------
         [Tooltip("The current Health of our player")]
         public float health = 100f;
@@ -47,19 +47,22 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("Time between 2 shots")]
         public float shootWaitTime = 0.9f;
-        //---------------------------------------------------------
 
-        [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
-        public static GameObject LocalPlayerInstance;
+        [Header("Sounds")]
+
+        public AudioClip shootingClip;
+
+        [Header("Other")]
 
         [Tooltip("The game manager object.")]
         public GameManager gameManager;
 
+        [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
+        public static GameObject LocalPlayerInstance;
+
         //where the player will respawn after both players get stunned
         [System.NonSerialized]
         public Transform respawnTransform;
-
-
         #endregion
 
         #region Private Fields
@@ -75,13 +78,20 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Transform the paint balls come from")]
         private Transform paintGun;
 
+        private FirstPersonController fpsController;
+
+        private float standUpAnimationTime = 1f;
+
         //True, when the user is firing
         bool IsFiring;
 
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
 
+        private bool isReturningControl = false;
+
         private Animator animator;
+        private Animator animatorHands;
 
         #endregion
 
@@ -99,7 +109,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 LocalPlayerInstance = gameObject;
             }
-            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("PaintGun");
+            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("hand_right.001").Find("PaintGun");
 
             if (PhotonNetwork.IsMasterClient)
             {
@@ -140,7 +150,10 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
-            animator = GetComponentInChildren<Animator>();
+
+            animator = GetComponent<Animator>();
+            animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();
+            fpsController = GetComponent<FirstPersonController>();
             respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
         }
 
@@ -163,22 +176,36 @@ namespace Photon.Pun.Demo.PunBasics
             // local player
             if (photonView.IsMine)
             {
-                if (this.health <= 0f)
+                if (health > 0f)
+                {
+                    if (!isReturningControl)
+                    {
+                        if (fpsController.isStunned)
+                        {
+                            animator.SetBool("isDown", false);
+                            animatorHands.SetBool("isDown", false);
+                            StartCoroutine(ReturnPlayerControl(standUpAnimationTime));
+                        }
+                        else
+                        {
+                            AnimateWalking();
+                            ProcessInputs();
+                        }
+                    }
+
+                    if (IsFiring && !waitingToShoot)
+                    {
+                        AnimateShoot();
+                        StartCoroutine(ShootPaintball());
+                    }
+                }
+                else if (!fpsController.isStunned)
                 {
                     Stun();
                     animator.SetBool("isDown", true);
-                }
-                else
-                {
-                    animator.SetBool("isDown", false);
-                    AnimateWalking();
-                    this.ProcessInputs();
-                }
-            }
-            if (IsFiring && !waitingToShoot && health > 0)
-            {
-                AnimateShoot();
-                StartCoroutine(ShootPaintball());
+                    animatorHands.SetBool("isDown", true);
+
+                }   
             }
         }
 
@@ -201,11 +228,12 @@ namespace Photon.Pun.Demo.PunBasics
         public void Respawn()
         {
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
-            gameObject.GetComponent<FirstPersonController>().isStunned = false;
-            gameObject.GetComponent<FirstPersonController>().enabled = false;   //We disable the script so that we can teleport the player
+            fpsController.enabled = false;   //We disable the script so that we can teleport the player
             transform.position = respawnTransform.position;
             this.health = startingHealth;
-            StartCoroutine(ReturnPlayerControl(respawnTime)); //we reenable the FirstPersonController script after the respawn time is done
+            animator.SetBool("isDown", false);
+            animatorHands.SetBool("isDown", false);
+            StartCoroutine(ReturnPlayerControl(respawnTime + standUpAnimationTime)); //we reenable the FirstPersonController script after the respawn time is done
         }
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
@@ -214,7 +242,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
-
+        
         /// <summary>
         /// Change the player's health.
         /// </summary>
@@ -243,6 +271,13 @@ namespace Photon.Pun.Demo.PunBasics
         public void AnimateShoot()
         {
             animator.Play("Shoot");
+            animatorHands.Play("Shoot");
+          
+        }
+
+        private void PlayShootingSound()
+        {
+            GetComponent<AudioSource>().PlayOneShot(shootingClip);
         }
 
         public void OnLevelFinished()
@@ -257,7 +292,7 @@ namespace Photon.Pun.Demo.PunBasics
         //Disables movement
         void Stun()
         {
-            gameObject.GetComponent<FirstPersonController>().isStunned = true;
+            fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
         }
 
@@ -292,53 +327,67 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 animator.SetBool("isMovingForward", true);
                 animator.SetBool("isMovingBackward", false);
+                animatorHands.SetBool("isMovingForward", true);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             else if (Input.GetAxis("Vertical") < 0)
             {
                 animator.SetBool("isMovingForward", false);
                 animator.SetBool("isMovingBackward", true);
+                animatorHands.SetBool("isMovingForward", false);
+                animatorHands.SetBool("isMovingBackward", true);
             }
             else
             {
                 animator.SetBool("isMovingForward", false);
                 animator.SetBool("isMovingBackward", false);
+                animatorHands.SetBool("isMovingForward", false);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             if (Input.GetAxis("Horizontal") > 0)
             {
                 animator.SetBool("isMovingRight", true);
                 animator.SetBool("isMovingLeft", false);
+                animatorHands.SetBool("isMovingRight", true);
+                animatorHands.SetBool("isMovingLeft", false);
             }
             else if (Input.GetAxis("Horizontal") < 0)
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", true);
+                animatorHands.SetBool("isMovingRight", false);
+                animatorHands.SetBool("isMovingLeft", true);
             }
             else
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", false);
+                animatorHands.SetBool("isMovingRight", false);
+                animatorHands.SetBool("isMovingLeft", false);
             }
         }
 
         private IEnumerator ReturnPlayerControl(float waitTime)
         {
-            while (true)
-            {
-                yield return new WaitForSeconds(waitTime);
-                gameObject.GetComponent<FirstPersonController>().enabled = true;
-            }
+            isReturningControl = true;
+            fpsController.enabled = true;
+            yield return new WaitForSeconds(waitTime);
+            fpsController.isStunned = false;
+            isReturningControl = false;
         }
+        
 
         private IEnumerator ShootPaintball()
         {
             waitingToShoot = true;
-           
+            
             GameObject paintball;
             paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
             paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
             paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
             paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
+            PlayShootingSound();
             yield return new WaitForSeconds(shootWaitTime);
             waitingToShoot = false;
         }
