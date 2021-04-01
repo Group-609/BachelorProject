@@ -258,7 +258,20 @@ namespace Photon.Pun.Demo.PunBasics
         {
             PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
         }
-        
+
+        [PunRPC]
+        public void Stunned(int targetViewID)
+        {
+            GameObject playerObject = PhotonView.Find(targetViewID).gameObject;
+            playerObject.GetComponent<PlayerManager>().stunCount++;
+            Debug.Log("Someone is stunned! Player's stun count is " + stunCount);
+            if (playerObject == gameObject)
+            {
+                StunCondition.Instance.localPlayerStuntCount++;
+                Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
+            }
+        }
+
         //Function to call when an enemy is hit. 
         // enemy - the enemy we hit
         // healthChange - the effect on the enemies health (negative values for hurting)
@@ -301,6 +314,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
+            photonView.RPC(nameof(Stunned), RpcTarget.All, GetComponent<PhotonView>().ViewID);
         }
 
         /// <summary>
