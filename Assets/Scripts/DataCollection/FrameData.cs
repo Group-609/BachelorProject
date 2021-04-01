@@ -6,16 +6,16 @@ using System;
 [Serializable]
 public class FrameData
 {
-    public float x;
-    public float y;
-    public float z;
-    public float time;
+    public string x;
+    public string y;
+    public string z;
+    public string time;
 
     public FrameData(float x, float y, float z, float time)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.time = time;
+        this.x = x.ToString("0.00"); ;
+        this.y = y.ToString("0.00"); ;
+        this.z = z.ToString("0.00"); ;
+        this.time = time.ToString("0.00"); ;
     }
 }
