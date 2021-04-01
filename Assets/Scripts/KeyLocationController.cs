@@ -8,9 +8,13 @@ public class KeyLocationController : MonoBehaviour
 {
     public float radius;
     public GameObject sphere;
+    public GameObject clearSphere;
+    public int clearSphereSpawnAmount;
     public List<GameObject> players = new List<GameObject>();
-    private float speedMod;
+    public float speedMod;
     public int health = 10;
+    private int shrinkValue = 20;
+    private bool isDestroyed = false;
 
     void Start()
     {
@@ -27,7 +31,13 @@ public class KeyLocationController : MonoBehaviour
                 if (player.FindClosestObject("KeyLocation") == gameObject) //Only run if this is the closest keyLocation.
                 {
                     float dist = Vector3.Distance(player.transform.position, transform.position);
-                    if (dist <= radius && dist > radius - 1)
+
+                    if (!player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && dist <= radius)
+                    {
+                        player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = true;
+                    }
+
+                    if (player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && dist > radius - 1)
                     {
                         if (player.transform.position.x < transform.position.x) //Look at what side of the key location the player is at, so we only stop movement in the wanted direction.
                         {
@@ -48,7 +58,7 @@ public class KeyLocationController : MonoBehaviour
                         }
 
                         float t = radius - dist;
-                        speedMod = Mathf.Lerp(-0.2f, 1, t); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck.
+                        speedMod = Mathf.Lerp(-1f, 1, t); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck as they will rebound to zone edge.
                         player.GetComponent<FirstPersonController>().keyLocationSpeedMod = speedMod;
                     }
                     else
@@ -58,6 +68,11 @@ public class KeyLocationController : MonoBehaviour
                     }
                 }
             }
+        }
+
+        if (!isDestroyed && health <= 0)
+        {
+            DestroyLocation();
         }
     }
 
@@ -70,17 +85,29 @@ public class KeyLocationController : MonoBehaviour
         }
     }
 
-    public void loseHealth() //Run this when enemies are killed and reach location
+    public void LoseHealth() //Run this when enemies are killed and reach location
     {
         health -= 1;
-        
-        if (health <= 0)
+    }
+
+    private void DestroyLocation()
+    {
+        sphere.transform.localScale -= new Vector3(shrinkValue, shrinkValue, shrinkValue) * Time.deltaTime;
+
+        foreach (GameObject player in players)
         {
+            player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
+            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = true;
+        }
+
+        if (sphere.transform.localScale.x <= 0)
+        {
+            isDestroyed = true;
             sphere.SetActive(false);
-         
-            foreach (GameObject player in players)
+
+            for (int i = 0; i < clearSphereSpawnAmount; i++)
             {
-                player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
+                Instantiate(clearSphere, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y*4, gameObject.transform.position.z), Quaternion.identity);
             }
         }
     }

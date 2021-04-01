@@ -19,6 +19,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [NonSerialized] public float keyLocationSpeedMod = 1;
         [SerializeField] public bool isPlayerKeyLocXPositive;
         [SerializeField] public bool isPlayerKeyLocZPositive;
+        [SerializeField] public bool isPlayerInKeyLocZone = false;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
 
         [SerializeField] private float m_JumpSpeed;

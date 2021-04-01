@@ -104,8 +104,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 photonView.RPC("Blobify", RpcTarget.All);
             }
             
+
             if(distanceToKeyLocationToDespawn > Vector3.Distance(gameObject.FindClosestObject(keyLocations).transform.position, transform.position))
             {
+                gameObject.FindClosestObject(keyLocations).GetComponent<KeyLocationController>().LoseHealth();
                 PhotonNetwork.Destroy(gameObject);
             }
         }

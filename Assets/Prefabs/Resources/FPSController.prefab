@@ -81,6 +81,7 @@ MonoBehaviour:
   walkingBackMultiplier: 0.75
   isPlayerKeyLocXPositive: 0
   isPlayerKeyLocZPositive: 0
+  isPlayerInKeyLocZone: 0
   m_RunstepLenghten: 0.481
   m_JumpSpeed: 10
   m_StickToGroundForce: 10
