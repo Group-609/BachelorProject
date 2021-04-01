@@ -366,6 +366,7 @@ MonoBehaviour:
   - {fileID: 2573107618479437793}
   - {fileID: -9015750094166818286}
   - {fileID: 6669901714281856914}
+  - {fileID: 8271200732394199424}
   viewIdField: 0
   InstantiationId: 1
   isRuntimeInstantiated: 0
@@ -427,25 +428,25 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 1
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: RotateY
   - Type: 1
-    SynchronizeType: 2
+    SynchronizeType: 0
     Name: RotateX
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isMovingLeft
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isMovingRight
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isMovingForward
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: isMovingBackward
   - Type: 4
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: isDown
   m_SynchronizeLayers:
   - SynchronizeType: 1
@@ -502,6 +503,7 @@ GameObject:
   - component: {fileID: 5139315375763324033}
   - component: {fileID: 269680798666927274}
   - component: {fileID: 6854539093494353886}
+  - component: {fileID: 8271200732394199424}
   m_Layer: 10
   m_Name: FirstPersonCharacter
   m_TagString: MainCamera
@@ -674,6 +676,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 585375687ea1aa04d82db53a0c3ad155, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8271200732394199424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 0
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!95 &3565227718185368860
 Animator:
   serializedVersion: 3
