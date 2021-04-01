@@ -337,7 +337,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minMovementMultiplier: 0.5
   movementMultiplierFadeOutSpeed: 0.5
-  hurtTexture: {fileID: 2800000, guid: 7809c6a2e66da844dbe3ba588e939dea, type: 3}
+  hurtTexture1: {fileID: 2800000, guid: 0972feea8d6798d418a50e876d45e956, type: 3}
+  hurtTexture2: {fileID: 2800000, guid: b801006dbd21cd547a49ce26503ade08, type: 3}
+  hurtTexture3: {fileID: 2800000, guid: a6b85c00e73392149b154c3abe940a81, type: 3}
   textureFadeOutSpeed: 1
   hurtSound:
   - {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
