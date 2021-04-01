@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
+using Photon.Pun.Demo.PunBasics;
 
 [RequireComponent(typeof (FirstPersonController))]
 public class HurtEffect : MonoBehaviour
@@ -11,7 +12,9 @@ public class HurtEffect : MonoBehaviour
     public float minMovementMultiplier = 0.5f;
     public float movementMultiplierFadeOutSpeed = 0.5f;
 
-    public Texture hurtTexture;
+    public Texture hurtTexture1;
+    public Texture hurtTexture2;
+    public Texture hurtTexture3;
     public float textureFadeOutSpeed = 1f;
     private float opacity = 1f;
 
@@ -20,17 +23,20 @@ public class HurtEffect : MonoBehaviour
     private AudioSource audioSource;
 
     private FirstPersonController controller;
+    private PlayerManager player;
 
     private void Start()
     {
         controller = gameObject.GetComponent<FirstPersonController>();
         audioSource = gameObject.GetComponent<AudioSource>();
+        player = gameObject.GetComponent<PlayerManager>();
     }
 
     private IEnumerator ApplyEffect()
     {
         isDisplayingEffect = true;
         controller.speedMultiplier = minMovementMultiplier;
+        opacity = 1;
 
         while (opacity > 0 || controller.speedMultiplier < 1f)
         {
@@ -38,7 +44,6 @@ public class HurtEffect : MonoBehaviour
                 opacity -= textureFadeOutSpeed * Time.deltaTime;
             if (controller.speedMultiplier < 1f)
                 controller.speedMultiplier = Mathf.Max(minMovementMultiplier, controller.speedMultiplier + movementMultiplierFadeOutSpeed * Time.deltaTime);
-
             yield return null;
         }
         isDisplayingEffect = false;
@@ -54,7 +59,19 @@ public class HurtEffect : MonoBehaviour
             GUI.color = tempColor;
 
             //draw texture to GUI
-            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), hurtTexture, ScaleMode.StretchToFill);
+            if (player.health <= 33)
+            {
+                GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), hurtTexture3, ScaleMode.StretchToFill);
+            }
+            if (player.health <= 66)
+            {
+                GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), hurtTexture2, ScaleMode.StretchToFill);
+            }
+            if (player.health <= 100)
+            {
+                GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), hurtTexture1, ScaleMode.StretchToFill);
+            }
+
         }
     }
 
