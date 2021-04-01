@@ -247,7 +247,7 @@ namespace Photon.Pun.Demo.PunBasics
         //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
         public void HitPlayer(GameObject player, float healthChange)
         {
-            photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
         
         /// <summary>

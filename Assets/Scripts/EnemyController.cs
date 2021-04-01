@@ -101,7 +101,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             if (!isBlobified)
             {
                 audioSource.PlayOneShot(shrinkingClip);
-                photonView.RPC("Blobify", RpcTarget.All);
+                photonView.RPC(nameof(Blobify), RpcTarget.All);
             }
             
             if(distanceToKeyLocationToDespawn > Vector3.Distance(gameObject.FindClosestObject(keyLocations).transform.position, transform.position))
@@ -239,7 +239,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     {
         if(player.GetComponent<PlayerManager>().health > 0)
         {
-            photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
     }
 
