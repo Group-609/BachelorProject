@@ -5,6 +5,9 @@ using System;
 using System.Collections;
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
+using UnityStandardAssets.Characters.FirstPerson;
+
+using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -61,8 +64,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField]
     private float distanceToKeyLocationToDespawn = 1f;
 
-    private List<GameObject> keyLocations;
+    private GameObject assignedKeyLocation;
 
+    [NonSerialized]
+    public bool isAreaEnemy;
 
     //Used for estimating where player will be when projectile hits
     private Vector3 previousFramePlayerPosition;
@@ -70,7 +75,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        keyLocations = new List<GameObject>(GameObject.FindGameObjectsWithTag("KeyLocation"));
+        assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk");     //Walking animation
@@ -104,8 +109,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 photonView.RPC(nameof(Blobify), RpcTarget.All);
             }
 
-            GameObject closestKeyLocation = gameObject.FindClosestObject(keyLocations);
-            if(distanceToKeyLocationToDespawn > Vector3.Distance(closestKeyLocation.transform.position, transform.position))
+            if(distanceToKeyLocationToDespawn > Vector3.Distance(assignedKeyLocation.transform.position, transform.position))
             {
                 PhotonNetwork.Destroy(gameObject);
             }
@@ -113,14 +117,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (!isBlobified)
         {
             FindNavTarget();
-            //TODO fix null reference exception here
-            distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
-            if (distanceToPlayer <= minDistForMovement)
+            if (closestPlayer != null)
             {
-                SetSpeed(speed);
-                if (isAttackReady)
+                distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
+                if (distanceToPlayer <= minDistForMovement)
                 {
-                    StartCoroutine(AttackPlayer());
+                    SetSpeed(speed);
+                    if (isAttackReady)
+                    {
+                        StartCoroutine(AttackPlayer());
+                    }
                 }
             }
             else
@@ -136,7 +142,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         animator.SetBool("IsDead", true);
         isBlobified = true;
         agent.stoppingDistance = 0;
-        agent.destination = gameObject.FindClosestObject(keyLocations).transform.position;
+        if (isAreaEnemy)
+            agent.destination = assignedKeyLocation.transform.position;
+        else
+        {
+            agent.destination = new Vector3(Random.Range(0f, 1f), 0, Random.Range(0f, 1f)); // adjust this
+            Destroy(gameObject, 5f);
+        }
         SetSpeed(speed);
         //TODO?: set color to nice pink
     }
@@ -162,7 +174,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
         if (refreshTargetTimer <= 0)
         {
-            List<GameObject> alivePlayers = GetAlivePlayers();
+            List<GameObject> alivePlayers = GetPlayersToAttack();
 
             //If we found alive players, find the closest player, else make it null
             if (alivePlayers.Count != 0)  
@@ -176,12 +188,14 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    private List<GameObject> GetAlivePlayers()
+    private List<GameObject> GetPlayersToAttack()
     {
         return players.FindAll(
                    delegate (GameObject player)
                    {
-                       return player.GetComponent<PlayerManager>().health > 0;
+                       if (isAreaEnemy)
+                           return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone;
+                       else return player.GetComponent<PlayerManager>().health > 0;
                    }
                 );
     }

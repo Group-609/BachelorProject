@@ -14,14 +14,16 @@ public class KeyLocationController : MonoBehaviour
     public float speedMod;
     private int shrinkValue = 20;
     private bool isDestroyed = false;
+    private GameObject gameManager;
 
     private bool IsAreaFinished
     {
-        get => GameObject.Find("Game Manager").GetComponent<EnemySpawner>().IsLevelFinished;
+        get => gameManager.GetComponent<EnemySpawner>().IsLevelFinished;
     }
 
     void Start()
     {
+        gameManager = GameObject.Find("Game Manager");
         StartCoroutine(GetPlayers());
         sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
     }
