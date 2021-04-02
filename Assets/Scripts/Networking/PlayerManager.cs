@@ -155,11 +155,21 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            try{animator = GetComponent<Animator>();}
+            catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
-            animator = GetComponent<Animator>();
-            animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();
-            fpsController = GetComponent<FirstPersonController>();
-            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
+            try{animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();}
+            catch {Debug.LogError("Missing Animator Component on player hands Prefab.", this);}
+
+            try{fpsController = GetComponent<FirstPersonController>();}
+            catch{Debug.LogError("Missing fpsController.", this);}
+
+            if(gameManager == null)
+            {
+                gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+            }
+            try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
+            catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
         }
 
 
@@ -197,20 +207,18 @@ namespace Photon.Pun.Demo.PunBasics
                             ProcessInputs();
                         }
                     }
-
-                    if (IsFiring && !waitingToShoot)
-                    {
-                        AnimateShoot();
-                        StartCoroutine(ShootPaintball());
-                    }
                 }
                 else if (!fpsController.isStunned)
                 {
                     Stun();
                     animator.SetBool("isDown", true);
                     animatorHands.SetBool("isDown", true);
-
                 }   
+            }
+            if (IsFiring && !waitingToShoot && health > 0f)
+            {
+                AnimateShoot();
+                StartCoroutine(ShootPaintball());
             }
         }
 

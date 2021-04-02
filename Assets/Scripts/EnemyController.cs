@@ -118,8 +118,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (!isBlobified)
         {
-            if (closestPlayer != null)
+            FindNavTarget();
+            if(closestPlayer == null)   //if no player is found, chill for a bit
             {
+                SetSpeed(0);
+            }
+            else
+            { 
                 distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
                 if (distanceToPlayer <= minDistForMovement)
                 {
@@ -129,12 +134,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                         StartCoroutine(AttackPlayer());
                     }
                 }
-                else SetSpeed(0);
+                else
+                {
+                    SetSpeed(0);
+                }
             }
-            else
-            {
-                SetSpeed(0);
-            }
+            
+            
         }
     }
 
