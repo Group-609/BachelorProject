@@ -14,7 +14,11 @@ public class ConditionSetter : MonoBehaviour
     public void GetCondition(string condition)
     {
         this.condition = condition;
-        Debug.LogError("Got condition: " + condition);
+        if(condition == "Failed to receive condition from server!")
+        {
+            Debug.LogError(condition + " Please contant the developers!");
+        }
+        
     }
 
     public bool IsDDACondition()
