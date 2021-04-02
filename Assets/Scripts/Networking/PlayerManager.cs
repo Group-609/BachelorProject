@@ -157,9 +157,25 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             animator = GetComponent<Animator>();
+            if(animator == null)
+            {
+                Debug.LogError("<Color=Red><b>Missing</b></Color> Animator Component on player Prefab.", this);
+            }
             animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();
+            if (animatorHands == null)
+            {
+                Debug.LogError("<Color=Red><b>Missing</b></Color> Animator Component on player hands Prefab.", this);
+            }
             fpsController = GetComponent<FirstPersonController>();
+            if (fpsController == null)
+            {
+                Debug.LogError("<Color=Red><b>Missing</b></Color> fpsController.", this);
+            }
             respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
+            if (respawnTransform == null)
+            {
+                Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);
+            }
         }
 
 
@@ -197,20 +213,18 @@ namespace Photon.Pun.Demo.PunBasics
                             ProcessInputs();
                         }
                     }
-
-                    if (IsFiring && !waitingToShoot)
-                    {
-                        AnimateShoot();
-                        StartCoroutine(ShootPaintball());
-                    }
                 }
                 else if (!fpsController.isStunned)
                 {
                     Stun();
                     animator.SetBool("isDown", true);
                     animatorHands.SetBool("isDown", true);
-
                 }   
+            }
+            if (IsFiring && !waitingToShoot && health > 0f)
+            {
+                AnimateShoot();
+                StartCoroutine(ShootPaintball());
             }
         }
 
