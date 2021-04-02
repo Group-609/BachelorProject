@@ -38,6 +38,7 @@ namespace Photon.Pun.Demo.PunBasics
 		#region Private Fields
 
 		public const byte respawnEvent = 1;
+		public const byte destroyKeyLocationEvent = 2;
 
 		private GameObject instance;
 
