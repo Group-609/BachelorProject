@@ -35,14 +35,14 @@ public class KeyLocationController : MonoBehaviour
             {
                 if (player.FindClosestObject("KeyLocation") == gameObject) //Only run if this is the closest keyLocation.
                 {
-                    float dist = Vector3.Distance(player.transform.position, transform.position);
+                    float distToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
-                    if (!player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && dist <= radius)
+                    if (!player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && distToPlayer <= radius)
                     {
                         player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = true;
                     }
 
-                    if (player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && dist > radius - 1)
+                    if (player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && distToPlayer > radius - 1)
                     {
                         if (player.transform.position.x < transform.position.x) //Look at what side of the key location the player is at, so we only stop movement in the wanted direction.
                         {
@@ -62,8 +62,8 @@ public class KeyLocationController : MonoBehaviour
                             player.GetComponent<FirstPersonController>().isPlayerKeyLocZPositive = false;
                         }
 
-                        float t = radius - dist;
-                        speedMod = Mathf.Lerp(-1f, 1, t); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck as they will rebound to zone edge.
+                        float radiusToPlayerDistDiff = radius - distToPlayer;
+                        speedMod = Mathf.Lerp(-1f, 1, radiusToPlayerDistDiff); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck as they will rebound to zone edge.
                         player.GetComponent<FirstPersonController>().keyLocationSpeedMod = speedMod;
                     }
                     else
@@ -74,8 +74,7 @@ public class KeyLocationController : MonoBehaviour
                 }
             }
         }
-
-        if (!isDestroyed && health <= 0)
+        else if (!isDestroyed)
         {
             DestroyLocation();
         }
