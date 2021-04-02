@@ -137,7 +137,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             // for now we just take the last progress point for spawning in process (should probably be changed later, but it fits the current design)
             EnemySpawnPoint spawnPoint = enemyProgressSpawnPoints[activeSpawnPointIndex].FindLast(delegate (EnemySpawnPoint point) { return true; });
-            if (!spawnPoint.IsEnemyTooClose())
+            if (!spawnPoint.IsEnemyOrPlayerTooClose())
             {
                 InstantiateEnemy(spawnPoint, false);
                 enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;

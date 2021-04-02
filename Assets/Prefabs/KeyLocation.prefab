@@ -45,13 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7703f7bbbe045ae4c8c5b77691a514f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  areaIndex: 0
   radius: 0
   sphere: {fileID: 3549167572352077796}
   clearSphere: {fileID: 7324278031975958964, guid: ba56b467c4ceafc46a377431fd8d74d0, type: 3}
   clearSphereSpawnAmount: 15
   players: []
   speedMod: 0
-  health: 10
 --- !u!1 &3549167572352077796
 GameObject:
   m_ObjectHideFlags: 0
@@ -63,6 +63,8 @@ GameObject:
   - component: {fileID: 385493603387202879}
   - component: {fileID: 6653362127456103515}
   - component: {fileID: 8767871226186617026}
+  - component: {fileID: 5018882665100039450}
+  - component: {fileID: 899819281911783214}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -133,6 +135,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &5018882665100039450
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3549167572352077796}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &899819281911783214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3549167572352077796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78142f2229110bf41a4f39f6694a904b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7232753103619010616
 PrefabInstance:
   m_ObjectHideFlags: 0

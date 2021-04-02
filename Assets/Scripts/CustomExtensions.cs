@@ -33,7 +33,7 @@ public static class CustomExtensions
         return spawnPointList.FindAll(
             delegate(EnemySpawnPoint spawnPoint)
             {
-                return !spawnPoint.IsEnemyTooClose();
+                return !spawnPoint.IsEnemyOrPlayerTooClose();
             }
         );
     }
