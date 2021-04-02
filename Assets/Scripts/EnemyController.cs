@@ -113,20 +113,28 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (!isBlobified)
         {
             FindNavTarget();
-            //TODO fix null reference exception here
-            distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
-            if (distanceToPlayer <= minDistForMovement)
-            {
-                SetSpeed(speed);
-                if (isAttackReady)
-                {
-                    StartCoroutine(AttackPlayer());
-                }
-            }
-            else
+            if(closestPlayer == null)   //if no player is found, chill for a bit
             {
                 SetSpeed(0);
             }
+            else
+            { 
+                distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
+                if (distanceToPlayer <= minDistForMovement)
+                {
+                    SetSpeed(speed);
+                    if (isAttackReady)
+                    {
+                        StartCoroutine(AttackPlayer());
+                    }
+                }
+                else
+                {
+                    SetSpeed(0);
+                }
+            }
+            
+            
         }
     }
 
