@@ -17,7 +17,7 @@ public class KeyLocationController : MonoBehaviour
 
     private bool IsAreaFinished
     {
-        get => GameObject.Find("GameManager").GetComponent<EnemySpawner>().IsLevelFinished;
+        get => GameObject.Find("Game Manager").GetComponent<EnemySpawner>().IsLevelFinished;
     }
 
     void Start()
