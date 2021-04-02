@@ -12,7 +12,6 @@ public class KeyLocationController : MonoBehaviour
     public int clearSphereSpawnAmount;
     public List<GameObject> players = new List<GameObject>();
     public float speedMod;
-    public int health = 10;
     private int shrinkValue = 20;
     private bool isDestroyed = false;
 
