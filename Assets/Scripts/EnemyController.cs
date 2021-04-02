@@ -56,8 +56,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     private NavMeshAgent agent;
     private Animator animator;
-    private int refreshTargetTimer = 0;
-    public int refreshTargetTimerLimit = 50;
+    public int refreshTargetTimeSec = 1;
     [System.NonSerialized]
     public bool isBlobified = false;
 
@@ -97,6 +96,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
         audioSource = GetComponent<AudioSource>();
         audioSource.PlayOneShot(spawningClip);
+
+        // we want to find nav target not every frame because it's computationally a bit heavy
+        InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec); 
     }
 
     void Update()
@@ -108,15 +110,14 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 audioSource.PlayOneShot(shrinkingClip);
                 photonView.RPC(nameof(Blobify), RpcTarget.All);
             }
-
-            if(distanceToKeyLocationToDespawn > Vector3.Distance(assignedKeyLocation.transform.position, transform.position))
+            
+            if(isAreaEnemy && distanceToKeyLocationToDespawn > Vector3.Distance(assignedKeyLocation.transform.position, transform.position))
             {
                 PhotonNetwork.Destroy(gameObject);
             }
         }
         if (!isBlobified)
         {
-            FindNavTarget();
             if (closestPlayer != null)
             {
                 distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
@@ -147,10 +148,17 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             agent.destination = new Vector3(Random.Range(0f, 1f), 0, Random.Range(0f, 1f)); // adjust this
-            Destroy(gameObject, 5f);
+            StartCoroutine(DestroyEnemyWithDelay());
         }
         SetSpeed(speed);
+        CancelInvoke(nameof(FindNavTarget));
         //TODO?: set color to nice pink
+    }
+
+    private IEnumerator DestroyEnemyWithDelay()
+    {
+        yield return new WaitForSeconds(5f);
+        PhotonNetwork.Destroy(gameObject);
     }
 
     void FixedUpdate()
@@ -169,23 +177,15 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void FindNavTarget()
     {
-        refreshTargetTimer -= 1;
+        List<GameObject> alivePlayers = GetPlayersToAttack();
 
-        //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
-        if (refreshTargetTimer <= 0)
+        //If we found alive players, find the closest player, else make it null
+        if (alivePlayers.Count != 0)
         {
-            List<GameObject> alivePlayers = GetPlayersToAttack();
-
-            //If we found alive players, find the closest player, else make it null
-            if (alivePlayers.Count != 0)  
-            {
-                closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
-                agent.destination = closestPlayer.position;
-            }
-            else closestPlayer = null;
-            
-            refreshTargetTimer = refreshTargetTimerLimit;
+            closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
+            agent.destination = closestPlayer.position;
         }
+        else closestPlayer = null;
     }
 
     private List<GameObject> GetPlayersToAttack()
