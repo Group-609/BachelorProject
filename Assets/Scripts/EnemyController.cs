@@ -129,6 +129,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                         StartCoroutine(AttackPlayer());
                     }
                 }
+                else SetSpeed(0);
             }
             else
             {
