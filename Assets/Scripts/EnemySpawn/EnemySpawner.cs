@@ -102,7 +102,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             foreach (EnemySpawnPoint spawnPoint in enemyAreaSpawnPoints[activeSpawnPointIndex])
             {
-                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                InstantiateEnemy(spawnPoint, true);
                 enemiesLeftToSpawnForArea--;
             }
             yield return new WaitForSeconds(spawnIntervalForArea);
@@ -111,7 +111,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             foreach (EnemySpawnPoint spawnPoint in enemyProgressSpawnPoints[activeSpawnPointIndex])
             {
-                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                InstantiateEnemy(spawnPoint, false);
                 enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
             }
             yield return new WaitForSeconds(spawnIntervalForProgress);
@@ -128,7 +128,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             if (validSpawnPoints.Count > 0)
             {
                 EnemySpawnPoint spawnPoint = validSpawnPoints[UnityEngine.Random.Range(0, validSpawnPoints.Count)];
-                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                InstantiateEnemy(spawnPoint, true);
                 enemiesLeftToSpawnForArea--;
                 yield return new WaitForSeconds(spawnIntervalForArea);
             }
@@ -137,15 +137,21 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             // for now we just take the last progress point for spawning in process (should probably be changed later, but it fits the current design)
             EnemySpawnPoint spawnPoint = enemyProgressSpawnPoints[activeSpawnPointIndex].FindLast(delegate (EnemySpawnPoint point) { return true; });
-            if (!spawnPoint.IsEnemyTooClose())
+            if (!spawnPoint.IsEnemyOrPlayerTooClose())
             {
-                PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+                InstantiateEnemy(spawnPoint, false);
                 enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
                 isInitialSpawnMade = !IsProgressCleared;
                 yield return new WaitForSeconds(spawnIntervalForProgress);
             }
         }
         isEnemySpawning = false;
+    }
+
+    private void InstantiateEnemy(EnemySpawnPoint spawnPoint, bool isAreaEnemy)
+    {
+        GameObject enemy = PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
+        enemy.GetComponent<EnemyController>().isAreaEnemy = isAreaEnemy;
     }
 
     private void ChangeEnemyCount(int addToEnemyCount)
