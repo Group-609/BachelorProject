@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: radius
       value: 45
       objectReference: {fileID: 0}
+    - target: {fileID: 1992424575875697468, guid: 049cb76b34c984f4baaedd891fdebfed, type: 3}
+      propertyPath: areaIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5014250319179593954, guid: 049cb76b34c984f4baaedd891fdebfed, type: 3}
       propertyPath: m_LocalPosition.x
       value: -125.2
@@ -137,6 +141,10 @@ PrefabInstance:
     - target: {fileID: 1992424575875697468, guid: 049cb76b34c984f4baaedd891fdebfed, type: 3}
       propertyPath: radius
       value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 1992424575875697468, guid: 049cb76b34c984f4baaedd891fdebfed, type: 3}
+      propertyPath: areaIndex
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5014250319179593954, guid: 049cb76b34c984f4baaedd891fdebfed, type: 3}
       propertyPath: m_LocalPosition.x

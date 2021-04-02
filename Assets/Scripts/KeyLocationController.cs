@@ -6,6 +6,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class KeyLocationController : MonoBehaviour
 {
+    public int areaIndex;
     public float radius;
     public GameObject sphere;
     public GameObject clearSphere;
@@ -14,23 +15,17 @@ public class KeyLocationController : MonoBehaviour
     public float speedMod;
     private int shrinkValue = 20;
     private bool isDestroyed = false;
-    private GameObject gameManager;
 
-    private bool IsAreaFinished
-    {
-        get => gameManager.GetComponent<EnemySpawner>().IsLevelFinished;
-    }
 
     void Start()
     {
-        gameManager = GameObject.Find("Game Manager");
         StartCoroutine(GetPlayers());
         sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
     }
 
     void Update()
     {
-        if (!IsAreaFinished)
+        if (LevelProgressionCondition.Instance.currentLevel == areaIndex)
         {
             foreach (GameObject player in players)
             {
@@ -75,7 +70,7 @@ public class KeyLocationController : MonoBehaviour
                 }
             }
         }
-        else if (!isDestroyed)
+        else if (LevelProgressionCondition.Instance.currentLevel > areaIndex && !isDestroyed)
         {
             DestroyLocation();
         }
