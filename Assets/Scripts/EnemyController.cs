@@ -101,10 +101,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             if (!isBlobified)
             {
                 audioSource.PlayOneShot(shrinkingClip);
-                photonView.RPC("Blobify", RpcTarget.All);
+                photonView.RPC(nameof(Blobify), RpcTarget.All);
             }
-            
-            if(distanceToKeyLocationToDespawn > Vector3.Distance(gameObject.FindClosestObject(keyLocations).transform.position, transform.position))
+
+            GameObject closestKeyLocation = gameObject.FindClosestObject(keyLocations);
+            if(distanceToKeyLocationToDespawn > Vector3.Distance(closestKeyLocation.transform.position, transform.position))
             {
                 PhotonNetwork.Destroy(gameObject);
             }
@@ -112,6 +113,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (!isBlobified)
         {
             FindNavTarget();
+            //TODO fix null reference exception here
             distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
             if (distanceToPlayer <= minDistForMovement)
             {
@@ -238,7 +240,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     {
         if(player.GetComponent<PlayerManager>().health > 0)
         {
-            photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
     }
 

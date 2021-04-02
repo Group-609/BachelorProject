@@ -48,6 +48,10 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Time between 2 shots")]
         public float shootWaitTime = 0.9f;
 
+        [Header("DDA system variables")]
+        [System.NonSerialized]
+        public int stunCount;
+
         [Header("Sounds")]
 
         public AudioClip shootingClip;
@@ -63,6 +67,7 @@ namespace Photon.Pun.Demo.PunBasics
         //where the player will respawn after both players get stunned
         [System.NonSerialized]
         public Transform respawnTransform;
+
         #endregion
 
         #region Private Fields
@@ -230,6 +235,7 @@ namespace Photon.Pun.Demo.PunBasics
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
             transform.position = respawnTransform.position;
+            GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
             animatorHands.SetBool("isDown", false);
@@ -240,7 +246,7 @@ namespace Photon.Pun.Demo.PunBasics
         //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
         public void HitPlayer(GameObject player, float healthChange)
         {
-            photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
         
         /// <summary>
@@ -251,7 +257,20 @@ namespace Photon.Pun.Demo.PunBasics
         {
             PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
         }
-        
+
+        [PunRPC]
+        public void Stunned(int targetViewID)
+        {
+            GameObject playerObject = PhotonView.Find(targetViewID).gameObject;
+            playerObject.GetComponent<PlayerManager>().stunCount++;
+            //Debug.Log("Someone is stunned! Player's stun count is " + stunCount);
+            if (photonView.IsMine)
+            {
+                StunCondition.Instance.localPlayerStuntCount++;
+                //Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
+            }
+        }
+
         //Function to call when an enemy is hit. 
         // enemy - the enemy we hit
         // healthChange - the effect on the enemies health (negative values for hurting)
@@ -294,6 +313,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
+            photonView.RPC(nameof(Stunned), RpcTarget.All, GetComponent<PhotonView>().ViewID);
         }
 
         /// <summary>

@@ -46,7 +46,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     {
         get => !isEnemySpawning && GameObject.FindGameObjectsWithTag("Enemy").Length < maxEnemyCount && (!IsProgressCleared || !IsAreaCleared);
     }
-    private bool IsLevelFinished
+    public bool IsLevelFinished
     {
         get => IsProgressCleared && IsAreaCleared && GameObject.FindGameObjectsWithTag("Enemy").Length == 0;
     }

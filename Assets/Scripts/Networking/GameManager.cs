@@ -14,6 +14,7 @@ using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Collections;
+using System.Linq;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -48,6 +49,9 @@ namespace Photon.Pun.Demo.PunBasics
 		[Tooltip("Check if we should receive condition from the server")]
 		[SerializeField]
 		private bool isLiveTest = true;
+		[Tooltip("Period at which the time based DDAAs are triggered")]
+		[SerializeField]
+		private float timeBasedDDAAPeriod;
 
 		[Tooltip("The prefab to use for representing the player")]
         [SerializeField]
@@ -111,6 +115,8 @@ namespace Photon.Pun.Demo.PunBasics
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
 				}
 			}
+
+			InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
 		}
 
 		/// <summary>
@@ -223,8 +229,20 @@ namespace Photon.Pun.Demo.PunBasics
 			PhotonNetwork.LoadLevel("Master");
 		}
 
-		#endregion
+        #endregion
 
-	}
+        #region DDA System methods
+
+		private void TriggerTimeBasedDDAAs()
+		{
+			Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
+			StunCondition.Instance.UpdateConditionalValue(GameObject.FindGameObjectsWithTag("Player").ToList());
+
+			//TODO: Implement updating DDAAs here, which are time-based
+		}
+
+        #endregion
+
+    }
 
 }
