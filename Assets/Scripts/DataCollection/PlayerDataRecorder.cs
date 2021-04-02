@@ -48,6 +48,14 @@ public class PlayerDataRecorder : MonoBehaviour
         DataContainer data = new DataContainer();
         data.frames = frames.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
+        if (DDAEngine.isDynamicAdjustmentEnabled)
+        {
+            data.condition = "DDA";
+        }
+        else
+        {
+            data.condition = "Control";
+        }
         return JsonUtility.ToJson(data);
     }
 }
@@ -56,6 +64,7 @@ public class PlayerDataRecorder : MonoBehaviour
 class DataContainer{
     public string sessionStartTime;
     public FrameData[] frames;
+    public string condition;
 }
 
 struct JsonDateTime

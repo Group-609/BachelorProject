@@ -46,6 +46,9 @@ namespace Photon.Pun.Demo.PunBasics
 		[SerializeField]
 		private bool IsDDAEnabled = true;
 
+		[Tooltip("Check if we should receive condition from the server")]
+		[SerializeField]
+		private bool isLiveTest = true;
 		[Tooltip("Period at which the time based DDAAs are triggered")]
 		[SerializeField]
 		private float timeBasedDDAAPeriod;
@@ -63,7 +66,15 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private void Awake()
 		{
+			GameObject conditionSetter = GameObject.Find("ConditionSetter");
+			if (isLiveTest && conditionSetter != null)
+            {
+				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
+				Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
+			}
 			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
+			Debug.LogError("Is DDA condition - " + IsDDAEnabled);
+			
 		}
 
 		/// <summary>
