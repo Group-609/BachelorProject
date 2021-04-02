@@ -164,6 +164,10 @@ namespace Photon.Pun.Demo.PunBasics
             try{fpsController = GetComponent<FirstPersonController>();}
             catch{Debug.LogError("Missing fpsController.", this);}
 
+            if(gameManager == null)
+            {
+                gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+            }
             try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
             catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
         }
