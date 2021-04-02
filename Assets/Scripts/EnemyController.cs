@@ -103,11 +103,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                 audioSource.PlayOneShot(shrinkingClip);
                 photonView.RPC("Blobify", RpcTarget.All);
             }
-            
-            GameObject closestKeyLocation = gameObject.FindClosestObject(keyLocations)
+
+            GameObject closestKeyLocation = gameObject.FindClosestObject(keyLocations);
             if(distanceToKeyLocationToDespawn > Vector3.Distance(closestKeyLocation.transform.position, transform.position))
             {
-                closestKeyLocation.GetComponent<KeyLocationController>().LoseHealth();
                 PhotonNetwork.Destroy(gameObject);
             }
         }

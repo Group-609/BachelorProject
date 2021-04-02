@@ -16,15 +16,20 @@ public class KeyLocationController : MonoBehaviour
     private int shrinkValue = 20;
     private bool isDestroyed = false;
 
+    private bool IsAreaFinished
+    {
+        get => GameObject.Find("GameManager").GetComponent<EnemySpawner>().IsLevelFinished;
+    }
+
     void Start()
     {
         StartCoroutine(GetPlayers());
-        sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius*2) + 1); //+1 to reduce screen clipping with sphere
+        sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
     }
 
     void Update()
     {
-        if (health > 0)
+        if (!IsAreaFinished)
         {
             foreach (GameObject player in players)
             {
@@ -83,11 +88,6 @@ public class KeyLocationController : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             players.AddRange(GameObject.FindGameObjectsWithTag("Player"));
         }
-    }
-
-    public void LoseHealth() //Run this when enemies are killed and reach location
-    {
-        health -= 1;
     }
 
     private void DestroyLocation()
