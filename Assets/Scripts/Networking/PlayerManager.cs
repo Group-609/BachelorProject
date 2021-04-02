@@ -155,27 +155,17 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            try{animator = GetComponent<Animator>();}
+            catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
-            animator = GetComponent<Animator>();
-            if(animator == null)
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> Animator Component on player Prefab.", this);
-            }
-            animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();
-            if (animatorHands == null)
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> Animator Component on player hands Prefab.", this);
-            }
-            fpsController = GetComponent<FirstPersonController>();
-            if (fpsController == null)
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> fpsController.", this);
-            }
-            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
-            if (respawnTransform == null)
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);
-            }
+            try{animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();}
+            catch {Debug.LogError("Missing Animator Component on player hands Prefab.", this);}
+
+            try{fpsController = GetComponent<FirstPersonController>();}
+            catch{Debug.LogError("Missing fpsController.", this);}
+
+            try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
+            catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
         }
 
 
