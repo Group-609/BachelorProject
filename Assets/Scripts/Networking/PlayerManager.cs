@@ -49,8 +49,6 @@ namespace Photon.Pun.Demo.PunBasics
         public float shootWaitTime = 0.9f;
 
         [Header("DDA system variables")]
-        public int stunConditionTrackPeriod = 120000;
-
         [System.NonSerialized]
         public int stunCount;
 
@@ -265,7 +263,7 @@ namespace Photon.Pun.Demo.PunBasics
             GameObject playerObject = PhotonView.Find(targetViewID).gameObject;
             playerObject.GetComponent<PlayerManager>().stunCount++;
             //Debug.Log("Someone is stunned! Player's stun count is " + stunCount);
-            if (playerObject == gameObject)
+            if (photonView.IsMine)
             {
                 StunCondition.Instance.localPlayerStuntCount++;
                 //Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
