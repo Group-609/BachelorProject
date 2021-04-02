@@ -320,6 +320,7 @@ MonoBehaviour:
   paintballDamage: 10
   respawnTime: 0.5
   shootWaitTime: 1
+  stunConditionTrackPeriod: 120000
   shootingClip: {fileID: 8300000, guid: dadcbab627eabef4e999297f97faa002, type: 3}
   gameManager: {fileID: 0}
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}

@@ -264,11 +264,11 @@ namespace Photon.Pun.Demo.PunBasics
         {
             GameObject playerObject = PhotonView.Find(targetViewID).gameObject;
             playerObject.GetComponent<PlayerManager>().stunCount++;
-            Debug.Log("Someone is stunned! Player's stun count is " + stunCount);
+            //Debug.Log("Someone is stunned! Player's stun count is " + stunCount);
             if (playerObject == gameObject)
             {
                 StunCondition.Instance.localPlayerStuntCount++;
-                Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
+                //Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
             }
         }
 
