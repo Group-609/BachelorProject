@@ -174,8 +174,9 @@ namespace Photon.Pun.Demo.PunBasics
 		[PunRPC]
 		public void SetCondition(bool IsDDAEnabled)
         {
+			this.IsDDAEnabled = IsDDAEnabled;
 			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
-			Debug.LogError("Is DDA condition - " + IsDDAEnabled);
+			Debug.LogError("Condition set by master client - " + IsDDAEnabled);
 		}
 
 		/// <summary>
