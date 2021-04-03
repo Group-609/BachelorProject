@@ -107,7 +107,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (!isBlobified)
             {
-                audioSource.PlayOneShot(shrinkingClip);
                 photonView.RPC(nameof(Blobify), RpcTarget.All);
             }
             
@@ -118,7 +117,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (!isBlobified)
         {
-            FindNavTarget();
+            if(currentHealth < 0)
+            {
+                audioSource.PlayOneShot(shrinkingClip);
+            }
             if(closestPlayer == null)   //if no player is found, chill for a bit
             {
                 SetSpeed(0);
@@ -139,14 +141,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                     SetSpeed(0);
                 }
             }
-            
-            
         }
     }
 
     [PunRPC]
     void Blobify()
     {
+        Debug.LogError("Killed area enemy - " + isAreaEnemy);
         animator.SetBool("IsDead", true);
         isBlobified = true;
         agent.stoppingDistance = 0;
@@ -203,7 +204,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                    delegate (GameObject player)
                    {
                        if (isAreaEnemy)
-                           return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone;
+                           return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<PlayerManager>().isPlayerInKeyLocZone;
                        else return player.GetComponent<PlayerManager>().health > 0;
                    }
                 );

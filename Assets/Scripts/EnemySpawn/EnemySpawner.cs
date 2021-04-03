@@ -151,7 +151,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private void InstantiateEnemy(EnemySpawnPoint spawnPoint, bool isAreaEnemy)
     {
         GameObject enemy = PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
-        enemy.GetComponent<EnemyController>().isAreaEnemy = isAreaEnemy;
+        enemy.GetComponent<EnemyController>().isAreaEnemy = isAreaEnemy;    //Might not be set on client side
     }
 
     private void ChangeEnemyCount(int addToEnemyCount)

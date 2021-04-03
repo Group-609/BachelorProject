@@ -738,7 +738,7 @@ MonoBehaviour:
   shootClip: {fileID: 8300000, guid: 27a18335be5d36845a4ebe81eefc9761, type: 3}
   roarClip: {fileID: 8300000, guid: cd3c67e3f6f47db4e89afd5dc64b6a1b, type: 3}
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
-  refreshTargetTimerLimit: 20
+  refreshTargetTimeSec: 1
   distanceToKeyLocationToDespawn: 1
 --- !u!195 &5732855970157686023
 NavMeshAgent:

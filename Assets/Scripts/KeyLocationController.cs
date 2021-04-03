@@ -8,6 +8,7 @@ using Photon.Realtime;
 using ExitGames.Client.Photon;
 using System.Linq;
 
+
 public class KeyLocationController : MonoBehaviour
 {
     public int areaIndex;
@@ -38,43 +39,49 @@ public class KeyLocationController : MonoBehaviour
             {
                 foreach (GameObject player in players)
                 {
+                    PlayerManager playerManager = player.GetComponent<PlayerManager>();
+                    FirstPersonController firstPersonController = player.GetComponent<FirstPersonController>();
                     if (player.FindClosestObject("KeyLocation") == gameObject) //Only run if this is the closest keyLocation.
                     {
                         float distToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
-                        if (!player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && distToPlayer <= radius)
+                        if (!playerManager.isPlayerInKeyLocZone && distToPlayer <= radius)
                         {
-                            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = true;
+                            playerManager.isPlayerInKeyLocZone = true;
+                            if (firstPersonController.isActiveAndEnabled)
+                                firstPersonController.isPlayerInKeyLocZone = true;
                         }
-
-                        if (player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && distToPlayer > radius - 1)
+                        if (firstPersonController.isActiveAndEnabled)
                         {
-                            if (player.transform.position.x < transform.position.x) //Look at what side of the key location the player is at, so we only stop movement in the wanted direction.
+                            if (playerManager.isPlayerInKeyLocZone && distToPlayer > radius - 1)
                             {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocXPositive = true;
+                                if (player.transform.position.x < transform.position.x) //Look at what side of the key location the player is at, so we only stop movement in the wanted direction.
+                                {
+                                    firstPersonController.isPlayerKeyLocXPositive = true;
+                                }
+                                else
+                                {
+                                    firstPersonController.isPlayerKeyLocXPositive = false;
+                                }
+
+                                if (player.transform.position.z < transform.position.z)
+                                {
+                                    firstPersonController.isPlayerKeyLocZPositive = true;
+                                }
+                                else
+                                {
+                                    firstPersonController.isPlayerKeyLocZPositive = false;
+                                }
+
+                                float radiusToPlayerDistDiff = radius - distToPlayer;
+                                speedMod = Mathf.Lerp(-1f, 1, radiusToPlayerDistDiff); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck as they will rebound to zone edge.
+                                firstPersonController.keyLocationSpeedMod = speedMod;
                             }
                             else
                             {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocXPositive = false;
+                                speedMod = 1;
+                                firstPersonController.keyLocationSpeedMod = speedMod;
                             }
-
-                            if (player.transform.position.z < transform.position.z)
-                            {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocZPositive = true;
-                            }
-                            else
-                            {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocZPositive = false;
-                            }
-
-                            float radiusToPlayerDistDiff = radius - distToPlayer;
-                            speedMod = Mathf.Lerp(-1f, 1, radiusToPlayerDistDiff); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck as they will rebound to zone edge.
-                            player.GetComponent<FirstPersonController>().keyLocationSpeedMod = speedMod;
-                        }
-                        else
-                        {
-                            speedMod = 1;
-                            player.GetComponent<FirstPersonController>().keyLocationSpeedMod = speedMod;
                         }
                     }
                 }
@@ -109,7 +116,8 @@ public class KeyLocationController : MonoBehaviour
         foreach (GameObject player in players)
         {
             player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
-            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
+            player.GetComponent<PlayerManager>().isPlayerInKeyLocZone = false;
+            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = true;
         }
         while (sphere.transform.localScale.x > 0)
         {

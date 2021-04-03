@@ -11,6 +11,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System;
 using UnityStandardAssets.Characters.FirstPerson;
 using Photon.Pun;
 using ExitGames.Client.Photon;
@@ -50,7 +51,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float shootWaitTime = 0.9f;
 
         [Header("DDA system variables")]
-        [System.NonSerialized]
+        [NonSerialized]
         public int stunCount;
 
         [Header("Sounds")]
@@ -66,8 +67,10 @@ namespace Photon.Pun.Demo.PunBasics
         public static GameObject LocalPlayerInstance;
 
         //where the player will respawn after both players get stunned
-        [System.NonSerialized]
+        [NonSerialized]
         public Transform respawnTransform;
+
+        [NonSerialized] public bool isPlayerInKeyLocZone = false;   //is this player in a key location zone
 
         #endregion
 
