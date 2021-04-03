@@ -14,11 +14,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private bool m_IsWalking;
         private float m_WalkSpeed;
         [SerializeField] private float m_RunSpeed;
-        public float speedMultiplier = 1f;
+        [NonSerialized] public float speedMultiplier = 1f;
         [SerializeField] private float walkingBackMultiplier = 0.5f;
         [NonSerialized] public float keyLocationSpeedMod = 1;
-        [SerializeField] public bool isPlayerKeyLocXPositive;
-        [SerializeField] public bool isPlayerKeyLocZPositive;
+        [NonSerialized] public bool isPlayerKeyLocXPositive;
+        [NonSerialized] public bool isPlayerKeyLocZPositive;
+        [NonSerialized] public bool isPlayerInKeyLocZone = false;
         [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
 
         [SerializeField] private float m_JumpSpeed;
@@ -130,13 +131,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 m_MoveDir.x = desiredMove.x * speed;
                 m_MoveDir.z = desiredMove.z * speed;
 
-                if (isPlayerKeyLocXPositive && m_MoveDir.x < 0 || !isPlayerKeyLocXPositive && m_MoveDir.x > 0)
+                if (isPlayerInKeyLocZone)
                 {
-                    m_MoveDir.x *= keyLocationSpeedMod;
-                }
-                if (isPlayerKeyLocZPositive && m_MoveDir.z < 0 || !isPlayerKeyLocZPositive && m_MoveDir.z > 0)
-                {
-                    m_MoveDir.z *= keyLocationSpeedMod;
+                    if (isPlayerKeyLocXPositive && m_MoveDir.x < 0 || !isPlayerKeyLocXPositive && m_MoveDir.x > 0)
+                    {
+                        m_MoveDir.x *= keyLocationSpeedMod;
+                    }
+                    if (isPlayerKeyLocZPositive && m_MoveDir.z < 0 || !isPlayerKeyLocZPositive && m_MoveDir.z > 0)
+                    {
+                        m_MoveDir.z *= keyLocationSpeedMod;
+                    }
                 }
             }
 

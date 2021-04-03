@@ -25,7 +25,7 @@ public class PlayerDataRecorder : MonoBehaviour
 
     //Does not depend on framerate
     void FixedUpdate()
-    {
+    {   
         counter++;
         if (counter % framesBetweenRecordTakes == 0)
         {
@@ -33,11 +33,15 @@ public class PlayerDataRecorder : MonoBehaviour
         }
         if (counter % framesBetweenSavingOfData == 0)
         {
+            #if UNITY_WEBGL
             Save(GetJsonToSend());
+            #endif
         }
         if (testEnded)
         {
+            #if UNITY_WEBGL
             Save(GetJsonToSend());
+            #endif
             this.enabled = false;
         }
     }
@@ -48,6 +52,14 @@ public class PlayerDataRecorder : MonoBehaviour
         DataContainer data = new DataContainer();
         data.frames = frames.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
+        if (DDAEngine.isDynamicAdjustmentEnabled)
+        {
+            data.condition = "DDA";
+        }
+        else
+        {
+            data.condition = "Control";
+        }
         return JsonUtility.ToJson(data);
     }
 }
@@ -56,6 +68,7 @@ public class PlayerDataRecorder : MonoBehaviour
 class DataContainer{
     public string sessionStartTime;
     public FrameData[] frames;
+    public string condition;
 }
 
 struct JsonDateTime

@@ -15,6 +15,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using System.Linq;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -48,6 +49,10 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Time between 2 shots")]
         public float shootWaitTime = 0.9f;
 
+        [Header("DDA system variables")]
+        [System.NonSerialized]
+        public int stunCount;
+
         [Header("Sounds")]
 
         public AudioClip shootingClip;
@@ -63,6 +68,7 @@ namespace Photon.Pun.Demo.PunBasics
         //where the player will respawn after both players get stunned
         [System.NonSerialized]
         public Transform respawnTransform;
+
         #endregion
 
         #region Private Fields
@@ -150,11 +156,21 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            try{animator = GetComponent<Animator>();}
+            catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
-            animator = GetComponent<Animator>();
-            animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();
-            fpsController = GetComponent<FirstPersonController>();
-            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
+            try{animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();}
+            catch {Debug.LogError("Missing Animator Component on player hands Prefab.", this);}
+
+            try{fpsController = GetComponent<FirstPersonController>();}
+            catch{Debug.LogError("Missing fpsController.", this);}
+
+            if(gameManager == null)
+            {
+                gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+            }
+            try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
+            catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
         }
 
 
@@ -192,20 +208,18 @@ namespace Photon.Pun.Demo.PunBasics
                             ProcessInputs();
                         }
                     }
-
-                    if (IsFiring && !waitingToShoot)
-                    {
-                        AnimateShoot();
-                        StartCoroutine(ShootPaintball());
-                    }
                 }
                 else if (!fpsController.isStunned)
                 {
                     Stun();
                     animator.SetBool("isDown", true);
                     animatorHands.SetBool("isDown", true);
-
                 }   
+            }
+            if (IsFiring && !waitingToShoot && health > 0f)
+            {
+                AnimateShoot();
+                StartCoroutine(ShootPaintball());
             }
         }
 
@@ -217,10 +231,16 @@ namespace Photon.Pun.Demo.PunBasics
         public void OnEvent(EventData photonEvent)
         {
             byte eventCode = photonEvent.Code;
-
-            if (photonView.IsMine && eventCode == GameManager.respawnEvent) //Respawn event
+            
+            if (photonView.IsMine) 
             {
-                 Respawn();
+                if (eventCode == GameManager.respawnEvent)
+                    Respawn();
+                if (eventCode == GameManager.destroyKeyLocationEvent)
+                {
+                    StartCoroutine(KeyLocationController.GetKeyLocationToDestroy().BeginDestroyingProcess());
+                }
+                    
             }
         }
 
@@ -230,6 +250,7 @@ namespace Photon.Pun.Demo.PunBasics
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
             transform.position = respawnTransform.position;
+            GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
             animatorHands.SetBool("isDown", false);
@@ -240,7 +261,7 @@ namespace Photon.Pun.Demo.PunBasics
         //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
         public void HitPlayer(GameObject player, float healthChange)
         {
-            photonView.RPC("ChangeHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
         
         /// <summary>
@@ -251,7 +272,20 @@ namespace Photon.Pun.Demo.PunBasics
         {
             PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
         }
-        
+
+        [PunRPC]
+        public void Stunned(int targetViewID)
+        {
+            GameObject playerObject = PhotonView.Find(targetViewID).gameObject;
+            playerObject.GetComponent<PlayerManager>().stunCount++;
+            //Debug.Log("Someone is stunned! Player's stun count is " + stunCount);
+            if (photonView.IsMine)
+            {
+                StunCondition.Instance.localPlayerStuntCount++;
+                //Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
+            }
+        }
+
         //Function to call when an enemy is hit. 
         // enemy - the enemy we hit
         // healthChange - the effect on the enemies health (negative values for hurting)
@@ -294,6 +328,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
+            photonView.RPC(nameof(Stunned), RpcTarget.All, GetComponent<PhotonView>().ViewID);
         }
 
         /// <summary>

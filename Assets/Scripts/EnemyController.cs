@@ -5,6 +5,9 @@ using System;
 using System.Collections;
 using Photon.Pun;
 using Photon.Pun.Demo.PunBasics;
+using UnityStandardAssets.Characters.FirstPerson;
+
+using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -53,16 +56,17 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     private NavMeshAgent agent;
     private Animator animator;
-    private int refreshTargetTimer = 0;
-    public int refreshTargetTimerLimit = 50;
+    public int refreshTargetTimeSec = 1;
     [System.NonSerialized]
     public bool isBlobified = false;
 
     [SerializeField]
     private float distanceToKeyLocationToDespawn = 1f;
 
-    private List<GameObject> keyLocations;
+    private GameObject assignedKeyLocation;
 
+    [NonSerialized]
+    public bool isAreaEnemy;
 
     //Used for estimating where player will be when projectile hits
     private Vector3 previousFramePlayerPosition;
@@ -70,7 +74,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        keyLocations = new List<GameObject>(GameObject.FindGameObjectsWithTag("KeyLocation"));
+        assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk");     //Walking animation
@@ -92,6 +96,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
         audioSource = GetComponent<AudioSource>();
         audioSource.PlayOneShot(spawningClip);
+
+        // we want to find nav target not every frame because it's computationally a bit heavy
+        InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec); 
     }
 
     void Update()
@@ -101,10 +108,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             if (!isBlobified)
             {
                 audioSource.PlayOneShot(shrinkingClip);
-                photonView.RPC("Blobify", RpcTarget.All);
+                photonView.RPC(nameof(Blobify), RpcTarget.All);
             }
             
-            if(distanceToKeyLocationToDespawn > Vector3.Distance(gameObject.FindClosestObject(keyLocations).transform.position, transform.position))
+            if(isAreaEnemy && distanceToKeyLocationToDespawn > Vector3.Distance(assignedKeyLocation.transform.position, transform.position))
             {
                 PhotonNetwork.Destroy(gameObject);
             }
@@ -112,19 +119,28 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if (!isBlobified)
         {
             FindNavTarget();
-            distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
-            if (distanceToPlayer <= minDistForMovement)
-            {
-                SetSpeed(speed);
-                if (isAttackReady)
-                {
-                    StartCoroutine(AttackPlayer());
-                }
-            }
-            else
+            if(closestPlayer == null)   //if no player is found, chill for a bit
             {
                 SetSpeed(0);
             }
+            else
+            { 
+                distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
+                if (distanceToPlayer <= minDistForMovement)
+                {
+                    SetSpeed(speed);
+                    if (isAttackReady)
+                    {
+                        StartCoroutine(AttackPlayer());
+                    }
+                }
+                else
+                {
+                    SetSpeed(0);
+                }
+            }
+            
+            
         }
     }
 
@@ -134,9 +150,24 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         animator.SetBool("IsDead", true);
         isBlobified = true;
         agent.stoppingDistance = 0;
-        agent.destination = gameObject.FindClosestObject(keyLocations).transform.position;
+        if (isAreaEnemy)
+            agent.destination = assignedKeyLocation.transform.position;
+        else
+        {
+            Vector3 randomPosition = transform.position + Random.insideUnitSphere.normalized * 30;
+            randomPosition.y = 0;
+            agent.destination = randomPosition; 
+            StartCoroutine(DestroyEnemyWithDelay());
+        }
         SetSpeed(speed);
+        CancelInvoke(nameof(FindNavTarget));
         //TODO?: set color to nice pink
+    }
+
+    private IEnumerator DestroyEnemyWithDelay()
+    {
+        yield return new WaitForSeconds(5f);
+        PhotonNetwork.Destroy(gameObject);
     }
 
     void FixedUpdate()
@@ -155,31 +186,25 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void FindNavTarget()
     {
-        refreshTargetTimer -= 1;
+        List<GameObject> alivePlayers = GetPlayersToAttack();
 
-        //we set destination for target to run less than every frame, cause it's computationally heavy over longer distances
-        if (refreshTargetTimer <= 0)
+        //If we found alive players, find the closest player, else make it null
+        if (alivePlayers.Count != 0)
         {
-            List<GameObject> alivePlayers = GetAlivePlayers();
-
-            //If we found alive players, find the closest player, else make it null
-            if (alivePlayers.Count != 0)  
-            {
-                closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
-                agent.destination = closestPlayer.position;
-            }
-            else closestPlayer = null;
-            
-            refreshTargetTimer = refreshTargetTimerLimit;
+            closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
+            agent.destination = closestPlayer.position;
         }
+        else closestPlayer = null;
     }
 
-    private List<GameObject> GetAlivePlayers()
+    private List<GameObject> GetPlayersToAttack()
     {
         return players.FindAll(
                    delegate (GameObject player)
                    {
-                       return player.GetComponent<PlayerManager>().health > 0;
+                       if (isAreaEnemy)
+                           return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone;
+                       else return player.GetComponent<PlayerManager>().health > 0;
                    }
                 );
     }
@@ -238,7 +263,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     {
         if(player.GetComponent<PlayerManager>().health > 0)
         {
-            photonView.RPC("ChangePlayerHealth", RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
         }
     }
 
