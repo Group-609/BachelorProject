@@ -15,6 +15,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using System.Linq;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -230,10 +231,16 @@ namespace Photon.Pun.Demo.PunBasics
         public void OnEvent(EventData photonEvent)
         {
             byte eventCode = photonEvent.Code;
-
-            if (photonView.IsMine && eventCode == GameManager.respawnEvent) //Respawn event
+            
+            if (photonView.IsMine) 
             {
-                 Respawn();
+                if (eventCode == GameManager.respawnEvent)
+                    Respawn();
+                if (eventCode == GameManager.destroyKeyLocationEvent)
+                {
+                    StartCoroutine(KeyLocationController.GetKeyLocationToDestroy().BeginDestroyingProcess());
+                }
+                    
             }
         }
 

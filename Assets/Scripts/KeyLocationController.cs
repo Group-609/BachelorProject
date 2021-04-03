@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
-
+using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
+using System.Linq;
 
 public class KeyLocationController : MonoBehaviour
 {
@@ -14,8 +18,11 @@ public class KeyLocationController : MonoBehaviour
     public List<GameObject> players = new List<GameObject>();
     public float speedMod;
     private int shrinkValue = 20;
-    private bool arePlayersReset;
-    private bool isDestroyed;
+
+    [System.NonSerialized]
+    public bool hasEventToDestroyStarted;
+    [System.NonSerialized]
+    public bool isDestroyed;
 
     void Start()
     {
@@ -25,7 +32,7 @@ public class KeyLocationController : MonoBehaviour
 
     void Update()
     {
-        if (!isDestroyed)
+        if (!isDestroyed || !hasEventToDestroyStarted)
         {
             if (LevelProgressionCondition.Instance.currentLevel == areaIndex)
             {
@@ -72,13 +79,9 @@ public class KeyLocationController : MonoBehaviour
                     }
                 }
             }
-            else if (LevelProgressionCondition.Instance.currentLevel > areaIndex)
+            else if (LevelProgressionCondition.Instance.currentLevel > areaIndex && !isDestroyed && !hasEventToDestroyStarted)
             {
-                if (!arePlayersReset)
-                {
-                    ResetPlayers();
-                }
-                ShrinkSphere();
+                DestroyKeyLocation();
             }
         }
     }
@@ -92,9 +95,27 @@ public class KeyLocationController : MonoBehaviour
         }
     }
 
-    private void ShrinkSphere()
+    private void DestroyKeyLocation()
     {
-        sphere.transform.localScale -= new Vector3(shrinkValue, shrinkValue, shrinkValue) * Time.deltaTime;
+        Debug.Log("Raised event to destroy key location");
+        hasEventToDestroyStarted = true;
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+        PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, 0, raiseEventOptions, SendOptions.SendReliable);
+    }
+
+    public IEnumerator BeginDestroyingProcess()
+    {
+        Debug.Log("Begin Destroying process");
+        foreach (GameObject player in players)
+        {
+            player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
+            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
+        }
+        while (sphere.transform.localScale.x > 0)
+        {
+            sphere.transform.localScale -= new Vector3(shrinkValue, shrinkValue, shrinkValue) * Time.deltaTime;
+            yield return null;
+        }
         if (sphere.transform.localScale.x <= 0)
         {
             sphere.SetActive(false);
@@ -106,13 +127,14 @@ public class KeyLocationController : MonoBehaviour
         }
     }
 
-    private void ResetPlayers()
+    public static KeyLocationController GetKeyLocationToDestroy()
     {
-        foreach (GameObject player in players)
-        {
-            player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
-            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
-        }
-        arePlayersReset = true;
+        return GameObject.FindGameObjectsWithTag("KeyLocation").ToList().Find(
+                delegate (GameObject keyLocation)
+                {
+                    KeyLocationController controller = keyLocation.GetComponent<KeyLocationController>();
+                    return controller.hasEventToDestroyStarted && !controller.isDestroyed;
+                }
+            ).GetComponent<KeyLocationController>();
     }
 }
