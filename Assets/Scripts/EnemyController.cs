@@ -272,6 +272,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if(player.GetComponent<PlayerManager>().health > 0)
         {
             photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+
         }
     }
 
@@ -279,7 +280,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public void ChangePlayerHealth(float value, int targetViewID)
     {
         PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
-        //PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().OnDamageTaken();   //TODO: Player hurt effect
+        PhotonView.Find(targetViewID).gameObject.GetComponent<HurtEffect>().Hit();
     }
 
     #region IPunObservable implementation
