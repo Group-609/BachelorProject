@@ -150,8 +150,8 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     private void InstantiateEnemy(EnemySpawnPoint spawnPoint, bool isAreaEnemy)
     {
-        GameObject enemy = PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
-        enemy.GetComponent<EnemyController>().isAreaEnemy = isAreaEnemy;    //Might not be set on client side
+        object[] instantiationData = { isAreaEnemy };   //we need to pass instantiation data like this for the client players to receive this data
+        PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity, 0, instantiationData);
     }
 
     private void ChangeEnemyCount(int addToEnemyCount)

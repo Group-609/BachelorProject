@@ -72,6 +72,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private Vector3 previousFramePlayerPosition;
     private Vector3 playerVelocity = new Vector3(0,0,0);
 
+    //Here, we receive data sent during instantiation, photon networking specific
+    public void OnPhotonInstantiate(Photon.Pun.PhotonMessageInfo info)
+    {
+        object[] instantiationData = info.photonView.InstantiationData;
+        isAreaEnemy = (bool)instantiationData[0];
+    }
+
     void Start()
     {
         assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
@@ -147,7 +154,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void Blobify()
     {
-        Debug.LogError("Killed area enemy - " + isAreaEnemy);
         animator.SetBool("IsDead", true);
         isBlobified = true;
         agent.stoppingDistance = 0;
