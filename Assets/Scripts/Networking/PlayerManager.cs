@@ -410,6 +410,7 @@ namespace Photon.Pun.Demo.PunBasics
             isReturningControl = true;
             fpsController.enabled = true;
             yield return new WaitForSeconds(waitTime);
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.isStunned = false;
             isReturningControl = false;
         }
