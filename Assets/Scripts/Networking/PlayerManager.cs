@@ -329,6 +329,7 @@ namespace Photon.Pun.Demo.PunBasics
         //Disables movement
         void Stun()
         {
+            IsFiring = false;
             fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
             photonView.RPC(nameof(Stunned), RpcTarget.All, GetComponent<PhotonView>().ViewID);

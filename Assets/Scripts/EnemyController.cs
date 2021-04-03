@@ -9,7 +9,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 using Random = UnityEngine.Random;
 
-public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
+public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunInstantiateMagicCallback
 {
     private List<GameObject> players;
     [System.NonSerialized]
@@ -154,7 +154,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void Blobify()
     {
-        Debug.LogError("Killed enemy from area - " + isAreaEnemy);
         animator.SetBool("IsDead", true);
         isBlobified = true;
         agent.stoppingDistance = 0;
