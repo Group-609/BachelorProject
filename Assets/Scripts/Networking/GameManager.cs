@@ -73,9 +73,8 @@ namespace Photon.Pun.Demo.PunBasics
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
 				Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
 			}
-			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
-			Debug.LogError("Is DDA condition - " + IsDDAEnabled);
-			
+			if (PhotonNetwork.IsMasterClient)
+				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
 		}
 
 		/// <summary>
@@ -170,6 +169,13 @@ namespace Photon.Pun.Demo.PunBasics
 
 				LoadArena(); 
 			}
+		}
+
+		[PunRPC]
+		public void SetCondition(bool IsDDAEnabled)
+        {
+			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
+			Debug.LogError("Is DDA condition - " + IsDDAEnabled);
 		}
 
 		/// <summary>
