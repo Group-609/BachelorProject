@@ -737,6 +737,10 @@ MonoBehaviour:
   hitClip: {fileID: 8300000, guid: d1efa627fb40a3f41ac2ed07e644c43e, type: 3}
   shootClip: {fileID: 8300000, guid: 27a18335be5d36845a4ebe81eefc9761, type: 3}
   roarClip: {fileID: 8300000, guid: cd3c67e3f6f47db4e89afd5dc64b6a1b, type: 3}
+  hurtClip:
+  - {fileID: 8300000, guid: d67d777e29120bf48ab4e833b97cfaba, type: 3}
+  - {fileID: 8300000, guid: 1c86cfd19f52fab4bb03a38e09692019, type: 3}
+  - {fileID: 8300000, guid: f8aec3b2dc39bbd4d8dbfce709a95ffb, type: 3}
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimeSec: 1
   distanceToKeyLocationToDespawn: 1

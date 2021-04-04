@@ -45,6 +45,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     private AudioSource audioSource;
 
+    [SerializeField]
+    private AudioClip[] hurtClip = new AudioClip[0];
+    private AudioSource audioSource2;
+
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
     [SerializeField]
@@ -95,6 +99,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         currentHealth = maxHealth;
 
         audioSource = GetComponent<AudioSource>();
+        audioSource2 = GetComponent<AudioSource>();
         audioSource.PlayOneShot(spawningClip);
 
         // we want to find nav target not every frame because it's computationally a bit heavy
@@ -212,6 +217,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public void OnDamageTaken()
     {
         audioSource.PlayOneShot(hitClip);
+        audioSource2.PlayOneShot((AudioClip)hurtClip.GetRandomItem(), 0.7F);
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
