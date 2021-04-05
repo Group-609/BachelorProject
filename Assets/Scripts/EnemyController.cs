@@ -201,7 +201,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
             closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
             agent.destination = closestPlayer.position;
         }
-        else closestPlayer = null;
+        else
+        {
+            closestPlayer = null;
+        }
+
     }
 
     private List<GameObject> GetPlayersToAttack()
@@ -210,7 +214,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                    delegate (GameObject player)
                    {
                        if (isAreaEnemy)
+                       {
+                           Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
                            return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<PlayerManager>().isPlayerInKeyLocZone;
+                       }
                        else return player.GetComponent<PlayerManager>().health > 0;
                    }
                 );

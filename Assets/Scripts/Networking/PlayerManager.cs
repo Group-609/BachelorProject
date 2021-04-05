@@ -233,11 +233,9 @@ namespace Photon.Pun.Demo.PunBasics
 
         public void OnEvent(EventData photonEvent)
         {
+            
             byte eventCode = photonEvent.Code;
-            if (eventCode == GameManager.respawnEvent)
-            {
-                isPlayerInKeyLocZone = false;
-            }
+
             if (photonView.IsMine) 
             {
                 if (eventCode == GameManager.respawnEvent)
@@ -248,6 +246,12 @@ namespace Photon.Pun.Demo.PunBasics
                 }
                     
             }
+            if (eventCode == GameManager.respawnEvent)
+            {
+                Debug.Log("Event for respawn called");
+                isPlayerInKeyLocZone = false;
+            }
+
         }
 
         //Called when all players are stunned 
