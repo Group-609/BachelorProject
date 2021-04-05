@@ -42,6 +42,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public AudioClip hitClip;
     public AudioClip shootClip;
     public AudioClip roarClip;
+    public AudioClip movementClip;
 
     private AudioSource audioSource;
 
