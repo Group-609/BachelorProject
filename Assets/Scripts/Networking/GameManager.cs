@@ -71,7 +71,7 @@ namespace Photon.Pun.Demo.PunBasics
 			if (isLiveTest && conditionSetter != null)
             {
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
-				Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
+				//Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
 			this.IsDDAEnabled = IsDDAEnabled;
 			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
-			Debug.LogError("Condition set by master client - " + IsDDAEnabled);
+			//Debug.LogError("Condition set by master client - " + IsDDAEnabled);
 		}
 
 		/// <summary>
