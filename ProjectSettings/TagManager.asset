@@ -8,6 +8,8 @@ TagManager:
   - Character
   - KeyLocation
   - EnemySpawnPoint
+  - PaintGun
+  - DebugWindow
   layers:
   - Default
   - TransparentFX
