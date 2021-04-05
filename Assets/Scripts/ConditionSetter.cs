@@ -16,7 +16,7 @@ public class ConditionSetter : MonoBehaviour
         this.condition = condition;
         if(condition == "Failed to receive condition from server!")
         {
-            Debug.LogError(condition + " Please contant the developers!");
+            Debug.LogError(condition + " Please contact the developers!");
         }
         
     }
