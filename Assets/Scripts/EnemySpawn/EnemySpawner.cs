@@ -100,14 +100,17 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     private void SpawnEnemy()
     {
-        if (!isInitialSpawnMade)
+        if (!LevelProgressionCondition.Instance.isGameFinished)
         {
-            StartCoroutine(InitialEnemySpawn());
-            isInitialSpawnMade = true;
-        }
-        else
-        {
-            StartCoroutine(SingleEnemySpawn());
+            if (!isInitialSpawnMade)
+            {
+                StartCoroutine(InitialEnemySpawn());
+                isInitialSpawnMade = true;
+            }
+            else
+            {
+                StartCoroutine(SingleEnemySpawn());
+            }
         }
     }
 
