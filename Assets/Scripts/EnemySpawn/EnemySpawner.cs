@@ -121,8 +121,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             foreach (EnemySpawnPoint spawnPoint in enemyAreaSpawnPoints[activeSpawnPointIndex])
             {
-                InstantiateEnemy(spawnPoint, true);
-                enemiesLeftToSpawnForArea--;
+                if (enemiesLeftToSpawnForArea > 0)
+                {
+                    InstantiateEnemy(spawnPoint, true);
+                    enemiesLeftToSpawnForArea--;
+                }
             }
             yield return new WaitForSeconds(spawnIntervalForArea);
         }
@@ -130,8 +133,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             foreach (EnemySpawnPoint spawnPoint in enemyProgressSpawnPoints[activeSpawnPointIndex])
             {
-                InstantiateEnemy(spawnPoint, false);
-                enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
+                {
+                    InstantiateEnemy(spawnPoint, false);
+                    enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                }
             }
             yield return new WaitForSeconds(spawnIntervalForProgress);
         }
