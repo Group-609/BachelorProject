@@ -236,6 +236,11 @@ namespace Photon.Pun.Demo.PunBasics
             
             byte eventCode = photonEvent.Code;
 
+            if (eventCode == GameManager.respawnEvent)
+            {
+                transform.position = respawnTransform.position;
+                isPlayerInKeyLocZone = false;
+            }
             if (photonView.IsMine) 
             {
                 if (eventCode == GameManager.respawnEvent)
@@ -246,12 +251,7 @@ namespace Photon.Pun.Demo.PunBasics
                     StartCoroutine(KeyLocationController.GetKeyLocationToDestroy((int) photonEvent.CustomData).BeginDestroyingProcess());
                 }
             }
-            if (eventCode == GameManager.respawnEvent)
-            {
-                isPlayerInKeyLocZone = false;
-                transform.position = respawnTransform.position;
-            }
-
+            
         }
 
         //Called when all players are stunned 

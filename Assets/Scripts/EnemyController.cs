@@ -211,16 +211,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     private List<GameObject> GetPlayersToAttack()
     {
         return players.FindAll(
-                   delegate (GameObject player)
-                   {
-                       if (isAreaEnemy)
-                       {
-                           //Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
-                           return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<PlayerManager>().isPlayerInKeyLocZone;
-                       }
-                       else return player.GetComponent<PlayerManager>().health > 0;
-                   }
-                );
+            delegate (GameObject player)
+            {
+                if (isAreaEnemy)
+                {
+                    Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
+                    return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<PlayerManager>().isPlayerInKeyLocZone;
+                }
+                else return player.GetComponent<PlayerManager>().health > 0;
+            }
+        );
     }
 
     public void OnDamageTaken()
