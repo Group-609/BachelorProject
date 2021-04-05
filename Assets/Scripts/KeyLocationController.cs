@@ -24,10 +24,14 @@ public class KeyLocationController : MonoBehaviour
     [System.NonSerialized]
     public bool isDestroyed;
 
+    public AudioClip clearedClip;
+    private AudioSource audioSource;
+
     void Start()
     {
         StartCoroutine(GetPlayers());
         sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
