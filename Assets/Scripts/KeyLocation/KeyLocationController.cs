@@ -35,8 +35,10 @@ public class KeyLocationController : MonoBehaviour
     {
         if (!hasEventToDestroyStarted)
         {
+            Debug.Log("Current level: " + LevelProgressionCondition.Instance.currentLevel + ". Area index: " + areaIndex);
             if (LevelProgressionCondition.Instance.currentLevel == areaIndex)
             {
+                Debug.Log("Checking for players in zone. Area index: " + areaIndex);
                 foreach (GameObject player in players)
                 {
                     PlayerManager playerManager = player.GetComponent<PlayerManager>();
