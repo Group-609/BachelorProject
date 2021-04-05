@@ -117,7 +117,7 @@ public class KeyLocationController : MonoBehaviour
         {
             player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
             player.GetComponent<PlayerManager>().isPlayerInKeyLocZone = false;
-            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = true;
+            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
         }
         while (sphere.transform.localScale.x > 0)
         {
