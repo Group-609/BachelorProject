@@ -84,7 +84,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
                 {
                     ChangeEnemyCount(baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
                 }
-                catch (IndexOutOfRangeException) { Debug.Log("Game is finished"); }
+                catch { Debug.Log("Game is finished"); }
 
                 activeSpawnPointIndex++;
                 isInitialSpawnMade = false;
