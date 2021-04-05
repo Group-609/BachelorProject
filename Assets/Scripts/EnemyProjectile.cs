@@ -1,21 +1,22 @@
 ﻿using System.Collections;
 using UnityEngine;
+using System;
 
 public class EnemyProjectile : MonoBehaviour
 {
     [Tooltip("The time it takes for the projectile to disappear")]
     private float despawnTime = 4.0f;
 
-    [System.NonSerialized]
+    [NonSerialized]
     public Transform target;
 
-    [System.NonSerialized]
-    public float damage; //Damage this specific paintball does
+	[NonSerialized]
+	public float damage; //Damage this specific paintball does
 
-	[System.NonSerialized]
+	[NonSerialized]
 	public GameObject enemyWhoShot;
 
-	[System.NonSerialized]
+	[NonSerialized]
 	public bool isLocal; //true if this is a real bullet that does damage
 
 	public float h = 10;
@@ -38,7 +39,6 @@ public class EnemyProjectile : MonoBehaviour
 		else if (isLocal && hitObject.CompareTag("Player"))
 		{
 			enemyWhoShot.GetComponent<EnemyController>().HitPlayer(hitObject, -damage);
-			hitObject.GetComponent<HurtEffect>().Hit();
 		}
 		//TODO: projectile hit sound
 		Destroy(gameObject);

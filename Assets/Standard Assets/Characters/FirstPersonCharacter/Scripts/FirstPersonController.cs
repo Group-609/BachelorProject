@@ -67,7 +67,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
         }
-
+        
 
         // Update is called once per frame
         private void Update()
@@ -93,7 +93,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
         }
-
 
         private void PlayLandingSound()
         {
@@ -286,6 +285,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 return;
             }
             body.AddForceAtPosition(m_CharacterController.velocity*0.1f, hit.point, ForceMode.Impulse);
+        }
+
+        public void SetRunSpeed(float speed)
+        {
+            m_RunSpeed = speed;
+        }
+
+        public float GetRunSpeed()
+        {
+            return m_RunSpeed;
         }
     }
 }

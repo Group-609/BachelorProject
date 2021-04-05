@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsWalking: 0
-  m_RunSpeed: 6
+  m_RunSpeed: 8
   walkingBackMultiplier: 0.75
   m_RunstepLenghten: 0.481
   m_JumpSpeed: 10
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_JumpBob:
     BobDuration: 0.2
     BobAmount: 0.1
-  m_StepInterval: 2
+  m_StepInterval: 4
   m_FootstepSounds:
   - {fileID: 8300000, guid: 42e65e088b3f4374e851b8dbd38f3df9, type: 3}
   - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
@@ -406,12 +406,12 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.55
-  m_Height: 2
+  m_Radius: 0.90516543
+  m_Height: 3.7431536
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: -0.009455323, y: 0.8715768, z: 0}
 --- !u!114 &6669901714281856914
 MonoBehaviour:
   m_ObjectHideFlags: 0

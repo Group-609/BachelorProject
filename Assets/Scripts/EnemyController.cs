@@ -9,7 +9,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 using Random = UnityEngine.Random;
 
-public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
+public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunInstantiateMagicCallback
 {
     private List<GameObject> players;
     [System.NonSerialized]
@@ -77,6 +77,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     private Vector3 previousFramePlayerPosition;
     private Vector3 playerVelocity = new Vector3(0,0,0);
 
+    //Here, we receive data sent during instantiation, photon networking specific
+    public void OnPhotonInstantiate(Photon.Pun.PhotonMessageInfo info)
+    {
+        object[] instantiationData = info.photonView.InstantiationData;
+        isAreaEnemy = (bool)instantiationData[0];
+    }
+
     void Start()
     {
         assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
@@ -117,7 +124,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (!isBlobified)
             {
-                audioSource.PlayOneShot(shrinkingClip);
                 photonView.RPC(nameof(Blobify), RpcTarget.All);
             }
             
@@ -128,7 +134,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (!isBlobified)
         {
-            FindNavTarget();
+            if(currentHealth < 0)
+            {
+                audioSource.PlayOneShot(shrinkingClip);
+            }
             if(closestPlayer == null)   //if no player is found, chill for a bit
             {
                 SetSpeed(0);
@@ -149,8 +158,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
                     SetSpeed(0);
                 }
             }
-            
-            
         }
     }
 
@@ -164,13 +171,14 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             agent.destination = assignedKeyLocation.transform.position;
         else
         {
-            Vector3 randomPosition = transform.position + Random.insideUnitSphere.normalized * 30;
-            randomPosition.y = 0;
-            agent.destination = randomPosition; 
+            Vector2 circleEdgePosition = Random.insideUnitCircle.normalized;
+            agent.destination = transform.position + new Vector3(circleEdgePosition.x, 0, circleEdgePosition.y) * 30;
             StartCoroutine(DestroyEnemyWithDelay());
         }
         SetSpeed(speed);
         CancelInvoke(nameof(FindNavTarget));
+        foreach (Collider collider in GetComponents<Collider>())
+            collider.enabled = false;
         //TODO?: set color to nice pink
     }
 
@@ -223,19 +231,26 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
             closestPlayer = gameObject.FindClosestObject(alivePlayers).transform;
             agent.destination = closestPlayer.position;
         }
-        else closestPlayer = null;
+        else
+        {
+            closestPlayer = null;
+        }
+
     }
 
     private List<GameObject> GetPlayersToAttack()
     {
         return players.FindAll(
-                   delegate (GameObject player)
-                   {
-                       if (isAreaEnemy)
-                           return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone;
-                       else return player.GetComponent<PlayerManager>().health > 0;
-                   }
-                );
+            delegate (GameObject player)
+            {
+                if (isAreaEnemy)
+                {
+                    Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
+                    return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<PlayerManager>().isPlayerInKeyLocZone;
+                }
+                else return player.GetComponent<PlayerManager>().health > 0;
+            }
+        );
     }
 
     public void OnDamageTaken()
@@ -294,14 +309,15 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         if(player.GetComponent<PlayerManager>().health > 0)
         {
             photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+
         }
     }
 
     [PunRPC]
     public void ChangePlayerHealth(float value, int targetViewID)
     {
-        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
-        //PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().OnDamageTaken();   //TODO: Player hurt effect
+        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = Math.Max(PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health + value, 0);
+        PhotonView.Find(targetViewID).gameObject.GetComponent<HurtEffect>().Hit();
     }
 
     #region IPunObservable implementation

@@ -40,7 +40,12 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     }
     private bool IsProgressCleared
     {
-        get => enemyCountForProgressSpawnPoints[activeSpawnPointIndex] == 0;
+        get 
+        {
+            if (enemyCountForProgressSpawnPoints.Length > activeSpawnPointIndex)
+                return enemyCountForProgressSpawnPoints[activeSpawnPointIndex] == 0;
+            else return false;
+        } 
     }
     private bool CanSpawnEnemy
     {
@@ -53,9 +58,12 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     void Start()
     {
-        //Debug.Log(enemiesLeftToSpawnForArea + " enemies to spawn");
-        SetSpawnPoints(GameObject.FindGameObjectsWithTag("EnemySpawnPoint"));
-        EnemySpawnDDAA.Instance.SetSpawnListener(this);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            //Debug.Log(enemiesLeftToSpawnForArea + " enemies to spawn");
+            SetSpawnPoints(GameObject.FindGameObjectsWithTag("EnemySpawnPoint"));
+            EnemySpawnDDAA.Instance.SetSpawnListener(this);
+        }
     }
 
     void Update()
@@ -63,35 +71,46 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         if (PhotonNetwork.IsMasterClient && !LevelProgressionCondition.Instance.isGameFinished)
         {
             LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
+            
             if (CanSpawnEnemy)
             {
                 SpawnEnemy();
             }
             else if (IsLevelFinished)
             {
-                LevelProgressionCondition.Instance.LevelFinished();
-
+                photonView.RPC(nameof(LevelFinished), RpcTarget.All);
+                
                 try
                 {
                     ChangeEnemyCount(baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
                 }
-                catch (IndexOutOfRangeException) { Debug.Log("Game is finished"); }
+                catch { Debug.Log("Game is finished"); }
 
                 activeSpawnPointIndex++;
                 isInitialSpawnMade = false;
             }
         }
     }
+
+    [PunRPC]
+    private void LevelFinished()
+    {
+        LevelProgressionCondition.Instance.LevelFinished();
+    }
+
     private void SpawnEnemy()
     {
-        if (!isInitialSpawnMade)
+        if (!LevelProgressionCondition.Instance.isGameFinished)
         {
-            StartCoroutine(InitialEnemySpawn());
-            isInitialSpawnMade = true;
-        }
-        else
-        {
-            StartCoroutine(SingleEnemySpawn());
+            if (!isInitialSpawnMade)
+            {
+                StartCoroutine(InitialEnemySpawn());
+                isInitialSpawnMade = true;
+            }
+            else
+            {
+                StartCoroutine(SingleEnemySpawn());
+            }
         }
     }
 
@@ -102,8 +121,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             foreach (EnemySpawnPoint spawnPoint in enemyAreaSpawnPoints[activeSpawnPointIndex])
             {
-                InstantiateEnemy(spawnPoint, true);
-                enemiesLeftToSpawnForArea--;
+                if (enemiesLeftToSpawnForArea > 0)
+                {
+                    InstantiateEnemy(spawnPoint, true);
+                    enemiesLeftToSpawnForArea--;
+                }
             }
             yield return new WaitForSeconds(spawnIntervalForArea);
         }
@@ -111,8 +133,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         {
             foreach (EnemySpawnPoint spawnPoint in enemyProgressSpawnPoints[activeSpawnPointIndex])
             {
-                InstantiateEnemy(spawnPoint, false);
-                enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
+                {
+                    InstantiateEnemy(spawnPoint, false);
+                    enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                }
             }
             yield return new WaitForSeconds(spawnIntervalForProgress);
         }
@@ -150,8 +175,8 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     private void InstantiateEnemy(EnemySpawnPoint spawnPoint, bool isAreaEnemy)
     {
-        GameObject enemy = PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity);
-        enemy.GetComponent<EnemyController>().isAreaEnemy = isAreaEnemy;
+        object[] instantiationData = { isAreaEnemy };   //we need to pass instantiation data like this for the client players to receive this data
+        PhotonNetwork.Instantiate(enemyPrefab.name, spawnPoint.transform.position, Quaternion.identity, 0, instantiationData);
     }
 
     private void ChangeEnemyCount(int addToEnemyCount)

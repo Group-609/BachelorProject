@@ -8,6 +8,7 @@ using Photon.Realtime;
 using ExitGames.Client.Photon;
 using System.Linq;
 
+
 public class KeyLocationController : MonoBehaviour
 {
     public int areaIndex;
@@ -20,9 +21,9 @@ public class KeyLocationController : MonoBehaviour
     private int shrinkValue = 20;
 
     [System.NonSerialized]
-    public bool hasEventToDestroyStarted;
+    public bool isEventToDestroySent;
     [System.NonSerialized]
-    public bool isDestroyed;
+    public bool hasEventToDestroyStarted;
 
     public AudioClip clearedClip;
     private AudioSource audioSource;
@@ -36,54 +37,62 @@ public class KeyLocationController : MonoBehaviour
 
     void Update()
     {
-        if (!isDestroyed || !hasEventToDestroyStarted)
+        if (!hasEventToDestroyStarted)
         {
+            //Debug.Log("Current level: " + LevelProgressionCondition.Instance.currentLevel + ". Area index: " + areaIndex);
             if (LevelProgressionCondition.Instance.currentLevel == areaIndex)
             {
+                //Debug.Log("Checking for players in zone. Area index: " + areaIndex);
                 foreach (GameObject player in players)
                 {
+                    PlayerManager playerManager = player.GetComponent<PlayerManager>();
+                    FirstPersonController firstPersonController = player.GetComponent<FirstPersonController>();
                     if (player.FindClosestObject("KeyLocation") == gameObject) //Only run if this is the closest keyLocation.
                     {
                         float distToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
-                        if (!player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && distToPlayer <= radius)
+                        if (!playerManager.isPlayerInKeyLocZone && distToPlayer <= radius)
                         {
-                            player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = true;
+                            playerManager.isPlayerInKeyLocZone = true;
+                            if (firstPersonController.isActiveAndEnabled)
+                                firstPersonController.isPlayerInKeyLocZone = true;
                         }
-
-                        if (player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone && distToPlayer > radius - 1)
+                        if (firstPersonController.isActiveAndEnabled)
                         {
-                            if (player.transform.position.x < transform.position.x) //Look at what side of the key location the player is at, so we only stop movement in the wanted direction.
+                            if (playerManager.isPlayerInKeyLocZone && distToPlayer > radius - 1)
                             {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocXPositive = true;
+                                if (player.transform.position.x < transform.position.x) //Look at what side of the key location the player is at, so we only stop movement in the wanted direction.
+                                {
+                                    firstPersonController.isPlayerKeyLocXPositive = true;
+                                }
+                                else
+                                {
+                                    firstPersonController.isPlayerKeyLocXPositive = false;
+                                }
+
+                                if (player.transform.position.z < transform.position.z)
+                                {
+                                    firstPersonController.isPlayerKeyLocZPositive = true;
+                                }
+                                else
+                                {
+                                    firstPersonController.isPlayerKeyLocZPositive = false;
+                                }
+
+                                float radiusToPlayerDistDiff = radius - distToPlayer;
+                                speedMod = Mathf.Lerp(-1f, 1, radiusToPlayerDistDiff); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck as they will rebound to zone edge.
+                                firstPersonController.keyLocationSpeedMod = speedMod;
                             }
                             else
                             {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocXPositive = false;
+                                speedMod = 1;
+                                firstPersonController.keyLocationSpeedMod = speedMod;
                             }
-
-                            if (player.transform.position.z < transform.position.z)
-                            {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocZPositive = true;
-                            }
-                            else
-                            {
-                                player.GetComponent<FirstPersonController>().isPlayerKeyLocZPositive = false;
-                            }
-
-                            float radiusToPlayerDistDiff = radius - distToPlayer;
-                            speedMod = Mathf.Lerp(-1f, 1, radiusToPlayerDistDiff); //Use difference in distance to key location, and its radius to determine movement speed modifier. Negative values make it so players can allow to be pushed a bit, and still remain stuck as they will rebound to zone edge.
-                            player.GetComponent<FirstPersonController>().keyLocationSpeedMod = speedMod;
-                        }
-                        else
-                        {
-                            speedMod = 1;
-                            player.GetComponent<FirstPersonController>().keyLocationSpeedMod = speedMod;
                         }
                     }
                 }
             }
-            else if (LevelProgressionCondition.Instance.currentLevel > areaIndex && !isDestroyed && !hasEventToDestroyStarted)
+            else if (PhotonNetwork.IsMasterClient && LevelProgressionCondition.Instance.currentLevel > areaIndex && !isEventToDestroySent)
             {
                 DestroyKeyLocation();
             }
@@ -102,17 +111,19 @@ public class KeyLocationController : MonoBehaviour
     private void DestroyKeyLocation()
     {
         Debug.Log("Raised event to destroy key location");
-        hasEventToDestroyStarted = true;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
-        PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, 0, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, areaIndex, raiseEventOptions, SendOptions.SendReliable);
+        isEventToDestroySent = true;
     }
 
     public IEnumerator BeginDestroyingProcess()
     {
         Debug.Log("Begin Destroying process");
+        hasEventToDestroyStarted = true;
         foreach (GameObject player in players)
         {
             player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
+            player.GetComponent<PlayerManager>().isPlayerInKeyLocZone = false;
             player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
         }
         while (sphere.transform.localScale.x > 0)
@@ -123,7 +134,6 @@ public class KeyLocationController : MonoBehaviour
         if (sphere.transform.localScale.x <= 0)
         {
             sphere.SetActive(false);
-            isDestroyed = true;
             for (int i = 0; i < clearSphereSpawnAmount; i++)
             {
                 Instantiate(clearSphere, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y * 4, gameObject.transform.position.z), Quaternion.identity);
@@ -131,13 +141,12 @@ public class KeyLocationController : MonoBehaviour
         }
     }
 
-    public static KeyLocationController GetKeyLocationToDestroy()
+    public static KeyLocationController GetKeyLocationToDestroy(int areaIndex)
     {
         return GameObject.FindGameObjectsWithTag("KeyLocation").ToList().Find(
                 delegate (GameObject keyLocation)
                 {
-                    KeyLocationController controller = keyLocation.GetComponent<KeyLocationController>();
-                    return controller.hasEventToDestroyStarted && !controller.isDestroyed;
+                    return keyLocation.GetComponent<KeyLocationController>().areaIndex == areaIndex;
                 }
             ).GetComponent<KeyLocationController>();
     }
