@@ -234,7 +234,10 @@ namespace Photon.Pun.Demo.PunBasics
         public void OnEvent(EventData photonEvent)
         {
             byte eventCode = photonEvent.Code;
-            
+            if (eventCode == GameManager.respawnEvent)
+            {
+                isPlayerInKeyLocZone = false;
+            }
             if (photonView.IsMine) 
             {
                 if (eventCode == GameManager.respawnEvent)
@@ -254,7 +257,6 @@ namespace Photon.Pun.Demo.PunBasics
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
             transform.position = respawnTransform.position;
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
-            isPlayerInKeyLocZone = false;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
             animatorHands.SetBool("isDown", false);
