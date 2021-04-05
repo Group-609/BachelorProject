@@ -21,9 +21,9 @@ public class KeyLocationController : MonoBehaviour
     private int shrinkValue = 20;
 
     [System.NonSerialized]
-    public bool hasEventToDestroyStarted;
+    public bool isEventToDestroySent;
     [System.NonSerialized]
-    public bool isDestroyed;
+    public bool hasEventToDestroyStarted;
 
     void Start()
     {
@@ -33,7 +33,7 @@ public class KeyLocationController : MonoBehaviour
 
     void Update()
     {
-        if (!isDestroyed || !hasEventToDestroyStarted)
+        if (!hasEventToDestroyStarted)
         {
             if (LevelProgressionCondition.Instance.currentLevel == areaIndex)
             {
@@ -86,7 +86,7 @@ public class KeyLocationController : MonoBehaviour
                     }
                 }
             }
-            else if (LevelProgressionCondition.Instance.currentLevel > areaIndex && !isDestroyed && !hasEventToDestroyStarted)
+            else if (LevelProgressionCondition.Instance.currentLevel > areaIndex && !isEventToDestroySent)
             {
                 DestroyKeyLocation();
             }
@@ -107,6 +107,7 @@ public class KeyLocationController : MonoBehaviour
         Debug.Log("Raised event to destroy key location");
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
         PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, areaIndex, raiseEventOptions, SendOptions.SendReliable);
+        isEventToDestroySent = true;
     }
 
     public IEnumerator BeginDestroyingProcess()
@@ -127,7 +128,6 @@ public class KeyLocationController : MonoBehaviour
         if (sphere.transform.localScale.x <= 0)
         {
             sphere.SetActive(false);
-            isDestroyed = true;
             for (int i = 0; i < clearSphereSpawnAmount; i++)
             {
                 Instantiate(clearSphere, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y * 4, gameObject.transform.position.z), Quaternion.identity);
