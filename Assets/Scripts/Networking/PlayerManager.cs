@@ -242,7 +242,8 @@ namespace Photon.Pun.Demo.PunBasics
                     Respawn();
                 if (eventCode == GameManager.destroyKeyLocationEvent)
                 {
-                    StartCoroutine(KeyLocationController.GetKeyLocationToDestroy().BeginDestroyingProcess());
+                    Debug.Log("Destroy key location index " + (int) photonEvent.CustomData);
+                    StartCoroutine(KeyLocationController.GetKeyLocationToDestroy((int) photonEvent.CustomData).BeginDestroyingProcess());
                 }
             }
             if (eventCode == GameManager.respawnEvent)

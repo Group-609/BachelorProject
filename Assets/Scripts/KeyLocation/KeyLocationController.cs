@@ -107,7 +107,7 @@ public class KeyLocationController : MonoBehaviour
         Debug.Log("Raised event to destroy key location");
         hasEventToDestroyStarted = true;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
-        PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, 0, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, areaIndex, raiseEventOptions, SendOptions.SendReliable);
     }
 
     public IEnumerator BeginDestroyingProcess()
@@ -135,13 +135,13 @@ public class KeyLocationController : MonoBehaviour
         }
     }
 
-    public static KeyLocationController GetKeyLocationToDestroy()
+    public static KeyLocationController GetKeyLocationToDestroy(int areaIndex)
     {
         return GameObject.FindGameObjectsWithTag("KeyLocation").ToList().Find(
                 delegate (GameObject keyLocation)
                 {
                     KeyLocationController controller = keyLocation.GetComponent<KeyLocationController>();
-                    return controller.hasEventToDestroyStarted && !controller.isDestroyed;
+                    return controller.areaIndex == areaIndex;
                 }
             ).GetComponent<KeyLocationController>();
     }
