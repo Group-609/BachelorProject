@@ -161,9 +161,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
             agent.destination = assignedKeyLocation.transform.position;
         else
         {
-            Vector3 randomPosition = transform.position + Random.insideUnitSphere.normalized * 30;
-            randomPosition.y = 0;
-            agent.destination = randomPosition; 
+            Vector2 circleEdgePosition = Random.insideUnitCircle.normalized;
+            agent.destination = transform.position + new Vector3(circleEdgePosition.x, 0, circleEdgePosition.y) * 30; ; 
             StartCoroutine(DestroyEnemyWithDelay());
         }
         SetSpeed(speed);
