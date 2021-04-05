@@ -40,7 +40,12 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     }
     private bool IsProgressCleared
     {
-        get => enemyCountForProgressSpawnPoints[activeSpawnPointIndex] == 0;
+        get 
+        {
+            if (enemyCountForProgressSpawnPoints.Length < activeSpawnPointIndex)
+                return enemyCountForProgressSpawnPoints[activeSpawnPointIndex] == 0;
+            else return false;
+        } 
     }
     private bool CanSpawnEnemy
     {
