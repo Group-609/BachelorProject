@@ -44,12 +44,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     public AudioClip roarClip;
     public AudioClip movementClip;
 
-    private AudioSource audioSource;
-
     [SerializeField]
     private AudioClip[] hurtClip = new AudioClip[0];
-    private AudioSource audioSource2;
 
+    private AudioSource audioSource;
+    private AudioSource audioSource2;
+    private AudioSource audioSourceWalking;
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
     [SerializeField]
@@ -99,8 +99,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
         
         currentHealth = maxHealth;
 
-        audioSource = GetComponent<AudioSource>();
-        audioSource2 = GetComponent<AudioSource>();
+        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSource2 = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceWalking = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceWalking.loop = true;
+        SetInitialAudioClips();
         audioSource.PlayOneShot(spawningClip);
 
         // we want to find nav target not every frame because it's computationally a bit heavy
@@ -109,6 +112,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
+        PlayWalkingSound();
         if (PhotonNetwork.IsMasterClient && currentHealth < 0)
         {
             if (!isBlobified)
@@ -188,6 +192,25 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable
     void SetSpeed(float speed)
     {
         agent.speed = speed;
+        
+    }
+
+    void PlayWalkingSound()
+    {
+        if (agent.velocity != Vector3.zero && !audioSourceWalking.isPlaying)
+        {
+            audioSourceWalking.Play();
+        }
+        if (agent.velocity == Vector3.zero)
+        {
+            audioSourceWalking.Pause();
+            Debug.Log("Enemy stopped playing walking sound");
+        }
+    }
+
+    void SetInitialAudioClips()
+    {
+        audioSourceWalking.clip = movementClip;
     }
 
     void FindNavTarget()
