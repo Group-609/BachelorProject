@@ -319,7 +319,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             animator.Play("Shoot");
             animatorHands.Play("Shoot");
-          
         }
 
         private void PlayShootingSound()
@@ -330,6 +329,17 @@ namespace Photon.Pun.Demo.PunBasics
         public void OnLevelFinished()
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
+        }
+
+        public string GetPlayerDebugInfo()
+        {
+            string debugPrintContent = "----Player info----\n";
+            if(photonView.IsMine){ debugPrintContent = debugPrintContent + "Your local player\n";  }
+            else { debugPrintContent += "Other player\n"; }
+            debugPrintContent += "Stun count: " + stunCount + "\n";
+            debugPrintContent += "In key location: " + isPlayerInKeyLocZone + "\n";
+            debugPrintContent += "----------------";
+            return debugPrintContent;
         }
 
         #endregion
