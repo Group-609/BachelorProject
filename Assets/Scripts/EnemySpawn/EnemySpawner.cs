@@ -53,25 +53,28 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     void Start()
     {
-        //Debug.Log(enemiesLeftToSpawnForArea + " enemies to spawn");
-        SetSpawnPoints(GameObject.FindGameObjectsWithTag("EnemySpawnPoint"));
-        EnemySpawnDDAA.Instance.SetSpawnListener(this);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            //Debug.Log(enemiesLeftToSpawnForArea + " enemies to spawn");
+            SetSpawnPoints(GameObject.FindGameObjectsWithTag("EnemySpawnPoint"));
+            EnemySpawnDDAA.Instance.SetSpawnListener(this);
+        }
     }
 
     void Update()
     {
-        if (!LevelProgressionCondition.Instance.isGameFinished)
+        if (PhotonNetwork.IsMasterClient && !LevelProgressionCondition.Instance.isGameFinished)
         {
             LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
             
-            if (PhotonNetwork.IsMasterClient && CanSpawnEnemy)
+            if (CanSpawnEnemy)
             {
                 SpawnEnemy();
             }
-            if (IsLevelFinished)
+            else if (IsLevelFinished)
             {
-                LevelProgressionCondition.Instance.LevelFinished();
-
+                photonView.RPC(nameof(LevelProgressionCondition.Instance.LevelFinished), RpcTarget.All);
+                
                 try
                 {
                     ChangeEnemyCount(baseEnemyCountAddition[LevelProgressionCondition.Instance.currentLevel]);
