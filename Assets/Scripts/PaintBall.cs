@@ -6,7 +6,7 @@ public class PaintBall : MonoBehaviour
 {
 
     [Tooltip("The time it takes for the bullet to disappear")]
-    private float despawnTime = 2.0f;
+    private float despawnTime = 5.0f;
 
     [System.NonSerialized]
     public GameObject playerWhoShot;
