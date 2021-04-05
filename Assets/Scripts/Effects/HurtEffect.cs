@@ -29,7 +29,7 @@ public class HurtEffect : MonoBehaviourPun
     private void Start()
     {
         controller = gameObject.GetComponent<FirstPersonController>();
-        audioSource = gameObject.GetComponent<AudioSource>();
+        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
         player = gameObject.GetComponent<PlayerManager>();
     }
 

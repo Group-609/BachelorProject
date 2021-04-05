@@ -35,21 +35,21 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     public float currentHealth = 50f;
 
     [Header("Sounds")]
+    public float soundDistance;
     public AudioClip spawningClip;
-    public AudioClip dyingClip;
-    public AudioClip turningHappyClip;
-    public AudioClip shrinkingClip;
-    public AudioClip hitClip;
-    public AudioClip shootClip;
-    public AudioClip roarClip;
     public AudioClip movementClip;
-
+    public AudioClip shrinkingClip;
+    public AudioClip shootClip;
+    public AudioClip hitClip;
     [SerializeField]
     private AudioClip[] hurtClip = new AudioClip[0];
 
     private AudioSource audioSource;
-    private AudioSource audioSource2;
     private AudioSource audioSourceWalking;
+    private AudioSource audioSourceHit;
+    private AudioSource audioSourceHurt;
+    
+
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
     [SerializeField]
@@ -107,11 +107,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         currentHealth = maxHealth;
 
         audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
-        audioSource2 = gameObject.AddComponent<AudioSource>() as AudioSource;
         audioSourceWalking = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceHit = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceHurt = gameObject.AddComponent<AudioSource>() as AudioSource;
+
         audioSourceWalking.loop = true;
         SetInitialAudioClips();
-        audioSource.PlayOneShot(spawningClip);
+        audioSource.Play();
 
         // we want to find nav target not every frame because it's computationally a bit heavy
         InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec); 
@@ -134,10 +136,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         }
         if (!isBlobified)
         {
-            if(currentHealth < 0)
-            {
-                audioSource.PlayOneShot(shrinkingClip);
-            }
+          
             if(closestPlayer == null)   //if no player is found, chill for a bit
             {
                 SetSpeed(0);
@@ -165,6 +164,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     void Blobify()
     {
         animator.SetBool("IsDead", true);
+        audioSource.PlayOneShot(shrinkingClip);
         isBlobified = true;
         agent.stoppingDistance = 0;
         if (isAreaEnemy)
@@ -212,13 +212,30 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         if (agent.velocity == Vector3.zero)
         {
             audioSourceWalking.Pause();
-            Debug.Log("Enemy stopped playing walking sound");
         }
     }
 
     void SetInitialAudioClips()
     {
+        audioSource.spatialBlend = 1;
+        audioSourceWalking.spatialBlend = 1;
+        audioSourceHit.spatialBlend = 1;
+        audioSourceHurt.spatialBlend = 1;
+
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
+        audioSourceWalking.rolloffMode = AudioRolloffMode.Linear;
+        audioSourceHit.rolloffMode = AudioRolloffMode.Linear;
+        audioSourceHurt.rolloffMode = AudioRolloffMode.Linear;
+
+        audioSource.maxDistance = soundDistance;
+        audioSourceWalking.maxDistance = soundDistance;
+        audioSourceHit.maxDistance = soundDistance;
+        audioSourceHurt.maxDistance = soundDistance;
+
+        audioSource.clip = spawningClip;
         audioSourceWalking.clip = movementClip;
+        audioSourceHit.clip = hitClip;
+
     }
 
     void FindNavTarget()
@@ -255,8 +272,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     public void OnDamageTaken()
     {
-        audioSource.PlayOneShot(hitClip);
-        audioSource2.PlayOneShot((AudioClip)hurtClip.GetRandomItem(), 0.7F);
+        audioSourceHit.Play();
+        audioSourceHurt.PlayOneShot((AudioClip)hurtClip.GetRandomItem());
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
