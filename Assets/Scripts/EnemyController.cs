@@ -215,7 +215,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                    {
                        if (isAreaEnemy)
                        {
-                           Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
+                           //Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
                            return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<PlayerManager>().isPlayerInKeyLocZone;
                        }
                        else return player.GetComponent<PlayerManager>().health > 0;

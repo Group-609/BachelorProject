@@ -244,11 +244,9 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     StartCoroutine(KeyLocationController.GetKeyLocationToDestroy().BeginDestroyingProcess());
                 }
-                    
             }
             if (eventCode == GameManager.respawnEvent)
             {
-                Debug.Log("Event for respawn called");
                 isPlayerInKeyLocZone = false;
                 transform.position = respawnTransform.position;
             }
