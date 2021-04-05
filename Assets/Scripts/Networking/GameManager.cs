@@ -73,9 +73,8 @@ namespace Photon.Pun.Demo.PunBasics
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
 				Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
 			}
-			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
-			Debug.LogError("Is DDA condition - " + IsDDAEnabled);
-			
+			if (PhotonNetwork.IsMasterClient)
+				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
 		}
 
 		/// <summary>
@@ -172,6 +171,14 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 		}
 
+		[PunRPC]
+		public void SetCondition(bool IsDDAEnabled)
+        {
+			this.IsDDAEnabled = IsDDAEnabled;
+			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
+			Debug.LogError("Condition set by master client - " + IsDDAEnabled);
+		}
+
 		/// <summary>
 		/// Called when the local player left the room. We need to load the launcher scene.
 		/// </summary>
@@ -236,7 +243,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private void TriggerTimeBasedDDAAs()
 		{
-			Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
+			//Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
 			StunCondition.Instance.UpdateConditionalValue(GameObject.FindGameObjectsWithTag("Player").ToList());
 
 			//TODO: Implement updating DDAAs here, which are time-based

@@ -11,6 +11,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System;
 using UnityStandardAssets.Characters.FirstPerson;
 using Photon.Pun;
 using ExitGames.Client.Photon;
@@ -50,7 +51,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float shootWaitTime = 0.9f;
 
         [Header("DDA system variables")]
-        [System.NonSerialized]
+        [NonSerialized]
         public int stunCount;
 
         [Header("Sounds")]
@@ -66,8 +67,10 @@ namespace Photon.Pun.Demo.PunBasics
         public static GameObject LocalPlayerInstance;
 
         //where the player will respawn after both players get stunned
-        [System.NonSerialized]
+        [NonSerialized]
         public Transform respawnTransform;
+
+        [NonSerialized] public bool isPlayerInKeyLocZone = false;   //is this player in a key location zone
 
         #endregion
 
@@ -230,17 +233,24 @@ namespace Photon.Pun.Demo.PunBasics
 
         public void OnEvent(EventData photonEvent)
         {
-            byte eventCode = photonEvent.Code;
             
+            byte eventCode = photonEvent.Code;
+
+            if (eventCode == GameManager.respawnEvent)
+            {
+                transform.position = respawnTransform.position;
+                isPlayerInKeyLocZone = false;
+                StartCoroutine(SetPlayerOutsideKeyLocationZone());
+            }
             if (photonView.IsMine) 
             {
                 if (eventCode == GameManager.respawnEvent)
                     Respawn();
                 if (eventCode == GameManager.destroyKeyLocationEvent)
                 {
-                    StartCoroutine(KeyLocationController.GetKeyLocationToDestroy().BeginDestroyingProcess());
+                    Debug.Log("Destroy key location index " + (int) photonEvent.CustomData);
+                    StartCoroutine(KeyLocationController.GetKeyLocationToDestroy((int) photonEvent.CustomData).BeginDestroyingProcess());
                 }
-                    
             }
         }
 
@@ -249,7 +259,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
-            transform.position = respawnTransform.position;
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
@@ -271,6 +280,10 @@ namespace Photon.Pun.Demo.PunBasics
         public void ChangeHealth(float value, int targetViewID)
         {
             PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
+            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health > startingHealth)
+                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = startingHealth;
+            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health < 0)
+                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = 0;
         }
 
         [PunRPC]
@@ -326,6 +339,7 @@ namespace Photon.Pun.Demo.PunBasics
         //Disables movement
         void Stun()
         {
+            IsFiring = false;
             fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
             photonView.RPC(nameof(Stunned), RpcTarget.All, GetComponent<PhotonView>().ViewID);
@@ -402,16 +416,22 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
+        private IEnumerator SetPlayerOutsideKeyLocationZone()
+        {
+            yield return new WaitForSeconds(respawnTime + standUpAnimationTime);
+            isPlayerInKeyLocZone = false;
+        }
+
         private IEnumerator ReturnPlayerControl(float waitTime)
         {
             isReturningControl = true;
             fpsController.enabled = true;
             yield return new WaitForSeconds(waitTime);
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.isStunned = false;
             isReturningControl = false;
         }
         
-
         private IEnumerator ShootPaintball()
         {
             waitingToShoot = true;
