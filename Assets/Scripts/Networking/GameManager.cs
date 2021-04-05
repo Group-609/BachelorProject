@@ -73,8 +73,6 @@ namespace Photon.Pun.Demo.PunBasics
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
 				Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
 			}
-			if (PhotonNetwork.IsMasterClient)
-				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
 		}
 
 		/// <summary>
@@ -115,7 +113,8 @@ namespace Photon.Pun.Demo.PunBasics
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
 				}
 			}
-
+			if (PhotonNetwork.IsMasterClient)
+				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
 			InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
 		}
 
