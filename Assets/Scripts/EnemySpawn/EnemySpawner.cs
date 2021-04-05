@@ -60,14 +60,15 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient && !LevelProgressionCondition.Instance.isGameFinished)
+        if (!LevelProgressionCondition.Instance.isGameFinished)
         {
             LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
-            if (CanSpawnEnemy)
+            
+            if (PhotonNetwork.IsMasterClient && CanSpawnEnemy)
             {
                 SpawnEnemy();
             }
-            else if (IsLevelFinished)
+            if (IsLevelFinished)
             {
                 LevelProgressionCondition.Instance.LevelFinished();
 
