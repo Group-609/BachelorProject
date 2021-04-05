@@ -250,6 +250,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.Log("Event for respawn called");
                 isPlayerInKeyLocZone = false;
+                transform.position = respawnTransform.position;
             }
 
         }
@@ -259,7 +260,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
-            transform.position = respawnTransform.position;
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
