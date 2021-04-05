@@ -30,6 +30,7 @@ public class HurtEffect : MonoBehaviourPun
     {
         controller = gameObject.GetComponent<FirstPersonController>();
         audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSource.spatialBlend = 1;
         player = gameObject.GetComponent<PlayerManager>();
     }
 

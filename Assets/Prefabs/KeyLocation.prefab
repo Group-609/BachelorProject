@@ -52,6 +52,7 @@ MonoBehaviour:
   clearSphereSpawnAmount: 15
   players: []
   speedMod: 0
+  clearedClip: {fileID: 8300000, guid: a5f9e6ddbd472fb408b10a32c9d9783b, type: 3}
 --- !u!1 &3549167572352077796
 GameObject:
   m_ObjectHideFlags: 0

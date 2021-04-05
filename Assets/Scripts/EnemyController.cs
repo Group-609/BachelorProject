@@ -273,7 +273,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     public void OnDamageTaken()
     {
         audioSourceHit.Play();
-        audioSourceHurt.PlayOneShot((AudioClip)hurtClip.GetRandomItem());
+        audioSourceHurt.PlayOneShot((AudioClip)hurtClip.GetRandomItem(), 0.7F);
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
