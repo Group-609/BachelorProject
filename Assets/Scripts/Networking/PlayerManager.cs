@@ -240,6 +240,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 transform.position = respawnTransform.position;
                 isPlayerInKeyLocZone = false;
+                StartCoroutine(SetPlayerOutsideKeyLocationZone());
             }
             if (photonView.IsMine) 
             {
@@ -251,7 +252,6 @@ namespace Photon.Pun.Demo.PunBasics
                     StartCoroutine(KeyLocationController.GetKeyLocationToDestroy((int) photonEvent.CustomData).BeginDestroyingProcess());
                 }
             }
-            
         }
 
         //Called when all players are stunned 
@@ -416,6 +416,12 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
+        private IEnumerator SetPlayerOutsideKeyLocationZone()
+        {
+            yield return new WaitForSeconds(respawnTime + standUpAnimationTime);
+            isPlayerInKeyLocZone = false;
+        }
+
         private IEnumerator ReturnPlayerControl(float waitTime)
         {
             isReturningControl = true;
@@ -426,7 +432,6 @@ namespace Photon.Pun.Demo.PunBasics
             isReturningControl = false;
         }
         
-
         private IEnumerator ShootPaintball()
         {
             waitingToShoot = true;
