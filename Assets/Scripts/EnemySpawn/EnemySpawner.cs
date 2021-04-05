@@ -42,7 +42,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     {
         get 
         {
-            if (enemyCountForProgressSpawnPoints.Length < activeSpawnPointIndex)
+            if (enemyCountForProgressSpawnPoints.Length > activeSpawnPointIndex)
                 return enemyCountForProgressSpawnPoints[activeSpawnPointIndex] == 0;
             else return false;
         } 
