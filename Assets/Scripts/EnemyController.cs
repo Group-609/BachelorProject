@@ -278,7 +278,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     [PunRPC]
     public void ChangePlayerHealth(float value, int targetViewID)
     {
-        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
+        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = Math.Max(PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health + value, 0);
         PhotonView.Find(targetViewID).gameObject.GetComponent<HurtEffect>().Hit();
     }
 

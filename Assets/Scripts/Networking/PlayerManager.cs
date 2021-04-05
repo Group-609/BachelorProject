@@ -275,6 +275,10 @@ namespace Photon.Pun.Demo.PunBasics
         public void ChangeHealth(float value, int targetViewID)
         {
             PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
+            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health > startingHealth)
+                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = startingHealth;
+            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health < 0)
+                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = 0;
         }
 
         [PunRPC]
