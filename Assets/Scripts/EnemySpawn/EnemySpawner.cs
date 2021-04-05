@@ -73,7 +73,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             }
             else if (IsLevelFinished)
             {
-                photonView.RPC(nameof(LevelProgressionCondition.Instance.LevelFinished), RpcTarget.All);
+                photonView.RPC(nameof(LevelFinished), RpcTarget.All);
                 
                 try
                 {
@@ -86,6 +86,13 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             }
         }
     }
+
+    [PunRPC]
+    private void LevelFinished()
+    {
+        LevelProgressionCondition.Instance.LevelFinished();
+    }
+
     private void SpawnEnemy()
     {
         if (!isInitialSpawnMade)

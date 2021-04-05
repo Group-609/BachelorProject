@@ -88,7 +88,7 @@ public class KeyLocationController : MonoBehaviour
                     }
                 }
             }
-            else if (LevelProgressionCondition.Instance.currentLevel > areaIndex && !isEventToDestroySent)
+            else if (PhotonNetwork.IsMasterClient && LevelProgressionCondition.Instance.currentLevel > areaIndex && !isEventToDestroySent)
             {
                 DestroyKeyLocation();
             }

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 public sealed class LevelProgressionCondition : ICondition
 {
     // --------------------------------- //
@@ -64,7 +60,6 @@ public sealed class LevelProgressionCondition : ICondition
         time += deltaTime;
     }
 
-    [PunRPC]
     public void LevelFinished()
     {
         if (currentLevel < expectedFinishTimes.Length)
