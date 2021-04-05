@@ -168,6 +168,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         }
         SetSpeed(speed);
         CancelInvoke(nameof(FindNavTarget));
+        foreach (Collider collider in GetComponents<Collider>())
+            collider.enabled = false;
         //TODO?: set color to nice pink
     }
 
