@@ -105,7 +105,6 @@ public class KeyLocationController : MonoBehaviour
     private void DestroyKeyLocation()
     {
         Debug.Log("Raised event to destroy key location");
-        hasEventToDestroyStarted = true;
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
         PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, areaIndex, raiseEventOptions, SendOptions.SendReliable);
     }
@@ -113,6 +112,7 @@ public class KeyLocationController : MonoBehaviour
     public IEnumerator BeginDestroyingProcess()
     {
         Debug.Log("Begin Destroying process");
+        hasEventToDestroyStarted = true;
         foreach (GameObject player in players)
         {
             player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
@@ -140,8 +140,7 @@ public class KeyLocationController : MonoBehaviour
         return GameObject.FindGameObjectsWithTag("KeyLocation").ToList().Find(
                 delegate (GameObject keyLocation)
                 {
-                    KeyLocationController controller = keyLocation.GetComponent<KeyLocationController>();
-                    return controller.areaIndex == areaIndex;
+                    return keyLocation.GetComponent<KeyLocationController>().areaIndex == areaIndex;
                 }
             ).GetComponent<KeyLocationController>();
     }
