@@ -25,10 +25,14 @@ public class KeyLocationController : MonoBehaviour
     [System.NonSerialized]
     public bool hasEventToDestroyStarted;
 
+    public AudioClip clearedClip;
+    private AudioSource audioSource;
+
     void Start()
     {
         StartCoroutine(GetPlayers());
         sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
+        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
     }
 
     void Update()
@@ -112,6 +116,14 @@ public class KeyLocationController : MonoBehaviour
         isEventToDestroySent = true;
     }
 
+    void AreaClearedSound()
+    {
+        //audioSource.spatialBlend = 1;
+        audioSource.clip = clearedClip;
+        audioSource.Play();
+        Debug.Log("AreaCleared");
+    }
+
     public IEnumerator BeginDestroyingProcess()
     {
         Debug.Log("Begin Destroying process");
@@ -134,6 +146,7 @@ public class KeyLocationController : MonoBehaviour
             {
                 Instantiate(clearSphere, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y * 4, gameObject.transform.position.z), Quaternion.identity);
             }
+            AreaClearedSound();
         }
     }
 

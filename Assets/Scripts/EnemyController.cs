@@ -35,15 +35,20 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     public float currentHealth = 50f;
 
     [Header("Sounds")]
+    public float soundDistance;
     public AudioClip spawningClip;
-    public AudioClip dyingClip;
-    public AudioClip turningHappyClip;
+    public AudioClip movementClip;
     public AudioClip shrinkingClip;
-    public AudioClip hitClip;
     public AudioClip shootClip;
-    public AudioClip roarClip;
+    public AudioClip hitClip;
+    [SerializeField]
+    private AudioClip[] hurtClip = new AudioClip[0];
 
     private AudioSource audioSource;
+    private AudioSource audioSourceWalking;
+    private AudioSource audioSourceHit;
+    private AudioSource audioSourceHurt;
+    
 
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
@@ -101,8 +106,14 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         
         currentHealth = maxHealth;
 
-        audioSource = GetComponent<AudioSource>();
-        audioSource.PlayOneShot(spawningClip);
+        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceWalking = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceHit = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceHurt = gameObject.AddComponent<AudioSource>() as AudioSource;
+
+        audioSourceWalking.loop = true;
+        SetInitialAudioClips();
+        audioSource.Play();
 
         // we want to find nav target not every frame because it's computationally a bit heavy
         InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec); 
@@ -110,6 +121,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void Update()
     {
+        PlayWalkingSound();
         if (PhotonNetwork.IsMasterClient && currentHealth < 0)
         {
             if (!isBlobified)
@@ -124,10 +136,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         }
         if (!isBlobified)
         {
-            if(currentHealth < 0)
-            {
-                audioSource.PlayOneShot(shrinkingClip);
-            }
+          
             if(closestPlayer == null)   //if no player is found, chill for a bit
             {
                 SetSpeed(0);
@@ -155,6 +164,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     void Blobify()
     {
         animator.SetBool("IsDead", true);
+        audioSource.PlayOneShot(shrinkingClip);
         isBlobified = true;
         agent.stoppingDistance = 0;
         if (isAreaEnemy)
@@ -190,6 +200,42 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     void SetSpeed(float speed)
     {
         agent.speed = speed;
+        
+    }
+
+    void PlayWalkingSound()
+    {
+        if (agent.velocity != Vector3.zero && !audioSourceWalking.isPlaying)
+        {
+            audioSourceWalking.Play();
+        }
+        if (agent.velocity == Vector3.zero)
+        {
+            audioSourceWalking.Pause();
+        }
+    }
+
+    void SetInitialAudioClips()
+    {
+        audioSource.spatialBlend = 1;
+        audioSourceWalking.spatialBlend = 1;
+        audioSourceHit.spatialBlend = 1;
+        audioSourceHurt.spatialBlend = 1;
+
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
+        audioSourceWalking.rolloffMode = AudioRolloffMode.Linear;
+        audioSourceHit.rolloffMode = AudioRolloffMode.Linear;
+        audioSourceHurt.rolloffMode = AudioRolloffMode.Linear;
+
+        audioSource.maxDistance = soundDistance;
+        audioSourceWalking.maxDistance = soundDistance;
+        audioSourceHit.maxDistance = soundDistance;
+        audioSourceHurt.maxDistance = soundDistance;
+
+        audioSource.clip = spawningClip;
+        audioSourceWalking.clip = movementClip;
+        audioSourceHit.clip = hitClip;
+
     }
 
     void FindNavTarget()
@@ -226,7 +272,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     public void OnDamageTaken()
     {
-        audioSource.PlayOneShot(hitClip);
+        audioSourceHit.Play();
+        audioSourceHurt.PlayOneShot((AudioClip)hurtClip.GetRandomItem(), 0.7F);
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
