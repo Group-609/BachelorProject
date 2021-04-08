@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 using Photon.Pun.Demo.PunBasics;
+using Photon.Pun;
 
 [RequireComponent(typeof (FirstPersonController))]
-public class HurtEffect : MonoBehaviour
+public class HurtEffect : MonoBehaviourPun
 {
     private bool isDisplayingEffect = false;
 
@@ -28,7 +29,8 @@ public class HurtEffect : MonoBehaviour
     private void Start()
     {
         controller = gameObject.GetComponent<FirstPersonController>();
-        audioSource = gameObject.GetComponent<AudioSource>();
+        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSource.spatialBlend = 1;
         player = gameObject.GetComponent<PlayerManager>();
     }
 
@@ -77,18 +79,21 @@ public class HurtEffect : MonoBehaviour
 
     public void Hit()
     {
-        if (audioSource != null && !audioSource.isPlaying)
+        if (photonView.IsMine)
         {
-            audioSource.clip = (AudioClip) hurtSound.GetRandomItem();
-            audioSource.Play();
-        }
-        if (isDisplayingEffect)
-        {
-            opacity = Mathf.Min(1f, opacity + 0.5f);
-        }
-        else
-        {
-            StartCoroutine(ApplyEffect());
+            if (audioSource != null && !audioSource.isPlaying)
+            {
+                audioSource.clip = (AudioClip)hurtSound.GetRandomItem();
+                audioSource.Play();
+            }
+            if (isDisplayingEffect)
+            {
+                opacity = Mathf.Min(1f, opacity + 0.5f);
+            }
+            else
+            {
+                StartCoroutine(ApplyEffect());
+            }
         }
     }
 }

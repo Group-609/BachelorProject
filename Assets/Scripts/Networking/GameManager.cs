@@ -38,6 +38,7 @@ namespace Photon.Pun.Demo.PunBasics
 		#region Private Fields
 
 		public const byte respawnEvent = 1;
+		public const byte destroyKeyLocationEvent = 2;
 
 		private GameObject instance;
 
@@ -70,11 +71,8 @@ namespace Photon.Pun.Demo.PunBasics
 			if (isLiveTest && conditionSetter != null)
             {
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
-				Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
+				//Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
 			}
-			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
-			Debug.LogError("Is DDA condition - " + IsDDAEnabled);
-			
 		}
 
 		/// <summary>
@@ -115,7 +113,8 @@ namespace Photon.Pun.Demo.PunBasics
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
 				}
 			}
-
+			if (PhotonNetwork.IsMasterClient)
+				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
 			InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
 		}
 
@@ -169,6 +168,14 @@ namespace Photon.Pun.Demo.PunBasics
 
 				LoadArena(); 
 			}
+		}
+
+		[PunRPC]
+		public void SetCondition(bool IsDDAEnabled)
+        {
+			this.IsDDAEnabled = IsDDAEnabled;
+			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
+			//Debug.LogError("Condition set by master client - " + IsDDAEnabled);
 		}
 
 		/// <summary>
@@ -235,7 +242,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private void TriggerTimeBasedDDAAs()
 		{
-			Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
+			//Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
 			StunCondition.Instance.UpdateConditionalValue(GameObject.FindGameObjectsWithTag("Player").ToList());
 
 			//TODO: Implement updating DDAAs here, which are time-based

@@ -12,10 +12,20 @@ public class EnemySpawnPoint : MonoBehaviour
     public int areaIndex;
 
     //This is needed, so enemies don't spawn on top of each other
-    private float minDistToEnemy = 8;
+    private float minClearDistToSpawn = 8;
 
-    public bool IsEnemyTooClose()
+    public bool IsEnemyOrPlayerTooClose()
     {
-        return Vector3.Distance(gameObject.FindClosestObject("Enemy").transform.position, transform.position) < minDistToEnemy;
+        GameObject closestEnemy = gameObject.FindClosestObject("Enemy");
+        GameObject closestPlayer = gameObject.FindClosestObject("Player");
+
+        if (closestEnemy != null && closestPlayer != null)
+            return Vector3.Distance(closestEnemy.transform.position, transform.position) < minClearDistToSpawn ||
+            Vector3.Distance(closestPlayer.transform.position, transform.position) < minClearDistToSpawn;
+        else if (closestEnemy != null)
+            return Vector3.Distance(closestEnemy.transform.position, transform.position) < minClearDistToSpawn;
+        else if (closestPlayer != null)
+            return Vector3.Distance(closestPlayer.transform.position, transform.position) < minClearDistToSpawn;
+        else return false;
     }
 }

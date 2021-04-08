@@ -11,10 +11,12 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System;
 using UnityStandardAssets.Characters.FirstPerson;
 using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using System.Linq;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -49,7 +51,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float shootWaitTime = 0.9f;
 
         [Header("DDA system variables")]
-        [System.NonSerialized]
+        [NonSerialized]
         public int stunCount;
 
         [Header("Sounds")]
@@ -65,8 +67,10 @@ namespace Photon.Pun.Demo.PunBasics
         public static GameObject LocalPlayerInstance;
 
         //where the player will respawn after both players get stunned
-        [System.NonSerialized]
+        [NonSerialized]
         public Transform respawnTransform;
+
+        [NonSerialized] public bool isPlayerInKeyLocZone = false;   //is this player in a key location zone
 
         #endregion
 
@@ -155,11 +159,21 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            try{animator = GetComponent<Animator>();}
+            catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
-            animator = GetComponent<Animator>();
-            animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();
-            fpsController = GetComponent<FirstPersonController>();
-            respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;
+            try{animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();}
+            catch {Debug.LogError("Missing Animator Component on player hands Prefab.", this);}
+
+            try{fpsController = GetComponent<FirstPersonController>();}
+            catch{Debug.LogError("Missing fpsController.", this);}
+
+            if(gameManager == null)
+            {
+                gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+            }
+            try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
+            catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
         }
 
 
@@ -197,20 +211,18 @@ namespace Photon.Pun.Demo.PunBasics
                             ProcessInputs();
                         }
                     }
-
-                    if (IsFiring && !waitingToShoot)
-                    {
-                        AnimateShoot();
-                        StartCoroutine(ShootPaintball());
-                    }
                 }
                 else if (!fpsController.isStunned)
                 {
                     Stun();
                     animator.SetBool("isDown", true);
                     animatorHands.SetBool("isDown", true);
-
                 }   
+            }
+            if (IsFiring && !waitingToShoot && health > 0f)
+            {
+                AnimateShoot();
+                StartCoroutine(ShootPaintball());
             }
         }
 
@@ -221,11 +233,24 @@ namespace Photon.Pun.Demo.PunBasics
 
         public void OnEvent(EventData photonEvent)
         {
+            
             byte eventCode = photonEvent.Code;
 
-            if (photonView.IsMine && eventCode == GameManager.respawnEvent) //Respawn event
+            if (eventCode == GameManager.respawnEvent)
             {
-                 Respawn();
+                transform.position = respawnTransform.position;
+                isPlayerInKeyLocZone = false;
+                StartCoroutine(SetPlayerOutsideKeyLocationZone());
+            }
+            if (photonView.IsMine) 
+            {
+                if (eventCode == GameManager.respawnEvent)
+                    Respawn();
+                if (eventCode == GameManager.destroyKeyLocationEvent)
+                {
+                    Debug.Log("Destroy key location index " + (int) photonEvent.CustomData);
+                    StartCoroutine(KeyLocationController.GetKeyLocationToDestroy((int) photonEvent.CustomData).BeginDestroyingProcess());
+                }
             }
         }
 
@@ -234,7 +259,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
-            transform.position = respawnTransform.position;
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
             this.health = startingHealth;
             animator.SetBool("isDown", false);
@@ -256,6 +280,10 @@ namespace Photon.Pun.Demo.PunBasics
         public void ChangeHealth(float value, int targetViewID)
         {
             PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
+            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health > startingHealth)
+                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = startingHealth;
+            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health < 0)
+                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = 0;
         }
 
         [PunRPC]
@@ -291,7 +319,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             animator.Play("Shoot");
             animatorHands.Play("Shoot");
-          
         }
 
         private void PlayShootingSound()
@@ -304,6 +331,17 @@ namespace Photon.Pun.Demo.PunBasics
             HealingRateDDAA.Instance.AdjustInGameValue();
         }
 
+        public string GetPlayerDebugInfo()
+        {
+            string debugPrintContent = "----Player info----\n";
+            if(photonView.IsMine){ debugPrintContent = debugPrintContent + "Your local player\n";  }
+            else { debugPrintContent += "Other player\n"; }
+            debugPrintContent += "Stun count: " + stunCount + "\n";
+            debugPrintContent += "In key location: " + isPlayerInKeyLocZone + "\n";
+            debugPrintContent += "----------------";
+            return debugPrintContent;
+        }
+
         #endregion
 
         #region Private Methods
@@ -311,6 +349,7 @@ namespace Photon.Pun.Demo.PunBasics
         //Disables movement
         void Stun()
         {
+            IsFiring = false;
             fpsController.isStunned = true;
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 1;
             photonView.RPC(nameof(Stunned), RpcTarget.All, GetComponent<PhotonView>().ViewID);
@@ -368,23 +407,27 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 animator.SetBool("isMovingRight", true);
                 animator.SetBool("isMovingLeft", false);
-                animatorHands.SetBool("isMovingRight", true);
-                animatorHands.SetBool("isMovingLeft", false);
+                animatorHands.SetBool("isMovingForward", true);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             else if (Input.GetAxis("Horizontal") < 0)
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", true);
-                animatorHands.SetBool("isMovingRight", false);
-                animatorHands.SetBool("isMovingLeft", true);
+                animatorHands.SetBool("isMovingForward", true);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             else
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", false);
-                animatorHands.SetBool("isMovingRight", false);
-                animatorHands.SetBool("isMovingLeft", false);
             }
+        }
+
+        private IEnumerator SetPlayerOutsideKeyLocationZone()
+        {
+            yield return new WaitForSeconds(respawnTime + standUpAnimationTime);
+            isPlayerInKeyLocZone = false;
         }
 
         private IEnumerator ReturnPlayerControl(float waitTime)
@@ -392,11 +435,11 @@ namespace Photon.Pun.Demo.PunBasics
             isReturningControl = true;
             fpsController.enabled = true;
             yield return new WaitForSeconds(waitTime);
+            GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.isStunned = false;
             isReturningControl = false;
         }
         
-
         private IEnumerator ShootPaintball()
         {
             waitingToShoot = true;

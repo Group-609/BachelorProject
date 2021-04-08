@@ -25,7 +25,7 @@ public class PlayerDataRecorder : MonoBehaviour
 
     //Does not depend on framerate
     void FixedUpdate()
-    {
+    {   
         counter++;
         if (counter % framesBetweenRecordTakes == 0)
         {
@@ -33,11 +33,15 @@ public class PlayerDataRecorder : MonoBehaviour
         }
         if (counter % framesBetweenSavingOfData == 0)
         {
+            #if UNITY_WEBGL
             Save(GetJsonToSend());
+            #endif
         }
         if (testEnded)
         {
+            #if UNITY_WEBGL
             Save(GetJsonToSend());
+            #endif
             this.enabled = false;
         }
     }
