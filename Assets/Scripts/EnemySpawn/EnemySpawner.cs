@@ -106,7 +106,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     [PunRPC]
     private void LevelFinished()
     {
-        Debug.LogError("Level Finished called in EnemySpawner");
+        //Debug.LogError("Level Finished called in EnemySpawner");
         LevelProgressionCondition.Instance.LevelFinished();
     }
 
