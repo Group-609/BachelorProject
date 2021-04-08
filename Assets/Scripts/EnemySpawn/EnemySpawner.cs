@@ -29,8 +29,19 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private int enemiesLeftToSpawnForArea = initialEnemyAmountToSpawn;
 
     private int activeSpawnPointIndex;
+    /*
     private readonly List<List<EnemySpawnPoint>> enemyAreaSpawnPoints = new List<List<EnemySpawnPoint>>();
     private readonly List<List<EnemySpawnPoint>> enemyProgressSpawnPoints = new List<List<EnemySpawnPoint>>(); // not sure about a correct name here
+    */
+
+    private readonly List<EnemySpawnPoint> area0SpawnPoints = new List<EnemySpawnPoint>();
+    private readonly List<EnemySpawnPoint> area1SpawnPoints = new List<EnemySpawnPoint>();
+    private readonly List<EnemySpawnPoint> area2SpawnPoints = new List<EnemySpawnPoint>();
+    private readonly List<EnemySpawnPoint> progress0SpawnPoints = new List<EnemySpawnPoint>();
+    private readonly List<EnemySpawnPoint> progress1SpawnPoints = new List<EnemySpawnPoint>();
+    private readonly List<EnemySpawnPoint> progress2SpawnPoints = new List<EnemySpawnPoint>();
+
+
 
     private bool isInitialSpawnMade;
 
@@ -120,25 +131,75 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         isEnemySpawning = true;
         if (IsProgressCleared)
         {
-            foreach (EnemySpawnPoint spawnPoint in enemyAreaSpawnPoints[activeSpawnPointIndex])
+            switch (activeSpawnPointIndex)
             {
-                if (enemiesLeftToSpawnForArea > 0)
-                {
-                    InstantiateEnemy(spawnPoint, true);
-                    enemiesLeftToSpawnForArea--;
-                }
+                case 0:
+                    foreach(EnemySpawnPoint spawnPoint in area0SpawnPoints)
+                    {
+                        if (enemiesLeftToSpawnForArea > 0)
+                        {
+                            InstantiateEnemy(spawnPoint, true);
+                            enemiesLeftToSpawnForArea--;
+                        }
+                    }
+                    break;
+                case 1:
+                    foreach (EnemySpawnPoint spawnPoint in area1SpawnPoints)
+                    {
+                        if (enemiesLeftToSpawnForArea > 0)
+                        {
+                            InstantiateEnemy(spawnPoint, true);
+                            enemiesLeftToSpawnForArea--;
+                        }
+                    }
+                    break;
+                case 2:
+                    foreach (EnemySpawnPoint spawnPoint in area2SpawnPoints)
+                    {
+                        if (enemiesLeftToSpawnForArea > 0)
+                        {
+                            InstantiateEnemy(spawnPoint, true);
+                            enemiesLeftToSpawnForArea--;
+                        }
+                    }
+                    break;
             }
             yield return new WaitForSeconds(spawnIntervalForArea);
         }
         else
         {
-            foreach (EnemySpawnPoint spawnPoint in enemyProgressSpawnPoints[activeSpawnPointIndex])
+            switch (activeSpawnPointIndex)
             {
-                if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
-                {
-                    InstantiateEnemy(spawnPoint, false);
-                    enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
-                }
+                case 0:
+                    foreach (EnemySpawnPoint spawnPoint in progress0SpawnPoints)
+                    {
+                        if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
+                        {
+                            InstantiateEnemy(spawnPoint, false);
+                            enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                        }
+                    }
+                    break;
+                case 1:
+                    foreach (EnemySpawnPoint spawnPoint in progress1SpawnPoints)
+                    {
+                        if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
+                        {
+                            InstantiateEnemy(spawnPoint, false);
+                            enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                        }
+                    }
+                    break;
+                case 2:
+                    foreach (EnemySpawnPoint spawnPoint in progress2SpawnPoints)
+                    {
+                        if (enemyCountForProgressSpawnPoints[activeSpawnPointIndex] > 0)
+                        {
+                            InstantiateEnemy(spawnPoint, false);
+                            enemyCountForProgressSpawnPoints[activeSpawnPointIndex]--;
+                        }
+                    }
+                    break;
             }
             yield return new WaitForSeconds(spawnIntervalForProgress);
         }
@@ -150,10 +211,22 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         isEnemySpawning = true;
         if (IsProgressCleared)
         {
-            List<EnemySpawnPoint> validSpawnPoints = enemyAreaSpawnPoints[activeSpawnPointIndex].ToValidSpawnPoints();
+            List<EnemySpawnPoint> validSpawnPoints = new List<EnemySpawnPoint>();
+            switch (activeSpawnPointIndex)
+            {
+                case 0:
+                    validSpawnPoints = area0SpawnPoints.ToValidSpawnPoints();
+                    break;
+                case 1:
+                    validSpawnPoints = area1SpawnPoints.ToValidSpawnPoints();
+                    break;
+                case 2:
+                    validSpawnPoints = area2SpawnPoints.ToValidSpawnPoints();
+                    break;
+            }
             if (validSpawnPoints.Count > 0)
             {
-                EnemySpawnPoint spawnPoint = validSpawnPoints[UnityEngine.Random.Range(0, validSpawnPoints.Count - 1)];
+                EnemySpawnPoint spawnPoint = validSpawnPoints[UnityEngine.Random.Range(0, validSpawnPoints.Count)];
                 InstantiateEnemy(spawnPoint, true);
                 enemiesLeftToSpawnForArea--;
                 yield return new WaitForSeconds(spawnIntervalForArea);
@@ -162,7 +235,19 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         else
         {
             // for now we just take the last progress point for spawning in process (should probably be changed later, but it fits the current design)
-            EnemySpawnPoint spawnPoint = enemyProgressSpawnPoints[activeSpawnPointIndex].FindLast(delegate (EnemySpawnPoint point) { return true; });
+            EnemySpawnPoint spawnPoint = new EnemySpawnPoint();
+            switch (activeSpawnPointIndex)
+            {
+                case 0:
+                    spawnPoint = progress0SpawnPoints.FindLast(delegate (EnemySpawnPoint point) { return true; });
+                    break;
+                case 1:
+                    spawnPoint = progress1SpawnPoints.FindLast(delegate (EnemySpawnPoint point) { return true; });
+                    break;
+                case 2:
+                    spawnPoint = progress2SpawnPoints.FindLast(delegate (EnemySpawnPoint point) { return true; });
+                    break;
+            }
             if (!spawnPoint.IsEnemyOrPlayerTooClose())
             {
                 InstantiateEnemy(spawnPoint, false);
@@ -207,20 +292,42 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
             if (spawnPoint.isAreaBased)
             {
-                enemyAreaSpawnPoints.AddToEnemySpawnPointList(spawnPoint);
+                switch (spawnPoint.areaIndex)
+                {
+                    case 0:
+                        area0SpawnPoints.Add(spawnPoint);
+                        break;
+                    case 1:
+                        area1SpawnPoints.Add(spawnPoint);
+                        break;
+                    case 2:
+                        area2SpawnPoints.Add(spawnPoint);
+                        break;
+                }
             } 
             else
             {
-                enemyProgressSpawnPoints.AddToEnemySpawnPointList(spawnPoint);
+
+                switch (spawnPoint.areaIndex)
+                {
+                    case 0:
+                        progress0SpawnPoints.Add(spawnPoint);
+                        break;
+                    case 1:
+                        progress1SpawnPoints.Add(spawnPoint);
+                        break;
+                    case 2:
+                        progress2SpawnPoints.Add(spawnPoint);
+                        break;
+                }
             }
         }
-        for(int i = 0; i < enemyAreaSpawnPoints.Count; i++)
-        {
-            Debug.Log("Area " + i + " :" + enemyAreaSpawnPoints[i].Count + " spawn points");
-        }
-        for (int i = 0; i < enemyProgressSpawnPoints.Count; i++)
-        {
-            Debug.Log("Progress " + i + " :" + enemyProgressSpawnPoints[i].Count + " spawn points");
-        }
+
+        Debug.Log("area0SpawnPoints: " + area0SpawnPoints.Count + " spawn points");
+        Debug.Log("area1SpawnPoints: " + area1SpawnPoints.Count + " spawn points");
+        Debug.Log("area2SpawnPoints: " + area2SpawnPoints.Count + " spawn points");
+        Debug.Log("progress0SpawnPoints: " + progress0SpawnPoints.Count + " spawn points");
+        Debug.Log("progress1SpawnPoints: " + progress1SpawnPoints.Count + " spawn points");
+        Debug.Log("progress2SpawnPoints: " + progress2SpawnPoints.Count + " spawn points");
     }
 }
