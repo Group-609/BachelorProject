@@ -12,7 +12,6 @@ public class DebugWindow : MonoBehaviour
     List<PlayerManager> players = new List<PlayerManager>();
 
     SpeedHack speedHack;
-    bool instaKillEnabled = false;
     bool speedHackEnabled = false;
     private float originalSpeed;
 
@@ -41,9 +40,14 @@ public class DebugWindow : MonoBehaviour
         {
             if (Input.GetKeyDown("i"))
             {
-                instaKillEnabled = !instaKillEnabled;
-                
+                List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+                foreach (GameObject enemy in enemies)
+                {
+                    enemy.GetComponent<EnemyController>().Die();
+                }
             }
+            
+
             if (Input.GetKeyDown("o"))
             {
                 speedHackEnabled = !speedHackEnabled;
@@ -82,13 +86,13 @@ public class DebugWindow : MonoBehaviour
         }
         else debugStrings.Add("Control condition is active");
         debugStrings.Add("----------------");
-        if(speedHackEnabled)
+        debugStrings.Add("Current level: " + LevelProgressionCondition.Instance.currentLevel);
+        debugStrings.Add("Enemies left: " + GameObject.FindGameObjectsWithTag("Enemy").Length);
+        if (speedHackEnabled)
             debugStrings.Add("Speedhack enabled - press 'o' again to disable");
         else debugStrings.Add("Press 'o' for speedhack");
-        if (instaKillEnabled)
-            debugStrings.Add("Instakill enabled - press 'i' again to disable");
-        else debugStrings.Add("Press 'i' for instakill");
-
+        
+        debugStrings.Add("Press 'i' to blobify all enemies");
 
         return debugStrings;
     }
