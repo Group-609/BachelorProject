@@ -95,6 +95,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     [PunRPC]
     private void LevelFinished()
     {
+        Debug.LogError("Level Finished called in EnemySpawner");
         LevelProgressionCondition.Instance.LevelFinished();
     }
 
@@ -152,7 +153,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             List<EnemySpawnPoint> validSpawnPoints = enemyAreaSpawnPoints[activeSpawnPointIndex].ToValidSpawnPoints();
             if (validSpawnPoints.Count > 0)
             {
-                EnemySpawnPoint spawnPoint = validSpawnPoints[UnityEngine.Random.Range(0, validSpawnPoints.Count)];
+                EnemySpawnPoint spawnPoint = validSpawnPoints[UnityEngine.Random.Range(0, validSpawnPoints.Count - 1)];
                 InstantiateEnemy(spawnPoint, true);
                 enemiesLeftToSpawnForArea--;
                 yield return new WaitForSeconds(spawnIntervalForArea);
@@ -193,7 +194,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     public void OnValueChanged(float value)
     {
-        //Debug.Log("Active point: " + activeSpawnPointIndex + ". " + value + " enemies to spawn");
+        Debug.Log("Active point: " + activeSpawnPointIndex + ". " + value + " enemies to spawn");
         enemiesLeftToSpawnForArea = (int) value;
     }
 
@@ -211,6 +212,14 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             {
                 enemyProgressSpawnPoints.AddToEnemySpawnPointList(spawnPoint);
             }
+        }
+        for(int i = 0; i < enemyAreaSpawnPoints.Count; i++)
+        {
+            Debug.Log("Area " + i + " :" + enemyAreaSpawnPoints[i].Count + " spawn points");
+        }
+        for (int i = 0; i < enemyProgressSpawnPoints.Count; i++)
+        {
+            Debug.Log("Progress " + i + " :" + enemyProgressSpawnPoints[i].Count + " spawn points");
         }
     }
 }

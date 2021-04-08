@@ -122,7 +122,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     void Update()
     {
         PlayWalkingSound();
-        if (PhotonNetwork.IsMasterClient && currentHealth < 0)
+        if (PhotonNetwork.IsMasterClient && currentHealth <= 0)
         {
             if (!isBlobified)
             {
@@ -180,6 +180,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         foreach (Collider collider in GetComponents<Collider>())
             collider.enabled = false;
         //TODO?: set color to nice pink
+    }
+
+    public void Die()
+    {
+        currentHealth = 0;
     }
 
     private IEnumerator DestroyEnemyWithDelay()
@@ -262,7 +267,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
             {
                 if (isAreaEnemy)
                 {
-                    Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
+                    //Debug.Log("Player is in key loc zone: " + player.GetComponent<PlayerManager>().isPlayerInKeyLocZone);
                     return player.GetComponent<PlayerManager>().health > 0 && player.GetComponent<PlayerManager>().isPlayerInKeyLocZone;
                 }
                 else return player.GetComponent<PlayerManager>().health > 0;
@@ -293,11 +298,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                 closestPlayer.GetComponent<HurtEffect>().Hit();
                 //TODO: play player melee hit sound
                 if (PhotonNetwork.IsMasterClient)
-                { 
+                {
                     HitPlayer(closestPlayer.gameObject, -meleeDamage);
                 }
             }
-            else if(distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
+            else if (distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
             {
                 GameObject projectile;
                 projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
