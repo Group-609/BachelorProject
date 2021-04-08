@@ -203,6 +203,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         foreach (GameObject spawnPointObject in allSpawnPointObjects)
         {
             EnemySpawnPoint spawnPoint = spawnPointObject.GetComponent<EnemySpawnPoint>();
+            Debug.Log("Raw spawn point index: " + spawnPoint.areaIndex + ". Is area: " + spawnPoint.isAreaBased);
 
             if (spawnPoint.isAreaBased)
             {
