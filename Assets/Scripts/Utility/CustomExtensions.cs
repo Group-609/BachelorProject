@@ -18,14 +18,9 @@ public static class CustomExtensions
 
     public static void AddToEnemySpawnPointList(this List<List<EnemySpawnPoint>> spawnPointList, EnemySpawnPoint spawnPointToAdd)
     {
-        try
-        {
-            spawnPointList[spawnPointToAdd.areaIndex].Add(spawnPointToAdd);
-        } 
-        catch(ArgumentOutOfRangeException)
-        {
+        if (spawnPointList.Count <= spawnPointToAdd.areaIndex)
             spawnPointList.Add(new List<EnemySpawnPoint>() { spawnPointToAdd });
-        }
+        else spawnPointList[spawnPointToAdd.areaIndex].Add(spawnPointToAdd);
     }
 
     public static List<EnemySpawnPoint> ToValidSpawnPoints(this List<EnemySpawnPoint> spawnPointList)
