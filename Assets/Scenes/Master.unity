@@ -503,19 +503,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6494167774872296142, guid: 0d2a50e2230cbae42b0f7b80ff20cc02, type: 3}
       propertyPath: m_Color.r
-      value: 1
+      value: 0.9811321
       objectReference: {fileID: 0}
     - target: {fileID: 6494167774872296142, guid: 0d2a50e2230cbae42b0f7b80ff20cc02, type: 3}
       propertyPath: m_Color.g
-      value: 0.9903964
+      value: 0.8807625
       objectReference: {fileID: 0}
     - target: {fileID: 6494167774872296142, guid: 0d2a50e2230cbae42b0f7b80ff20cc02, type: 3}
       propertyPath: m_Color.b
-      value: 0.8915094
+      value: 0.6062656
       objectReference: {fileID: 0}
     - target: {fileID: 6494167774872296142, guid: 0d2a50e2230cbae42b0f7b80ff20cc02, type: 3}
       propertyPath: m_Shadows.m_Type
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6494167774872296142, guid: 0d2a50e2230cbae42b0f7b80ff20cc02, type: 3}
+      propertyPath: m_Shadows.m_Resolution
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6494167774872296143, guid: 0d2a50e2230cbae42b0f7b80ff20cc02, type: 3}
       propertyPath: m_LocalRotation.x
