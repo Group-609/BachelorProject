@@ -75,6 +75,7 @@ public sealed class LevelProgressionCondition : ICondition
         else
         {
             Debug.Log("Game is finished");
+            GameObject.Find("Game Manager").GetComponent<ConditionSwitcher>().
             isGameFinished = true;
         }
     }
