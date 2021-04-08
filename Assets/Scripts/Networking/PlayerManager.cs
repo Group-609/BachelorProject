@@ -407,22 +407,20 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 animator.SetBool("isMovingRight", true);
                 animator.SetBool("isMovingLeft", false);
-                animatorHands.SetBool("isMovingRight", true);
-                animatorHands.SetBool("isMovingLeft", false);
+                animatorHands.SetBool("isMovingForward", true);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             else if (Input.GetAxis("Horizontal") < 0)
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", true);
-                animatorHands.SetBool("isMovingRight", false);
-                animatorHands.SetBool("isMovingLeft", true);
+                animatorHands.SetBool("isMovingForward", true);
+                animatorHands.SetBool("isMovingBackward", false);
             }
             else
             {
                 animator.SetBool("isMovingRight", false);
                 animator.SetBool("isMovingLeft", false);
-                animatorHands.SetBool("isMovingRight", false);
-                animatorHands.SetBool("isMovingLeft", false);
             }
         }
 

@@ -17,13 +17,15 @@ public class KeyLocationController : MonoBehaviour
     public GameObject clearSphere;
     public int clearSphereSpawnAmount;
     public List<GameObject> players = new List<GameObject>();
-    public float speedMod;
+    [System.NonSerialized] public float speedMod;
     private int shrinkValue = 20;
 
-    [System.NonSerialized]
-    public bool isEventToDestroySent;
-    [System.NonSerialized]
-    public bool hasEventToDestroyStarted;
+    public GameObject fountainWaterObject;
+    public Color cleanFountainMain;
+    public Color cleanFountainSecondary;
+
+    [System.NonSerialized] public bool isEventToDestroySent;
+    [System.NonSerialized] public bool hasEventToDestroyStarted;
 
     public AudioClip clearedClip;
     private AudioSource audioSource;
@@ -146,6 +148,8 @@ public class KeyLocationController : MonoBehaviour
             {
                 Instantiate(clearSphere, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y * 4, gameObject.transform.position.z), Quaternion.identity);
             }
+            fountainWaterObject.GetComponent<Renderer>().material.SetColor("_MainColor", cleanFountainMain);
+            fountainWaterObject.GetComponent<Renderer>().material.SetColor("_SecondaryColor", cleanFountainSecondary);
             AreaClearedSound();
         }
     }
