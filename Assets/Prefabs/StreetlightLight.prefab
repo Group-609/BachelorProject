@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7122772133688150618}
   - component: {fileID: 4419697474682991825}
   m_Layer: 0
-  m_Name: Streetlight Light
+  m_Name: StreetlightLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
