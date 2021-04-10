@@ -115,7 +115,8 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 			if (PhotonNetwork.IsMasterClient)
 				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
-			InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
+			if (IsDDAEnabled)
+				InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
 		}
 
 		/// <summary>
