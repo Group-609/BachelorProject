@@ -243,7 +243,16 @@ namespace Photon.Pun.Demo.PunBasics
 		private void TriggerTimeBasedDDAAs()
 		{
 			//Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
-			StunCondition.Instance.UpdateConditionalValue(GameObject.FindGameObjectsWithTag("Player").ToList());
+			StunCondition.Instance.UpdateConditionalValue(
+				GameObject.FindGameObjectsWithTag("Player").ToList().FindAll(
+					delegate(GameObject player)
+					{
+						return !photonView.IsMine;
+					}
+				)
+			);
+
+			EnemyMeleeDamageDDAA.Instance.AdjustInGameValue();
 
 			//TODO: Implement updating DDAAs here, which are time-based
 		}

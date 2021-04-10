@@ -279,7 +279,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     public void OnValueChanged(float value)
     {
-        Debug.Log("Active point: " + activeSpawnPointIndex + ". " + value + " enemies to spawn");
+        //Debug.Log("Active point: " + activeSpawnPointIndex + ". " + value + " enemies to spawn");
         enemiesLeftToSpawnForArea = (int) value;
     }
 
@@ -288,7 +288,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
         foreach (GameObject spawnPointObject in allSpawnPointObjects)
         {
             EnemySpawnPoint spawnPoint = spawnPointObject.GetComponent<EnemySpawnPoint>();
-            Debug.Log("Raw spawn point index: " + spawnPoint.areaIndex + ". Is area: " + spawnPoint.isAreaBased);
+            //Debug.Log("Raw spawn point index: " + spawnPoint.areaIndex + ". Is area: " + spawnPoint.isAreaBased);
 
             if (spawnPoint.isAreaBased)
             {
@@ -323,11 +323,11 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
             }
         }
 
-        Debug.Log("area0SpawnPoints: " + area0SpawnPoints.Count + " spawn points");
+        /*Debug.Log("area0SpawnPoints: " + area0SpawnPoints.Count + " spawn points");
         Debug.Log("area1SpawnPoints: " + area1SpawnPoints.Count + " spawn points");
         Debug.Log("area2SpawnPoints: " + area2SpawnPoints.Count + " spawn points");
         Debug.Log("progress0SpawnPoints: " + progress0SpawnPoints.Count + " spawn points");
         Debug.Log("progress1SpawnPoints: " + progress1SpawnPoints.Count + " spawn points");
-        Debug.Log("progress2SpawnPoints: " + progress2SpawnPoints.Count + " spawn points");
+        Debug.Log("progress2SpawnPoints: " + progress2SpawnPoints.Count + " spawn points");*/
     }
 }
