@@ -22,7 +22,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     [Header("DDA friendly variables - they might be changed by the DDAA")]
     //the default values here should be used if DDA is not applied
     private float meleeDamage = EnemyMeleeDamageDDAA.Instance.meleeDamage;
-    public float projectileDamage = 30f;
+    private float projectileDamage = EnemyBulletDamageDDAA.Instance.bulletDamage;
     public float speed = 3f;
     public float maxHealth = 50f;
     public float shootingDistance = 25f;
@@ -86,17 +86,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void Start()
     {
-        Debug.Log("DDA at enemy controller start: Melee damage = " + meleeDamage);
-
-        EnemyMeleeDamageDDAA.Instance.SetMeleeDamageListener(
-            new OnValueChangeListener(
-                (value) => {
-                    Debug.Log("DDA: Enemy melee damage value changed. Old value = " + meleeDamage + ". New value = " + value);
-                    meleeDamage = value;
-                }
-            )
-        );
-
+        LoadDDAAListeners();
         assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -351,6 +341,31 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     {
         PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = Math.Max(PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health + value, 0);
         PhotonView.Find(targetViewID).gameObject.GetComponent<HurtEffect>().Hit();
+    }
+
+    private void LoadDDAAListeners()
+    {
+        //Debug.Log("DDA at enemy controller start: Melee damage = " + meleeDamage);
+        Debug.Log("DDA at enemy controller start: Bullet damage = " + projectileDamage);
+
+        EnemyMeleeDamageDDAA.Instance.SetMeleeDamageListener(
+            new OnValueChangeListener(
+                (newValue) =>
+                {
+                    //Debug.Log("DDA: Enemy melee damage value changed. Old value = " + meleeDamage + ". New value = " + newValue);
+                    meleeDamage = newValue;
+                }
+            )
+        );
+        EnemyBulletDamageDDAA.Instance.SetBulletDamageListener(
+            new OnValueChangeListener(
+                (newValue) =>
+                {
+                    Debug.Log("DDA: Enemy bullet damage value changed. Old value = " + projectileDamage + ". New value = " + newValue);
+                    projectileDamage = newValue;
+                }
+            )
+        );
     }
 
     #region IPunObservable implementation
