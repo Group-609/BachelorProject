@@ -48,7 +48,7 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
     private float meleeDamageMultiplier = 1f;
-    private float meleeDamagePoint = baseMeleeDamagePoint;
+    private float meleeDamagePoint = baseMeleeDamagePoint;s
 
     // THE IN-GAME VALUE USED
     public float meleeDamage = DDAEngine.CalculateInGameValue(baseMeleeDamagePoint, meleeDamagePointContribution, dpgContribution, minMeleeDamage);
@@ -63,11 +63,14 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
     }
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
-        meleeDamageMultiplier += DDAEngine.GetAdditiveValue(
+        meleeDamageMultiplier = Mathf.Max(
+            0f, 
+            meleeDamageMultiplier + DDAEngine.GetAdditiveValue(
                 StunCondition.Instance.ConditionValue,
                 stunCountDiff,
                 stunCountDiffMultiplierAdditiveValues
-            );
+            )
+        );
         // adjust multiplier and point values
         meleeDamagePoint = baseMeleeDamagePoint * meleeDamageMultiplier; // possible to add value directly as well
 

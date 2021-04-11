@@ -64,11 +64,14 @@ public sealed class HealingRateDDAA : IDDAA
     }
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
-        healingMultiplier += DDAEngine.GetAdditiveValue(
+        healingMultiplier = Mathf.Max(
+            0f,
+            healingMultiplier + DDAEngine.GetAdditiveValue(
                 LevelProgressionCondition.Instance.ConditionValue,
                 levelProgression,
                 levelProgressionMultiplierAdditiveValues
-            );
+            )
+        );
         // adjust multiplier and point values
         healingPoint = baseHealingPoint * healingMultiplier; // possible to add value directly
 
