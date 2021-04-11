@@ -54,6 +54,9 @@ namespace Photon.Pun.Demo.PunBasics
         [NonSerialized]
         public int stunCount;
 
+        [NonSerialized]
+        public float totalDamageReceived;
+
         [Header("Sounds")]
 
         public AudioClip shootingClip;
@@ -279,11 +282,14 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeHealth(float value, int targetViewID)
         {
-            PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
-            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health > startingHealth)
-                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = startingHealth;
-            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health < 0)
-                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = 0;
+            PlayerManager player = PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>();
+            player.health = Mathf.Clamp(player.health + value, 0f, startingHealth);
+            if (value < 0)
+            {
+                player.totalDamageReceived += value;
+                if (photonView.IsMine)
+                    DamageReceivedCondition.Instance.localPlayerDamageReceived += value;
+            }
         }
 
         [PunRPC]
