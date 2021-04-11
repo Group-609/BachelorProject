@@ -259,7 +259,7 @@ namespace Photon.Pun.UtilityScripts
             int current = player.GetPlayerNumber();
             if (current != playerNumber)
             {
-				Debug.Log("PlayerNumbering: Set number "+playerNumber);
+				//Debug.Log("PlayerNumbering: Set number "+playerNumber);
                 player.SetCustomProperties(new Hashtable() { { PlayerNumbering.RoomPlayerIndexedProp, (byte)playerNumber } });
             }
         }

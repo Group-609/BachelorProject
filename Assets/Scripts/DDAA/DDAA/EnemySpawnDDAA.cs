@@ -65,11 +65,14 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
-        spawnMultiplier += DDAEngine.GetAdditiveValue(
+        spawnMultiplier = Mathf.Max(
+            0f,
+            spawnMultiplier + DDAEngine.GetAdditiveValue(
                 LevelProgressionCondition.Instance.ConditionValue,
                 levelProgression,
                 levelProgressionMultiplierAdditiveValues
-            );
+            )
+        );
         // adjust multiplier and point values
         spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
 

@@ -721,7 +721,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fcc50922fb3e0245ae7ef0d71bfb81b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meleeDamage: 90
   projectileDamage: 30
   speed: 5
   maxHealth: 50

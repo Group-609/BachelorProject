@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     [Header("DDA friendly variables - they might be changed by the DDAA")]
     //the default values here should be used if DDA is not applied
-    public float meleeDamage = 90f;
+    private float meleeDamage = EnemyMeleeDamageDDAA.Instance.meleeDamage;
     public float projectileDamage = 30f;
     public float speed = 3f;
     public float maxHealth = 50f;
@@ -86,6 +86,17 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void Start()
     {
+        Debug.Log("DDA at enemy controller start: Melee damage = " + meleeDamage);
+
+        EnemyMeleeDamageDDAA.Instance.SetMeleeDamageListener(
+            new OnValueChangeListener(
+                (value) => {
+                    Debug.Log("DDA: Enemy melee damage value changed. Old value = " + meleeDamage + ". New value = " + value);
+                    meleeDamage = value;
+                }
+            )
+        );
+
         assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -359,7 +370,5 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     }
 
     #endregion
-
-
 
 }
