@@ -16,12 +16,18 @@ public static class DDAEngine
 
     public static void AdjustDPG(float conditionValue, int[] conditionalValues, float[] additiveValues)
     {
-        difficultiesPointGlobal += GetAdditiveValue(conditionValue, conditionalValues, additiveValues);
+        difficultiesPointGlobal = Mathf.Max(
+            0f,
+            difficultiesPointGlobal + GetAdditiveValue(conditionValue, conditionalValues, additiveValues)
+        );
     }
 
     public static void AdjustDPG(float conditionValue, float[] conditionalValues, float[] additiveValues)
     {
-        difficultiesPointGlobal += GetAdditiveValue(conditionValue, conditionalValues, additiveValues);
+        difficultiesPointGlobal = Mathf.Max(
+            0f,
+            difficultiesPointGlobal + GetAdditiveValue(conditionValue, conditionalValues, additiveValues)
+        );
     }
 
     // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
