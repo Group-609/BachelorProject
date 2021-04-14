@@ -51,8 +51,11 @@ MonoBehaviour:
   clearSphere: {fileID: 7324278031975958964, guid: ba56b467c4ceafc46a377431fd8d74d0, type: 3}
   clearSphereSpawnAmount: 15
   players: []
-  speedMod: 0
+  fountainWaterObject: {fileID: 0}
+  cleanFountainMain: {r: 0, g: 0, b: 0, a: 0}
+  cleanFountainSecondary: {r: 0, g: 0, b: 0, a: 0}
   clearedClip: {fileID: 8300000, guid: a5f9e6ddbd472fb408b10a32c9d9783b, type: 3}
+  volume: 0.1
 --- !u!1 &3549167572352077796
 GameObject:
   m_ObjectHideFlags: 0
