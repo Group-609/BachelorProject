@@ -43,6 +43,8 @@ namespace Photon.Pun.Demo.Asteroids
         private Dictionary<string, GameObject> roomListEntries;
         private Dictionary<int, GameObject> playerListEntries;
 
+        public GameObject devFlowActiveText;
+
         #region UNITY
 
         public void Awake()
@@ -53,6 +55,17 @@ namespace Photon.Pun.Demo.Asteroids
             roomListEntries = new Dictionary<string, GameObject>();
             
             PlayerNameInput.text = "Player " + Random.Range(1000, 10000);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKey("q"))
+            {
+                if (Input.GetKeyDown("p"))
+                {
+                    devFlowActiveText.SetActive(!devFlowActiveText.activeSelf);
+                }
+            }
         }
 
         #endregion
