@@ -252,14 +252,15 @@ namespace Photon.Pun.Demo.PunBasics
 					}
 				);
 
+			Debug.Log("My team other member count:" + teamPlayers.Count);
+
 			StunCondition.Instance.UpdateConditionalValue(teamPlayers);
 			DamageReceivedCondition.Instance.UpdateConditionalValue(teamPlayers);
+			DefeatedEnemiesCountCondition.Instance.UpdateConditionalValue(teamPlayers);
 
 			EnemyMeleeDamageDDAA.Instance.AdjustInGameValue();
 			EnemyBulletDamageDDAA.Instance.AdjustInGameValue();
 			PlayerPainballDamageDDAA.Instance.AdjustInGameValue();
-
-			//TODO: Implement updating DDAAs here, which are time-based
 		}
 
         #endregion

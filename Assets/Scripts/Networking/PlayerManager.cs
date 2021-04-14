@@ -57,6 +57,9 @@ namespace Photon.Pun.Demo.PunBasics
         [NonSerialized]
         public float totalDamageReceived;
 
+        [NonSerialized]
+        public int defeatedEnemiesCount;
+
         [Header("Sounds")]
 
         public AudioClip shootingClip;
@@ -300,16 +303,15 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
             PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
             player.health = Mathf.Clamp(player.health + value, 0f, startingHealth);
-            Debug.Log("Health changed. Current player's health = " + player.health);
             if (value < 0)
             {
                 player.totalDamageReceived += value;
-                Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
                 if (receivedPhotonView.IsMine)
                 {
                     DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += value;
                     Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
                 }
+                else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
             }
         }
 
@@ -319,12 +321,12 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
             PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
             player.stunCount++;
-            Debug.Log("Someone is stunned! Player's stun count is " + player.stunCount);
             if (receivedPhotonView.IsMine)
             {
                 StunCondition.Instance.localPlayerStuntCount++;
                 Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
             }
+            else Debug.Log("Someone is stunned! Player's stun count is " + player.stunCount);
         }
 
         //Function to call when an enemy is hit. 
@@ -332,14 +334,28 @@ namespace Photon.Pun.Demo.PunBasics
         // healthChange - the effect on the enemies health (negative values for hurting)
         public void HitEnemy(GameObject enemy, float healthChange)
         {
-            photonView.RPC("ChangeEnemyHealth", RpcTarget.All, healthChange, enemy.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeEnemyHealth), RpcTarget.All, healthChange, GetComponent<PhotonView>().ViewID, enemy.GetComponent<PhotonView>().ViewID);
         }
 
         [PunRPC]
-        public void ChangeEnemyHealth(float value, int targetViewID)
+        public void ChangeEnemyHealth(float value, int playerViewID, int targetViewID)
         {
-            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().currentHealth += value;
-            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().OnDamageTaken();
+            PhotonView enemyPhotonView = PhotonView.Find(targetViewID);
+            EnemyController enemy = enemyPhotonView.gameObject.GetComponent<EnemyController>();
+            enemy.currentHealth += value;
+            enemy.OnDamageTaken();
+            if (enemy.currentHealth <= 0)
+            {
+                PhotonView playerPhotonView = PhotonView.Find(playerViewID);
+                PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
+                player.defeatedEnemiesCount++;
+                if (playerPhotonView.IsMine)
+                {
+                    DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount++;
+                    Debug.Log("We defeated enemy! Local player defeated enemy count is " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+                }
+                else Debug.Log("Someone defeated enemy! Player's defeated enemy count is " + player.defeatedEnemiesCount);
+            }
         }
 
         [PunRPC]
