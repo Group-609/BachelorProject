@@ -257,6 +257,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 			EnemyMeleeDamageDDAA.Instance.AdjustInGameValue();
 			EnemyBulletDamageDDAA.Instance.AdjustInGameValue();
+			PlayerPainballDamageDDAA.Instance.AdjustInGameValue();
 
 			//TODO: Implement updating DDAAs here, which are time-based
 		}
