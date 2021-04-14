@@ -86,6 +86,8 @@ namespace Photon.Pun.Demo.PunBasics
 			Physics.IgnoreLayerCollision(8, 9);
 			Physics.IgnoreLayerCollision(9, 9);
 			Instance = this;
+			RenderSettings.skybox.SetFloat("_Exposure", 1);
+
 
 			// in case we started this demo with the wrong scene being active, simply load the menu scene
 			if (!PhotonNetwork.IsConnected)

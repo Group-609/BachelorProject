@@ -20,6 +20,9 @@ public class KeyLocationController : MonoBehaviour
     [System.NonSerialized] public float speedMod;
     private int shrinkValue = 20;
 
+    private GameObject directionalLight;
+    public float exposureValue;
+
     public GameObject fountainWaterObject;
     public Color cleanFountainMain;
     public Color cleanFountainSecondary;
@@ -35,6 +38,7 @@ public class KeyLocationController : MonoBehaviour
         StartCoroutine(GetPlayers());
         sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
         audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        directionalLight = GameObject.FindGameObjectWithTag("DirectionalLight");
     }
 
     void Update()
@@ -163,6 +167,10 @@ public class KeyLocationController : MonoBehaviour
             }
             fountainWaterObject.GetComponent<Renderer>().material.SetColor("_MainColor", cleanFountainMain);
             fountainWaterObject.GetComponent<Renderer>().material.SetColor("_SecondaryColor", cleanFountainSecondary);
+
+            directionalLight.GetComponent<Light>().intensity = exposureValue;
+            RenderSettings.skybox.SetFloat("_Exposure", exposureValue);
+
             AreaClearedSound();
         }
     }
