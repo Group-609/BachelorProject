@@ -139,6 +139,19 @@ public class KeyLocationController : MonoBehaviour
         while (sphere.transform.localScale.x > 0)
         {
             sphere.transform.localScale -= new Vector3(shrinkValue, shrinkValue, shrinkValue) * Time.deltaTime;
+
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (players[i].health < 100)
+                {
+                    players[i].health += Time.deltaTime;
+                }
+                else
+                {
+                    players[i].health = 100;
+                }
+            }
+
             yield return null;
         }
         if (sphere.transform.localScale.x <= 0)
