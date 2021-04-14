@@ -140,15 +140,15 @@ public class KeyLocationController : MonoBehaviour
         {
             sphere.transform.localScale -= new Vector3(shrinkValue, shrinkValue, shrinkValue) * Time.deltaTime;
 
-            for (int i = 0; i < players.Length; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                if (players[i].health < 100)
+                if (players[i].GetComponent<PlayerManager>().health < 100)
                 {
-                    players[i].health += Time.deltaTime;
+                    players[i].GetComponent<PlayerManager>().health += Time.deltaTime;
                 }
                 else
                 {
-                    players[i].health = 100;
+                    players[i].GetComponent<PlayerManager>().health = 100;
                 }
             }
 
