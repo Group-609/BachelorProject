@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 public class ConditionSwitcher : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void FirstConditionFinished();
+    private static extern void ShowSecondForm();
 
     public void SwitchCondition()
     {
         //TODO: show UI to fill out second part of survey
-        FirstConditionFinished();
+        ShowSecondForm();
     }
 
     public void LoadNextLevel()
