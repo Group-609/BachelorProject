@@ -298,14 +298,15 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
             PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
             player.health = Mathf.Clamp(player.health + value, 0f, startingHealth);
+            Debug.Log("Health changed. Current player's health = " + player.health);
             if (value < 0)
             {
                 player.totalDamageReceived += value;
-                Debug.Log("Someone was damaged! Player's damage received: " + player.totalDamageReceived);
+                Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
                 if (receivedPhotonView.IsMine)
                 {
-                    DamageReceivedCondition.Instance.localPlayerDamageReceived += value;
-                    Debug.Log("We were damaged! Local player damage received: " + DamageReceivedCondition.Instance.localPlayerDamageReceived);
+                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += value;
+                    Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
                 }
             }
         }

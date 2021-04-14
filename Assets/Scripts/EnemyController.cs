@@ -332,15 +332,15 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         if(player.GetComponent<PlayerManager>().health > 0)
         {
             photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
-
         }
     }
 
     [PunRPC]
     public void ChangePlayerHealth(float value, int targetViewID)
     {
-        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = Math.Max(PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health + value, 0);
-        PhotonView.Find(targetViewID).gameObject.GetComponent<HurtEffect>().Hit();
+        PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
+        receivedPhotonView.gameObject.GetComponent<PlayerManager>().ChangeHealth(value, targetViewID);
+        receivedPhotonView.gameObject.GetComponent<HurtEffect>().Hit();
     }
 
     private void LoadDDAAListeners()

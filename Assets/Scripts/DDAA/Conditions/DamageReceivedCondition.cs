@@ -36,7 +36,7 @@ public sealed class DamageReceivedCondition
     private static readonly float[] dpgValues = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // stun count difference, by which the DDAA's additive values would be mapped
     private static readonly float[] dpgAdditiveValues = new float[] { 1.5f, 1f, 0f, -1f, -1.5f }; // additive values to DPG point
 
-    public float localPlayerDamageReceived = 0;
+    public float localPlayerTotalDamageReceived = 0;
 
     private float comparisonWithTeam; // smaller value - better player
 
@@ -58,7 +58,7 @@ public sealed class DamageReceivedCondition
             float totalTeamDamageReceived = 0;
             teamPlayers.ForEach(player => totalTeamDamageReceived += player.GetComponent<PlayerManager>().totalDamageReceived);
             float teamDamageReceivedAverage = totalTeamDamageReceived / teamPlayers.Count;
-            ConditionValue = localPlayerDamageReceived / teamDamageReceivedAverage;
+            ConditionValue = localPlayerTotalDamageReceived / teamDamageReceivedAverage;
         }
         else
         {
