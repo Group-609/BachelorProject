@@ -41,9 +41,12 @@ public sealed class EnemyBulletDamageDDAA
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] stunCountDiff = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // how many times was the player stunned more than other players
-
     private static readonly float[] stunCountDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
     private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { 0.5f, 0.2f, 0f, -0.2f, -0.5f }; // additive values to multiplier
+
+    private static readonly float[] damageReceivedDiff = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // how many times was the player damaged more than other players
+    private static readonly float[] damageReceivedDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
+    private static readonly float[] damageReceivedDiffMultiplierAdditiveValues = new float[] { 0.5f, 0.2f, 0f, -0.2f, -0.5f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
@@ -63,16 +66,8 @@ public sealed class EnemyBulletDamageDDAA
     }
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
-        bulletDamageMultiplier = Mathf.Max(
-            0f,
-            bulletDamageMultiplier + DDAEngine.GetAdditiveValue(
-                StunCondition.Instance.ConditionValue,
-                stunCountDiff,
-                stunCountDiffMultiplierAdditiveValues
-            )
-        );
         // adjust multiplier and point values
-        bulletDamagePoint = baseBulletDamagePoint * bulletDamageMultiplier; // possible to add value directly as well
+        bulletDamagePoint = baseBulletDamagePoint * UpdatedMultiplier(); // possible to add value directly as well
 
         //set healing rate
         bulletDamage = DDAEngine.CalculateInGameValue(bulletDamagePoint, bulletDamagePointContribution, dpgContribution, minBulletDamage + addToInGameValue);
@@ -81,5 +76,24 @@ public sealed class EnemyBulletDamageDDAA
         {
             bulletDamageListener.OnValueChanged(bulletDamage);
         }
+    }
+
+    private float UpdatedMultiplier()
+    {
+        bulletDamageMultiplier = Mathf.Max(
+            0f,
+            bulletDamageMultiplier +
+            DDAEngine.GetAdditiveValue(
+                StunCondition.Instance.ConditionValue,
+                stunCountDiff,
+                stunCountDiffMultiplierAdditiveValues
+            ) +
+            DDAEngine.GetAdditiveValue(
+                DamageReceivedCondition.Instance.ConditionValue,
+                damageReceivedDiff,
+                damageReceivedDiffMultiplierAdditiveValues
+            )
+        );
+        return bulletDamageMultiplier;
     }
 }
