@@ -55,6 +55,7 @@ MonoBehaviour:
   cleanFountainMain: {r: 0.25490198, g: 0.50980395, b: 0.77647066, a: 0}
   cleanFountainSecondary: {r: 0.10196079, g: 0.3254902, b: 0.50980395, a: 0}
   clearedClip: {fileID: 8300000, guid: a5f9e6ddbd472fb408b10a32c9d9783b, type: 3}
+  volume: 0.2
 --- !u!1 &3549167572352077796
 GameObject:
   m_ObjectHideFlags: 0

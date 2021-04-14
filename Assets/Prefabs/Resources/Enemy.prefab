@@ -737,6 +737,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d67d777e29120bf48ab4e833b97cfaba, type: 3}
   - {fileID: 8300000, guid: 1c86cfd19f52fab4bb03a38e09692019, type: 3}
   - {fileID: 8300000, guid: f8aec3b2dc39bbd4d8dbfce709a95ffb, type: 3}
+  - {fileID: 8300000, guid: 0a34975baac280c4cb4062e74079cd8d, type: 3}
+  - {fileID: 8300000, guid: 5b50330a04676c64db00ff7d306d72a8, type: 3}
+  - {fileID: 8300000, guid: 40cf788a9c7ca7946bc939a3c8cd61d0, type: 3}
+  volumeHurt: 0.3
+  volumeSpawn: 0.9
+  volumeWalk: 0.3
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimeSec: 1
   distanceToKeyLocationToDespawn: 1
