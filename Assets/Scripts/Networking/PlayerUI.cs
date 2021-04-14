@@ -78,6 +78,13 @@ namespace Photon.Pun.Demo.PunBasics
 			// Reflect the Player Health
 			if (playerHealthSlider != null) {
 				playerHealthSlider.value = target.health;
+				if (target.health <= 0)
+                {
+					playerHealthSlider.transform.Find("Fill Area").gameObject.transform.Find("Fill").gameObject.SetActive(false);
+                } else
+                {
+					playerHealthSlider.transform.Find("Fill Area").gameObject.transform.Find("Fill").gameObject.SetActive(true);
+				}
 			}
 		}
 
