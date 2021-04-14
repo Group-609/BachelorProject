@@ -43,6 +43,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private GameObject instance;
 
+		private List<GameObject> players;
 
 		[Tooltip("Check to change the condition")]
 		[SerializeField]
@@ -118,6 +119,8 @@ namespace Photon.Pun.Demo.PunBasics
 				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
 			if (IsDDAEnabled)
 				InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
+
+			InvokeRepeating(nameof(RefreshPlayers), 0, 1f);
 		}
 
 		/// <summary>
@@ -130,9 +133,13 @@ namespace Photon.Pun.Demo.PunBasics
 			{
 				QuitApplication();
 			}
-			if(PhotonNetwork.IsMasterClient && !isRespawning)
+			if(PhotonNetwork.IsMasterClient)
             {
-				StartCoroutine(RespawnCheck());
+				if (!LevelProgressionCondition.Instance.isGameFinished && ArePlayersInCombat())
+					LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
+
+				if (!isRespawning)
+					StartCoroutine(RespawnCheck());
 			}
 		}
 
@@ -236,6 +243,24 @@ namespace Photon.Pun.Demo.PunBasics
 			Debug.LogFormat( "PhotonNetwork : Loading Level : {0}", PhotonNetwork.CurrentRoom.PlayerCount );
 
 			PhotonNetwork.LoadLevel("Master");
+		}
+
+		private void RefreshPlayers()
+		{
+			players = GameObject.FindGameObjectsWithTag("Player").ToList();
+		}
+
+		private bool ArePlayersInCombat()
+		{
+			if (players != null && players.Count > 0)
+			{
+				foreach(GameObject player in players)
+				{
+					if (player.GetComponent<PlayerManager>().isPlayerInKeyLocZone)
+						return true;
+				}
+			}
+			return false;
 		}
 
         #endregion
