@@ -57,6 +57,9 @@ namespace Photon.Pun.Demo.PunBasics
         [NonSerialized]
         public float totalDamageReceived;
 
+        [NonSerialized]
+        public int defeatedEnemiesCount;
+
         [Header("Sounds")]
 
         public AudioClip shootingClip;
@@ -330,14 +333,28 @@ namespace Photon.Pun.Demo.PunBasics
         // healthChange - the effect on the enemies health (negative values for hurting)
         public void HitEnemy(GameObject enemy, float healthChange)
         {
-            photonView.RPC("ChangeEnemyHealth", RpcTarget.All, healthChange, enemy.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeEnemyHealth), RpcTarget.All, healthChange, GetComponent<PhotonView>().ViewID, enemy.GetComponent<PhotonView>().ViewID);
         }
 
         [PunRPC]
-        public void ChangeEnemyHealth(float value, int targetViewID)
+        public void ChangeEnemyHealth(float value, int playerViewID, int targetViewID)
         {
-            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().currentHealth += value;
-            PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>().OnDamageTaken();
+            PhotonView enemyPhotonView = PhotonView.Find(targetViewID);
+            EnemyController enemy = enemyPhotonView.gameObject.GetComponent<EnemyController>();
+            enemy.currentHealth += value;
+            enemy.OnDamageTaken();
+            if (enemy.currentHealth <= 0)
+            {
+                PhotonView playerPhotonView = PhotonView.Find(playerViewID);
+                PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
+                player.defeatedEnemiesCount++;
+                Debug.Log("Someone defeated enemy! Player's defeated enemies count is " + player.defeatedEnemiesCount);
+                if (playerPhotonView.IsMine)
+                {
+                    DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount++;
+                    Debug.Log("We defeated enemy! Local player defeated enemy count is " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+                }
+            }
         }
 
         [PunRPC]

@@ -60,7 +60,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     private NavMeshAgent agent;
     private Animator animator;
-    public int refreshTargetTimeSec = 1;
+    private float refreshTargetTimeSec = 1.5f;
     [System.NonSerialized]
     public bool isBlobified = false;
 
