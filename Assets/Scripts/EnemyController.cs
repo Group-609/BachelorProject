@@ -11,7 +11,6 @@ using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunInstantiateMagicCallback
 {
-    private List<GameObject> players;
     [System.NonSerialized]
     public Transform closestPlayer;
     private float distanceToPlayer;
@@ -92,7 +91,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk");     //Walking animation
         agent.stoppingDistance = stoppingDistance;
-        players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
 
         try
         {
@@ -263,7 +261,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     private List<GameObject> GetPlayersToAttack()
     {
-        return players.FindAll(
+        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player")).FindAll(
             delegate (GameObject player)
             {
                 if (isAreaEnemy)
