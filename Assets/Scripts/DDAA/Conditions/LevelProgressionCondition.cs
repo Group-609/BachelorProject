@@ -62,7 +62,7 @@ public sealed class LevelProgressionCondition : ICondition
 
     public void LevelFinished()
     {
-        if (currentLevel < expectedFinishTimes.Length)
+        if (currentLevel + 1 < expectedFinishTimes.Length)
         {
             Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedFinishTimes[currentLevel]);
             if (DDAEngine.isDynamicAdjustmentEnabled)

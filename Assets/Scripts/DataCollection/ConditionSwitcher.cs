@@ -13,6 +13,7 @@ public class ConditionSwitcher : MonoBehaviour
 
     void Update()
     {
+        //Debug.Log("LevelProgressionCondition.Instance.isGameFinished: " + LevelProgressionCondition.Instance.isGameFinished + " firstCondition: " + firstCondition);
         if (LevelProgressionCondition.Instance.isGameFinished && firstCondition)
         {
             Debug.Log("First game finished!");
