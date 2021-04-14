@@ -14,6 +14,7 @@ using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Photon.Pun.Demo.PunBasics
@@ -115,7 +116,8 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 			if (PhotonNetwork.IsMasterClient)
 				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
-			InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
+			if (IsDDAEnabled)
+				InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
 		}
 
 		/// <summary>
@@ -243,7 +245,19 @@ namespace Photon.Pun.Demo.PunBasics
 		private void TriggerTimeBasedDDAAs()
 		{
 			//Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
-			StunCondition.Instance.UpdateConditionalValue(GameObject.FindGameObjectsWithTag("Player").ToList());
+			List<GameObject> teamPlayers = GameObject.FindGameObjectsWithTag("Player").ToList().FindAll(
+					delegate (GameObject player)
+					{
+						return !photonView.IsMine;
+					}
+				);
+
+			StunCondition.Instance.UpdateConditionalValue(teamPlayers);
+			DamageReceivedCondition.Instance.UpdateConditionalValue(teamPlayers);
+
+			EnemyMeleeDamageDDAA.Instance.AdjustInGameValue();
+			EnemyBulletDamageDDAA.Instance.AdjustInGameValue();
+			PlayerPainballDamageDDAA.Instance.AdjustInGameValue();
 
 			//TODO: Implement updating DDAAs here, which are time-based
 		}

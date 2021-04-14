@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun.Demo.PunBasics;
 
-public class StunCondition
+public sealed class StunCondition
 {
     // --------------------------------- //
     // Singleton related implementation //
@@ -34,11 +34,11 @@ public class StunCondition
     // IMPORTANT! Both arrays have to be the same length
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
     private static readonly float[] dpgValues = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // stun count difference, by which the DDAA's additive values would be mapped
-    private static readonly float[] dpgAdditiveValues = new float[] { -1f, 0f, 0.5f, 1f, 1.5f }; // additive values to DPG point
+    private static readonly float[] dpgAdditiveValues = new float[] { 1.5f, 1f, 0f,-1f, -1.5f }; // additive values to DPG point
 
-    public int localPlayerStuntCount;
+    public int localPlayerStuntCount = 0;
 
-    private float comparisonWithTeam;
+    private float comparisonWithTeam; // smaller value - better player
 
     public float ConditionValue
     {
@@ -53,9 +53,16 @@ public class StunCondition
 
     public void UpdateConditionalValue(List<GameObject> teamPlayers)
     {
-        int totalTeamStunCount = 0;
-        teamPlayers.ForEach(player => totalTeamStunCount += player.GetComponent<PlayerManager>().stunCount);
-        float teamStunCountAverage = totalTeamStunCount / teamPlayers.Count;
-        ConditionValue = localPlayerStuntCount / teamStunCountAverage;
+        if (teamPlayers.Count > 0)
+        {
+            int totalTeamStunCount = 0;
+            teamPlayers.ForEach(player => totalTeamStunCount += player.GetComponent<PlayerManager>().stunCount);
+            float teamStunCountAverage = totalTeamStunCount / teamPlayers.Count;
+            ConditionValue = localPlayerStuntCount / teamStunCountAverage;
+        }
+        else
+        {
+            ConditionValue = 1f;
+        }
     }
 }

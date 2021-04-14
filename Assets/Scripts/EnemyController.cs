@@ -11,7 +11,6 @@ using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunInstantiateMagicCallback
 {
-    private List<GameObject> players;
     [System.NonSerialized]
     public Transform closestPlayer;
     private float distanceToPlayer;
@@ -21,8 +20,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     [Header("DDA friendly variables - they might be changed by the DDAA")]
     //the default values here should be used if DDA is not applied
-    public float meleeDamage = 90f;
-    public float projectileDamage = 30f;
+    private float meleeDamage = EnemyMeleeDamageDDAA.Instance.meleeDamage;
+    private float projectileDamage = EnemyBulletDamageDDAA.Instance.bulletDamage;
     public float speed = 3f;
     public float maxHealth = 50f;
     public float shootingDistance = 25f;
@@ -86,12 +85,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void Start()
     {
+        LoadDDAAListeners();
         assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
         animator = GetComponentInChildren<Animator>();
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk");     //Walking animation
         agent.stoppingDistance = stoppingDistance;
-        players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
 
         try
         {
@@ -262,7 +261,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     private List<GameObject> GetPlayersToAttack()
     {
-        return players.FindAll(
+        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player")).FindAll(
             delegate (GameObject player)
             {
                 if (isAreaEnemy)
@@ -331,15 +330,40 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         if(player.GetComponent<PlayerManager>().health > 0)
         {
             photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
-
         }
     }
 
     [PunRPC]
     public void ChangePlayerHealth(float value, int targetViewID)
     {
-        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = Math.Max(PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health + value, 0);
-        PhotonView.Find(targetViewID).gameObject.GetComponent<HurtEffect>().Hit();
+        PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
+        receivedPhotonView.gameObject.GetComponent<PlayerManager>().ChangeHealth(value, targetViewID);
+        receivedPhotonView.gameObject.GetComponent<HurtEffect>().Hit();
+    }
+
+    private void LoadDDAAListeners()
+    {
+        //Debug.Log("DDA at enemy controller start: Melee damage = " + meleeDamage);
+        //Debug.Log("DDA at enemy controller start: Bullet damage = " + projectileDamage);
+
+        EnemyMeleeDamageDDAA.Instance.SetMeleeDamageListener(
+            new OnValueChangeListener(
+                (newValue) =>
+                {
+                    //Debug.Log("DDA: Enemy melee damage value changed. Old value = " + meleeDamage + ". New value = " + newValue);
+                    meleeDamage = newValue;
+                }
+            )
+        );
+        EnemyBulletDamageDDAA.Instance.SetBulletDamageListener(
+            new OnValueChangeListener(
+                (newValue) =>
+                {
+                    //Debug.Log("DDA: Enemy bullet damage value changed. Old value = " + projectileDamage + ". New value = " + newValue);
+                    projectileDamage = newValue;
+                }
+            )
+        );
     }
 
     #region IPunObservable implementation
@@ -359,7 +383,5 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     }
 
     #endregion
-
-
 
 }

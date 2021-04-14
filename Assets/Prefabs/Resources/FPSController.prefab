@@ -314,7 +314,6 @@ MonoBehaviour:
   health: 100
   startingHealth: 100
   paintBallSpeed: 25
-  paintballDamage: 10
   respawnTime: 0.5
   shootWaitTime: 1
   shootingClip: {fileID: 8300000, guid: dadcbab627eabef4e999297f97faa002, type: 3}

@@ -125,4 +125,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f390b634016cb7144b24e4944f061147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  despawnTime: 2
+  impactSphere: {fileID: 9011068551483308292, guid: 4ac8f342483920a43bc4b1522ffcd39f, type: 3}
+  impactSphereSpawnAmount: 6

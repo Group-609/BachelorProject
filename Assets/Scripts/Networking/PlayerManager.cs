@@ -42,7 +42,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float paintBallSpeed = 15f;
 
         [Tooltip("Damage of this player's paintballs")]
-        public float paintballDamage;
+        private float paintballDamage = PlayerPainballDamageDDAA.Instance.paintballDamage;
 
         [Tooltip("Time it takes for the player to get control back after dying")]
         public float respawnTime;
@@ -53,6 +53,9 @@ namespace Photon.Pun.Demo.PunBasics
         [Header("DDA system variables")]
         [NonSerialized]
         public int stunCount;
+
+        [NonSerialized]
+        public float totalDamageReceived;
 
         [Header("Sounds")]
 
@@ -174,6 +177,16 @@ namespace Photon.Pun.Demo.PunBasics
             }
             try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
             catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
+
+            PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
+                new OnValueChangeListener(
+                    (newValue) =>
+                    {
+                        Debug.Log("DDA: Player paintball damage value changed. Old value = " + paintballDamage + ". New value = " + newValue);
+                        paintballDamage = newValue;
+                    }    
+                )
+            );
         }
 
 
@@ -230,7 +243,10 @@ namespace Photon.Pun.Demo.PunBasics
         {
             PhotonNetwork.AddCallbackTarget(this);
         }
+         
+        #endregion
 
+        #region Photon events
         public void OnEvent(EventData photonEvent)
         {
             
@@ -279,23 +295,33 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeHealth(float value, int targetViewID)
         {
-            PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health += value;
-            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health > startingHealth)
-                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = startingHealth;
-            if (PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health < 0)
-                PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = 0;
+            PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
+            PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
+            player.health = Mathf.Clamp(player.health + value, 0f, startingHealth);
+            Debug.Log("Health changed. Current player's health = " + player.health);
+            if (value < 0)
+            {
+                player.totalDamageReceived += value;
+                Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
+                if (receivedPhotonView.IsMine)
+                {
+                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += value;
+                    Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
+                }
+            }
         }
 
         [PunRPC]
         public void Stunned(int targetViewID)
         {
-            GameObject playerObject = PhotonView.Find(targetViewID).gameObject;
-            playerObject.GetComponent<PlayerManager>().stunCount++;
-            //Debug.Log("Someone is stunned! Player's stun count is " + stunCount);
-            if (photonView.IsMine)
+            PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
+            PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
+            player.stunCount++;
+            Debug.Log("Someone is stunned! Player's stun count is " + player.stunCount);
+            if (receivedPhotonView.IsMine)
             {
                 StunCondition.Instance.localPlayerStuntCount++;
-                //Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
+                Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
             }
         }
 
