@@ -75,6 +75,7 @@ public sealed class LevelProgressionCondition : ICondition
         else
         {
             Debug.Log("Game is finished");
+            GameObject.Find("Game Manager").GetComponent<ConditionSwitcher>().SwitchCondition();    //This throws null pointer exception. I think condition switcher or Game Manager is not found
             isGameFinished = true;
         }
     }
