@@ -313,6 +313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   startingHealth: 100
+  healthRecoverySpeed: 30
   paintBallSpeed: 25
   respawnTime: 0.5
   shootWaitTime: 1
