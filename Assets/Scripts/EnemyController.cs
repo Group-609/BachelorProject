@@ -346,7 +346,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     private void LoadDDAAListeners()
     {
         //Debug.Log("DDA at enemy controller start: Melee damage = " + meleeDamage);
-        Debug.Log("DDA at enemy controller start: Bullet damage = " + projectileDamage);
+        //Debug.Log("DDA at enemy controller start: Bullet damage = " + projectileDamage);
 
         EnemyMeleeDamageDDAA.Instance.SetMeleeDamageListener(
             new OnValueChangeListener(
@@ -361,7 +361,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
             new OnValueChangeListener(
                 (newValue) =>
                 {
-                    Debug.Log("DDA: Enemy bullet damage value changed. Old value = " + projectileDamage + ". New value = " + newValue);
+                    //Debug.Log("DDA: Enemy bullet damage value changed. Old value = " + projectileDamage + ". New value = " + newValue);
                     projectileDamage = newValue;
                 }
             )

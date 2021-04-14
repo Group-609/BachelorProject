@@ -42,7 +42,7 @@ namespace Photon.Pun.Demo.PunBasics
         public float paintBallSpeed = 15f;
 
         [Tooltip("Damage of this player's paintballs")]
-        public float paintballDamage;
+        private float paintballDamage = PlayerPainballDamageDDAA.Instance.paintballDamage;
 
         [Tooltip("Time it takes for the player to get control back after dying")]
         public float respawnTime;
@@ -174,6 +174,16 @@ namespace Photon.Pun.Demo.PunBasics
             }
             try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
             catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
+
+            PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
+                new OnValueChangeListener(
+                    (newValue) =>
+                    {
+                        Debug.Log("DDA: Player paintball damage value changed. Old value = " + paintballDamage + ". New value = " + newValue);
+                        paintballDamage = newValue;
+                    }    
+                )
+            );
         }
 
 
