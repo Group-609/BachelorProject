@@ -28,6 +28,7 @@ public class KeyLocationController : MonoBehaviour
     [System.NonSerialized] public bool hasEventToDestroyStarted;
 
     public AudioClip clearedClip;
+    public float volume;
     private AudioSource audioSource;
 
     void Start()
@@ -116,14 +117,16 @@ public class KeyLocationController : MonoBehaviour
         RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
         PhotonNetwork.RaiseEvent(GameManager.destroyKeyLocationEvent, areaIndex, raiseEventOptions, SendOptions.SendReliable);
         isEventToDestroySent = true;
+
     }
 
     void AreaClearedSound()
     {
-        //audioSource.spatialBlend = 1;
         audioSource.clip = clearedClip;
+        audioSource.volume = volume;
         audioSource.Play();
-        Debug.Log("AreaCleared");
+        Debug.Log("Area Cleared");
+        
     }
 
     public IEnumerator BeginDestroyingProcess()
@@ -163,8 +166,10 @@ public class KeyLocationController : MonoBehaviour
             }
             fountainWaterObject.GetComponent<Renderer>().material.SetColor("_MainColor", cleanFountainMain);
             fountainWaterObject.GetComponent<Renderer>().material.SetColor("_SecondaryColor", cleanFountainSecondary);
-            AreaClearedSound();
+            
         }
+        AreaClearedSound();
+
     }
 
     public static KeyLocationController GetKeyLocationToDestroy(int areaIndex)
