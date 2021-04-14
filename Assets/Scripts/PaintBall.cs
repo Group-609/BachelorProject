@@ -22,12 +22,16 @@ public class PaintBall : MonoBehaviour
     [System.NonSerialized]
     public bool isLocal; //true if this is a real bullet that does damage
 
+    public GameObject impactSphere;
+    public int impactSphereSpawnAmount;
+
     void Start()
     {
         if (DDAEngine.isDynamicAdjustmentEnabled)
             paintballHealingRate = HealingRateDDAA.Instance.healingRate;
         else paintballHealingRate = basePaintballHealingRate;
-       
+
+        gameObject.GetComponent<Renderer>().material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, .33f));
 
         Destroy(gameObject, despawnTime);
     }
@@ -50,6 +54,13 @@ public class PaintBall : MonoBehaviour
                 playerWhoShot.GetComponent<PlayerManager>().HitEnemy(collision.collider.gameObject, -paintballDamage);     //We damage enemy
             }
         }
+
+        for (int i = 0; i < impactSphereSpawnAmount; i++)
+        {
+            GameObject currentImpactSphere = Instantiate(impactSphere, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z), Quaternion.identity);
+            currentImpactSphere.GetComponent<Renderer>().material.color = gameObject.GetComponent<Renderer>().material.color;
+        }
+
         //TODO: paintball hit sound
         Destroy(gameObject);
     }
