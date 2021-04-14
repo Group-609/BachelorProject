@@ -120,6 +120,8 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)
             {
                 LocalPlayerInstance = gameObject;
+                gameObject.transform.Find("Character").gameObject.transform.Find("hat").gameObject.SetActive(false);
+                gameObject.transform.Find("Character").gameObject.transform.Find("head").gameObject.SetActive(false);
             }
             paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("hand_right.001").Find("PaintGun");
 
