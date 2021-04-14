@@ -62,7 +62,7 @@ public sealed class LevelProgressionCondition : ICondition
 
     public void LevelFinished()
     {
-        if (currentLevel + 1 < expectedFinishTimes.Length)
+        if (currentLevel < expectedFinishTimes.Length)
         {
             Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedFinishTimes[currentLevel]);
             if (DDAEngine.isDynamicAdjustmentEnabled)
@@ -71,12 +71,12 @@ public sealed class LevelProgressionCondition : ICondition
             //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
 
             levelProgressionListeners.ForEach(listener => listener.OnLevelFinished());
+            if(currentLevel == expectedFinishTimes.Length)
+            {
+                Debug.Log("Game is finished");
+                isGameFinished = true;
+            }
         } 
-        else
-        {
-            Debug.Log("Game is finished");
-            isGameFinished = true;
-        }
     }
 
 
