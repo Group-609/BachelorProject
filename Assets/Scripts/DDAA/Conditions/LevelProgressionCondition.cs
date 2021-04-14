@@ -29,7 +29,7 @@ public sealed class LevelProgressionCondition : ICondition
     }
 
     public int currentLevel;
-    private static readonly int[] expectedFinishTimes = new int[] { 150, 330, 550 }; // adjust these. Expected time (in sec), when player should complete level
+    private static readonly int[] expectedFinishTimes = new int[] { 50, 100, 180 }; // adjust these. Expected time (in sec), when player should complete level
 
     // IMPORTANT! Both arrays have to be the same length
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
@@ -75,6 +75,7 @@ public sealed class LevelProgressionCondition : ICondition
         else
         {
             Debug.Log("Game is finished");
+            GameObject.Find("Game Manager").GetComponent<ConditionSwitcher>().SwitchCondition();    //This throws null pointer exception. I think condition switcher or Game Manager is not found
             isGameFinished = true;
         }
     }

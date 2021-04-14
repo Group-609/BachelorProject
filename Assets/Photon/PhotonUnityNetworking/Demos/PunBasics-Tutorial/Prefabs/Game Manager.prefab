@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 476684}
   - component: {fileID: 11476684}
   - component: {fileID: 978113929}
+  - component: {fileID: 1315921982}
+  - component: {fileID: 8718929963394914709}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -46,8 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4433564e76b1940028e7e531f171050d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsDDAEnabled: 1
-  isLiveTest: 1
+  IsDDAEnabled: 0
+  isLiveTest: 0
   timeBasedDDAAPeriod: 30
   playerPrefab: {fileID: 100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
 --- !u!114 &978113929
@@ -66,6 +68,40 @@ MonoBehaviour:
   maxEnemyCount: 4
   spawnIntervalForArea: 2
   spawnIntervalForProgress: 5
+--- !u!114 &1315921982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  observableSearch: 2
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents: []
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &8718929963394914709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 176684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b35b71bdba28144b695079c633b789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &771553832
 GameObject:
   m_ObjectHideFlags: 0
