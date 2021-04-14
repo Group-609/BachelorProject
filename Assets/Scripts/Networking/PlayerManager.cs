@@ -38,6 +38,9 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("The health of our player when he spawns")]
         public float startingHealth = 100f;
 
+        [Tooltip("Speed at which health temporarily recovers at zone clear")]
+        public float healthRecoverySpeed = 30f;
+
         [Tooltip("Speed of this player's paintballs")]
         public float paintBallSpeed = 15f;
 
