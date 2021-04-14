@@ -14,6 +14,7 @@ using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Photon.Pun.Demo.PunBasics
@@ -244,14 +245,15 @@ namespace Photon.Pun.Demo.PunBasics
 		private void TriggerTimeBasedDDAAs()
 		{
 			//Debug.Log("Time based DDAAs triggered. System time: " + Time.timeSinceLevelLoad);
-			StunCondition.Instance.UpdateConditionalValue(
-				GameObject.FindGameObjectsWithTag("Player").ToList().FindAll(
-					delegate(GameObject player)
+			List<GameObject> teamPlayers = GameObject.FindGameObjectsWithTag("Player").ToList().FindAll(
+					delegate (GameObject player)
 					{
 						return !photonView.IsMine;
 					}
-				)
-			);
+				);
+
+			StunCondition.Instance.UpdateConditionalValue(teamPlayers);
+			DamageReceivedCondition.Instance.UpdateConditionalValue(teamPlayers);
 
 			EnemyMeleeDamageDDAA.Instance.AdjustInGameValue();
 			EnemyBulletDamageDDAA.Instance.AdjustInGameValue();

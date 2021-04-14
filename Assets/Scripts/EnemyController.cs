@@ -11,7 +11,6 @@ using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunInstantiateMagicCallback
 {
-    private List<GameObject> players;
     [System.NonSerialized]
     public Transform closestPlayer;
     private float distanceToPlayer;
@@ -92,7 +91,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         agent = GetComponent<NavMeshAgent>();
         animator.Play("Walk");     //Walking animation
         agent.stoppingDistance = stoppingDistance;
-        players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
 
         try
         {
@@ -263,7 +261,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     private List<GameObject> GetPlayersToAttack()
     {
-        return players.FindAll(
+        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player")).FindAll(
             delegate (GameObject player)
             {
                 if (isAreaEnemy)
@@ -332,15 +330,15 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         if(player.GetComponent<PlayerManager>().health > 0)
         {
             photonView.RPC(nameof(ChangePlayerHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
-
         }
     }
 
     [PunRPC]
     public void ChangePlayerHealth(float value, int targetViewID)
     {
-        PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health = Math.Max(PhotonView.Find(targetViewID).gameObject.GetComponent<PlayerManager>().health + value, 0);
-        PhotonView.Find(targetViewID).gameObject.GetComponent<HurtEffect>().Hit();
+        PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
+        receivedPhotonView.gameObject.GetComponent<PlayerManager>().ChangeHealth(value, targetViewID);
+        receivedPhotonView.gameObject.GetComponent<HurtEffect>().Hit();
     }
 
     private void LoadDDAAListeners()
