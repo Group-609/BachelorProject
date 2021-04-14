@@ -43,7 +43,7 @@ function getCondition(callback)
   }, 
   })
 }
-function showSecondForm()
+function ShowSecondForm()
 {
   var data = { foo: 'bar' }
   var event = new CustomEvent('myCustomEvent', { detail: data })
