@@ -252,6 +252,8 @@ namespace Photon.Pun.Demo.PunBasics
 					}
 				);
 
+			Debug.Log("My team other member count:" + teamPlayers.Count);
+
 			StunCondition.Instance.UpdateConditionalValue(teamPlayers);
 			DamageReceivedCondition.Instance.UpdateConditionalValue(teamPlayers);
 			DefeatedEnemiesCountCondition.Instance.UpdateConditionalValue(teamPlayers);
