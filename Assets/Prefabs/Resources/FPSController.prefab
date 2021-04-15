@@ -488,7 +488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   framesBetweenRecordTakes: 4
-  framesBetweenSavingOfData: 600
+  framesBetweenSavingOfData: 1800
 --- !u!1 &100002
 GameObject:
   m_ObjectHideFlags: 0
