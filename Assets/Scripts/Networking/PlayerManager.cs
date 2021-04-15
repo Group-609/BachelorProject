@@ -352,7 +352,8 @@ namespace Photon.Pun.Demo.PunBasics
 
         public void UpdatePlayerHealthUI()
         {
-            healthUI.GetComponent<Text>().text = (int)health + "%";
+            if(photonView.IsMine)
+                healthUI.GetComponent<Text>().text = (int)health + "%";
         }
 
         [PunRPC]
