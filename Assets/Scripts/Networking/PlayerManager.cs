@@ -68,7 +68,8 @@ namespace Photon.Pun.Demo.PunBasics
         public AudioClip shootingClip;
         public AudioClip musicBase;
         public AudioClip musicLow;
-        public float musicVolume;
+        public float musicVolumeBase;
+        public float musicVolumeLow;
 
         [Header("Other")]
 
@@ -114,7 +115,8 @@ namespace Photon.Pun.Demo.PunBasics
         private Animator animator;
         private Animator animatorHands;
 
-        private AudioSource audioSourceMusic;
+        private AudioSource audioSourceMusicBase;
+        private AudioSource audioSourceMusicLow;
 
         #endregion
 
@@ -203,11 +205,15 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (photonView.IsMine)
             {
-                audioSourceMusic = gameObject.AddComponent<AudioSource>() as AudioSource;
+                audioSourceMusicBase = gameObject.AddComponent<AudioSource>() as AudioSource;
+                audioSourceMusicLow = gameObject.AddComponent<AudioSource>() as AudioSource;
                 SetBackgroundMusic();
-                audioSourceMusic.volume = musicVolume;
-                audioSourceMusic.loop = true;
-                audioSourceMusic.Play();
+                audioSourceMusicBase.volume = musicVolumeBase;
+                audioSourceMusicLow.volume = 0;
+                audioSourceMusicBase.loop = true;
+                audioSourceMusicLow.loop = true;
+                audioSourceMusicBase.Play();
+                audioSourceMusicLow.Play();
             }
             
 
@@ -300,6 +306,7 @@ namespace Photon.Pun.Demo.PunBasics
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
+            ChangeBackgroundMusic();
             this.health = startingHealth;
             animator.SetBool("isDown", false);
             animatorHands.SetBool("isDown", false);
@@ -391,13 +398,26 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void SetBackgroundMusic()
         {
-            if (isPlayerInKeyLocZone)
+            audioSourceMusicLow.clip = musicLow;
+            audioSourceMusicBase.clip = musicBase;
+        }
+
+        public void ChangeBackgroundMusic()
+        {
+            if (photonView.IsMine)
             {
-                audioSourceMusic.clip = musicLow;
-            } else
-            {
-                audioSourceMusic.clip = musicBase;
+                if (isPlayerInKeyLocZone)
+                {
+                    audioSourceMusicBase.volume = 0;
+                    audioSourceMusicLow.volume = musicVolumeLow;
+                }
+                else
+                {
+                    audioSourceMusicBase.volume = musicVolumeBase;
+                    audioSourceMusicLow.volume = 0;
+                }
             }
+                
         }
 
         public void OnLevelFinished()
