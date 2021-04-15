@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Photon.Pun.Demo.Asteroids
 {
-    public class LobbyMainPanel : MonoBehaviourPunCallbacks
+    public class SecondConditionMainLobby : MonoBehaviourPunCallbacks
     {
         public string SceneName = "Master";
 
@@ -19,33 +19,18 @@ namespace Photon.Pun.Demo.Asteroids
 
         public GameObject PlayerListEntryPrefab;
 
-        private Dictionary<string, RoomInfo> cachedRoomList;
-        private Dictionary<string, GameObject> roomListEntries;
         private Dictionary<int, GameObject> playerListEntries;
-
-        public GameObject devFlowActiveText;
-        private bool isDevFlowActivated = false;
-
+        
         #region UNITY
 
         public void Awake()
         {
             PhotonNetwork.AutomaticallySyncScene = true;
-
-            cachedRoomList = new Dictionary<string, RoomInfo>();
-            roomListEntries = new Dictionary<string, GameObject>();
-
         }
 
-
-        private void Update()
+        private void Start()
         {
-            if (Input.GetKey("q") && Input.GetKeyDown("p"))
-            {
-                isDevFlowActivated = !isDevFlowActivated;
-                devFlowActiveText.SetActive(isDevFlowActivated);
-                //DevTestingButton.SetActive(isDevFlowActivated);
-            }
+            SetActivePanel(SecondConditionInfoPanel.name);
         }
 
         #endregion
@@ -54,16 +39,7 @@ namespace Photon.Pun.Demo.Asteroids
 
         public override void OnJoinedRoom()
         {
-            // joining (or entering) a room invalidates any cached lobby room list (even if LeaveLobby was not called due to just joining a room)
-            cachedRoomList.Clear();
-
-
             SetActivePanel(InsideRoomPanel.name);
-
-            if (playerListEntries == null)
-            {
-                playerListEntries = new Dictionary<int, GameObject>();
-            }
 
             foreach (Player p in PhotonNetwork.PlayerList)
             {
@@ -72,8 +48,7 @@ namespace Photon.Pun.Demo.Asteroids
                 entry.transform.localScale = Vector3.one;
                 entry.GetComponent<PlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
 
-                object isPlayerReady;
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool)isPlayerReady);
                 }
@@ -145,8 +120,7 @@ namespace Photon.Pun.Demo.Asteroids
 
             foreach (Player p in PhotonNetwork.PlayerList)
             {
-                object isPlayerReady;
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     if (!(bool)isPlayerReady)
                     {
@@ -165,6 +139,12 @@ namespace Photon.Pun.Demo.Asteroids
         public void LocalPlayerPropertiesUpdated()
         {
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
+        }
+
+        public void OnEnterRoomClicked()
+        {
+            //PhotonNetwork.RejoinRoom(PhotonNetwork.CurrentRoom.Name);
+            SetActivePanel(InsideRoomPanel.name);
         }
 
         public void SetActivePanel(string activePanel)
