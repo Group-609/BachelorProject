@@ -116,12 +116,11 @@ namespace Photon.Pun.Demo.PunBasics
         private Animator animator;
         private Animator animatorHands;
 
-<<<<<<< HEAD
+
         public GameObject healthUI;
-=======
+
         private AudioSource audioSourceMusicBase;
         private AudioSource audioSourceMusicLow;
->>>>>>> main
 
         #endregion
 
