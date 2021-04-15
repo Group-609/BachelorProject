@@ -17,15 +17,15 @@ namespace Photon.Pun.Demo.Asteroids
 
         [Header("Game Condition Selection Panel")]
         public GameObject GameConditionSelectionPanel;
+        
+        private GameObject DevTestingButton;
 
         [Header("Test Condition Selection Panel")]
         public GameObject TestConditionSelectionPanel;
 
-        private GameObject ControlConditionButton;
-        private GameObject DDAConditionButton;
-
         [Header("Room Selection Panel")]
         public GameObject RoomSelectionPanel;
+        private GameObject JoinRandomRoomButton;
 
         [Header("Create Room Panel")]
         public GameObject CreateRoomPanel;
@@ -69,18 +69,18 @@ namespace Photon.Pun.Demo.Asteroids
 
         private void Start()
         {
-            ControlConditionButton = TestConditionSelectionPanel.transform.Find("ControlConditionButton").gameObject;
-            DDAConditionButton = TestConditionSelectionPanel.transform.Find("DDAConditionButton").gameObject;
+            DevTestingButton = GameConditionSelectionPanel.transform.Find("DevTestingButton").gameObject;
+            JoinRandomRoomButton = RoomSelectionPanel.transform.Find("JoinRandomRoomButton").gameObject;
         }
 
         private void Update()
         {
             if (Input.GetKey("q") && Input.GetKeyDown("p"))
             {
-                devFlowActiveText.SetActive(!devFlowActiveText.activeSelf);
                 isDevFlowActivated = !isDevFlowActivated;
-                ControlConditionButton.SetActive(isDevFlowActivated);
-                DDAConditionButton.SetActive(isDevFlowActivated);
+                //devFlowActiveText.SetActive(isDevFlowActivated);
+                //DevTestingButton.SetActive(isDevFlowActivated);
+                JoinRandomRoomButton.SetActive(isDevFlowActivated);
             }
         }
 
@@ -237,32 +237,14 @@ namespace Photon.Pun.Demo.Asteroids
 
         #region UI CALLBACKS
 
-        public void OnBackButtonClicked()
+        public void OnBackButtonClicked(string panelToActivate)
         {
             if (PhotonNetwork.InLobby)
             {
                 PhotonNetwork.LeaveLobby();
             }
 
-            SetActivePanel(RoomSelectionPanel.name);
-        }
-
-        public void OnLiveTestButtonClicked()
-        {
-            //TODO: check that condition should be set from server should added here
-            SetActivePanel(RoomSelectionPanel.name);
-        }
-
-        public void OnControlConditionButtonClicked()
-        {
-            //TODO: check that condition should be set to Control manually
-            SetActivePanel(RoomSelectionPanel.name);
-        }
-
-        public void OnDDAConditionButtonClicked()
-        {
-            //TODO: check that condition should be set to DDA manually
-            SetActivePanel(RoomSelectionPanel.name);
+            SetActivePanel(panelToActivate);
         }
 
         public void OnCreateRoomButtonClicked()
@@ -367,16 +349,12 @@ namespace Photon.Pun.Demo.Asteroids
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }
 
-        private void SetActivePanel(string activePanel)
+        public void SetActivePanel(string activePanel)
         {
             LoginPanel.SetActive(activePanel.Equals(LoginPanel.name));
             GameConditionSelectionPanel.SetActive(activePanel.Equals(GameConditionSelectionPanel.name));
+            TestConditionSelectionPanel.SetActive(activePanel.Equals(TestConditionSelectionPanel.name));
             RoomSelectionPanel.SetActive(activePanel.Equals(RoomSelectionPanel.name));
-            if (activePanel.Equals(TestConditionSelectionPanel.name))
-            {
-                TestConditionSelectionPanel.SetActive(isDevFlowActivated);
-                RoomSelectionPanel.SetActive(!isDevFlowActivated);
-            }
             CreateRoomPanel.SetActive(activePanel.Equals(CreateRoomPanel.name));
             JoinRandomRoomPanel.SetActive(activePanel.Equals(JoinRandomRoomPanel.name));
             RoomListPanel.SetActive(activePanel.Equals(RoomListPanel.name));    // UI should call OnRoomListButtonClicked() to activate this
