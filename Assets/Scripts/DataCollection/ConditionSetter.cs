@@ -6,6 +6,15 @@ public class ConditionSetter : MonoBehaviour
 {
     public string condition;
 
+    [Tooltip("Check if we should receive condition from the server")]
+    public bool isLiveTest = true;
+
+    [Tooltip("Force control condition")]
+    public bool forceControl;
+
+    [Tooltip("Force DDA condition")]
+    public bool forceDDA;
+
     void Start()
     {
         DontDestroyOnLoad(transform.gameObject);
@@ -18,15 +27,38 @@ public class ConditionSetter : MonoBehaviour
         {
             Debug.LogError(condition + " Please contact the developers!");
         }
-        
+    }
+
+    public void ShouldGetConditionFromServer()
+    {
+        isLiveTest = true;
+        forceControl = false;
+        forceDDA = false;
+    }
+
+    public void OnControlConditionButtonClicked()
+    {
+        isLiveTest = false;
+        forceControl = true;
+        forceDDA = false;
+    }
+
+    public void OnDDAConditionButtonClicked()
+    {
+        isLiveTest = false;
+        forceControl = false;
+        forceDDA = true;
     }
 
     public bool IsDDACondition()
     {
-        if (condition == "DDA")
+        if (forceControl || forceDDA)
         {
-            return true;
+            return forceDDA;
         }
-        else return false;
+        else
+        {
+            return condition == "DDA";
+        }
     }
 }
