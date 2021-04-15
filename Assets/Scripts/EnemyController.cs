@@ -42,7 +42,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     public AudioClip hitClip;
     [SerializeField]
     private AudioClip[] hurtClip = new AudioClip[0];
-
+    public float volumeHurt;
+    public float volumeSpawn;
+    public float volumeWalk;
     private AudioSource audioSource;
     private AudioSource audioSourceWalking;
     private AudioSource audioSourceHit;
@@ -85,6 +87,14 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void Start()
     {
+        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceWalking = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceHit = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceHurt = gameObject.AddComponent<AudioSource>() as AudioSource;
+        SetInitialAudioClips();
+        audioSource.volume = volumeSpawn;
+        audioSource.Play();
+
         LoadDDAAListeners();
         assignedKeyLocation = gameObject.FindClosestObject("KeyLocation");
         animator = GetComponentInChildren<Animator>();
@@ -105,14 +115,10 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         
         currentHealth = maxHealth;
 
-        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
-        audioSourceWalking = gameObject.AddComponent<AudioSource>() as AudioSource;
-        audioSourceHit = gameObject.AddComponent<AudioSource>() as AudioSource;
-        audioSourceHurt = gameObject.AddComponent<AudioSource>() as AudioSource;
+        
 
         audioSourceWalking.loop = true;
-        SetInitialAudioClips();
-        audioSource.Play();
+        
 
         // we want to find nav target not every frame because it's computationally a bit heavy
         InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec); 
@@ -211,6 +217,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     {
         if (agent.velocity != Vector3.zero && !audioSourceWalking.isPlaying)
         {
+            audioSourceWalking.volume = volumeWalk;
             audioSourceWalking.Play();
         }
         if (agent.velocity == Vector3.zero)
@@ -277,11 +284,19 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     public void OnDamageTaken()
     {
         audioSourceHit.Play();
-        audioSourceHurt.PlayOneShot((AudioClip)hurtClip.GetRandomItem(), 0.7F);
+        HurtSound();
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
-
+    public void HurtSound()
+    {
+        int n = Random.Range(1, hurtClip.Length);
+        audioSourceHurt.clip = hurtClip[n];
+        audioSourceHurt.volume = volumeHurt;
+        audioSourceHurt.PlayOneShot(audioSourceHurt.clip);
+        hurtClip[n] = hurtClip[0];
+        hurtClip[0] = audioSourceHurt.clip;
+    }
     IEnumerator AttackPlayer()
     {
         if (distanceToPlayer <= shootingDistance)

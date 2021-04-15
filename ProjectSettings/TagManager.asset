@@ -10,6 +10,7 @@ TagManager:
   - EnemySpawnPoint
   - PaintGun
   - DebugWindow
+  - DirectionalLight
   layers:
   - Default
   - TransparentFX

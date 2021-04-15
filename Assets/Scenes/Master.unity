@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: 764428c63577f4580af4ce54ca9f4b1b
+  m_OcclusionCullingData: {fileID: 36300000, guid: 7295fb8b0aa849b4db58a11547aeddd3, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.39084306, g: 0.36310285, b: 0.3284238, a: 1}
+  m_IndirectSpecularColor: {r: 0.77984834, g: 0.7261474, b: 0.6580826, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
 LightmapSettings:
@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 57493872}
   m_Layer: 0
   m_Name: Directional light
-  m_TagString: Untagged
+  m_TagString: DirectionalLight
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -3733,13 +3733,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 53260182529280280, guid: f1f07a13b5fc17e4abee473bf87916e2, type: 3}
+      propertyPath: exposureValue
+      value: 1.6
+      objectReference: {fileID: 0}
     - target: {fileID: 2438573084347846740, guid: f1f07a13b5fc17e4abee473bf87916e2, type: 3}
       propertyPath: areaIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2438573084347846740, guid: f1f07a13b5fc17e4abee473bf87916e2, type: 3}
+      propertyPath: exposureValue
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4292834307864006122, guid: f1f07a13b5fc17e4abee473bf87916e2, type: 3}
       propertyPath: m_Name
       value: Mapped Key Locations
+      objectReference: {fileID: 0}
+    - target: {fileID: 5113989731983418345, guid: f1f07a13b5fc17e4abee473bf87916e2, type: 3}
+      propertyPath: exposureValue
+      value: 1.3
       objectReference: {fileID: 0}
     - target: {fileID: 5936673742462650569, guid: f1f07a13b5fc17e4abee473bf87916e2, type: 3}
       propertyPath: m_LocalPosition.x

@@ -71,13 +71,12 @@ public sealed class LevelProgressionCondition : ICondition
             //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
 
             levelProgressionListeners.ForEach(listener => listener.OnLevelFinished());
+            if(currentLevel == expectedFinishTimes.Length)
+            {
+                Debug.Log("Game is finished");
+                isGameFinished = true;
+            }
         } 
-        else
-        {
-            Debug.Log("Game is finished");
-            GameObject.Find("Game Manager").GetComponent<ConditionSwitcher>().SwitchCondition();    //This throws null pointer exception. I think condition switcher or Game Manager is not found
-            isGameFinished = true;
-        }
     }
 
 
