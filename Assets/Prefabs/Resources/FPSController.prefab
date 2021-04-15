@@ -319,6 +319,9 @@ MonoBehaviour:
   respawnTime: 0.5
   shootWaitTime: 1
   shootingClip: {fileID: 8300000, guid: dadcbab627eabef4e999297f97faa002, type: 3}
+  musicBase: {fileID: 8300000, guid: 6f1dd8b727a76e44c965a083554b5a15, type: 3}
+  musicLow: {fileID: 8300000, guid: 8b2f864b7c866a8418e108425dba372c, type: 3}
+  musicVolume: 0.1
   gameManager: {fileID: 0}
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}
   paintballPrefab: {fileID: 909444189230491489, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}

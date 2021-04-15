@@ -66,6 +66,9 @@ namespace Photon.Pun.Demo.PunBasics
         [Header("Sounds")]
 
         public AudioClip shootingClip;
+        public AudioClip musicBase;
+        public AudioClip musicLow;
+        public float musicVolume;
 
         [Header("Other")]
 
@@ -110,6 +113,8 @@ namespace Photon.Pun.Demo.PunBasics
 
         private Animator animator;
         private Animator animatorHands;
+
+        private AudioSource audioSourceMusic;
 
         #endregion
 
@@ -195,6 +200,17 @@ namespace Photon.Pun.Demo.PunBasics
                     }    
                 )
             );
+
+            if (photonView.IsMine)
+            {
+                audioSourceMusic = gameObject.AddComponent<AudioSource>() as AudioSource;
+                SetBackgroundMusic();
+                audioSourceMusic.volume = musicVolume;
+                audioSourceMusic.loop = true;
+                audioSourceMusic.Play();
+            }
+            
+
         }
 
 
@@ -371,6 +387,17 @@ namespace Photon.Pun.Demo.PunBasics
         private void PlayShootingSound()
         {
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
+        }
+
+        private void SetBackgroundMusic()
+        {
+            if (isPlayerInKeyLocZone)
+            {
+                audioSourceMusic.clip = musicLow;
+            } else
+            {
+                audioSourceMusic.clip = musicBase;
+            }
         }
 
         public void OnLevelFinished()
