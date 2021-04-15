@@ -15,8 +15,17 @@ namespace Photon.Pun.Demo.Asteroids
 
         public InputField PlayerNameInput;
 
-        [Header("Selection Panel")]
-        public GameObject SelectionPanel;
+        [Header("Game Condition Selection Panel")]
+        public GameObject GameConditionSelectionPanel;
+        
+        private GameObject DevTestingButton;
+
+        [Header("Test Condition Selection Panel")]
+        public GameObject TestConditionSelectionPanel;
+
+        [Header("Room Selection Panel")]
+        public GameObject RoomSelectionPanel;
+        private GameObject JoinRandomRoomButton;
 
         [Header("Create Room Panel")]
         public GameObject CreateRoomPanel;
@@ -43,6 +52,9 @@ namespace Photon.Pun.Demo.Asteroids
         private Dictionary<string, GameObject> roomListEntries;
         private Dictionary<int, GameObject> playerListEntries;
 
+        public GameObject devFlowActiveText;
+        private bool isDevFlowActivated = false;
+
         #region UNITY
 
         public void Awake()
@@ -55,13 +67,30 @@ namespace Photon.Pun.Demo.Asteroids
             PlayerNameInput.text = "Player " + Random.Range(1000, 10000);
         }
 
+        private void Start()
+        {
+            DevTestingButton = GameConditionSelectionPanel.transform.Find("DevTestingButton").gameObject;
+            JoinRandomRoomButton = RoomSelectionPanel.transform.Find("JoinRandomRoomButton").gameObject;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKey("q") && Input.GetKeyDown("p"))
+            {
+                isDevFlowActivated = !isDevFlowActivated;
+                //devFlowActiveText.SetActive(isDevFlowActivated);
+                //DevTestingButton.SetActive(isDevFlowActivated);
+                JoinRandomRoomButton.SetActive(isDevFlowActivated);
+            }
+        }
+
         #endregion
 
         #region PUN CALLBACKS
 
         public override void OnConnectedToMaster()
         {
-            this.SetActivePanel(SelectionPanel.name);
+            this.SetActivePanel(GameConditionSelectionPanel.name);
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -88,12 +117,12 @@ namespace Photon.Pun.Demo.Asteroids
 
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
-            SetActivePanel(SelectionPanel.name);
+            SetActivePanel(RoomSelectionPanel.name);
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
-            SetActivePanel(SelectionPanel.name);
+            SetActivePanel(RoomSelectionPanel.name);
         }
 
         public override void OnJoinRandomFailed(short returnCode, string message)
@@ -145,7 +174,7 @@ namespace Photon.Pun.Demo.Asteroids
 
         public override void OnLeftRoom()
         {
-            SetActivePanel(SelectionPanel.name);
+            SetActivePanel(RoomSelectionPanel.name);
 
             foreach (GameObject entry in playerListEntries.Values)
             {
@@ -208,14 +237,14 @@ namespace Photon.Pun.Demo.Asteroids
 
         #region UI CALLBACKS
 
-        public void OnBackButtonClicked()
+        public void OnBackButtonClicked(string panelToActivate)
         {
             if (PhotonNetwork.InLobby)
             {
                 PhotonNetwork.LeaveLobby();
             }
 
-            SetActivePanel(SelectionPanel.name);
+            SetActivePanel(panelToActivate);
         }
 
         public void OnCreateRoomButtonClicked()
@@ -320,10 +349,12 @@ namespace Photon.Pun.Demo.Asteroids
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }
 
-        private void SetActivePanel(string activePanel)
+        public void SetActivePanel(string activePanel)
         {
             LoginPanel.SetActive(activePanel.Equals(LoginPanel.name));
-            SelectionPanel.SetActive(activePanel.Equals(SelectionPanel.name));
+            GameConditionSelectionPanel.SetActive(activePanel.Equals(GameConditionSelectionPanel.name));
+            TestConditionSelectionPanel.SetActive(activePanel.Equals(TestConditionSelectionPanel.name));
+            RoomSelectionPanel.SetActive(activePanel.Equals(RoomSelectionPanel.name));
             CreateRoomPanel.SetActive(activePanel.Equals(CreateRoomPanel.name));
             JoinRandomRoomPanel.SetActive(activePanel.Equals(JoinRandomRoomPanel.name));
             RoomListPanel.SetActive(activePanel.Equals(RoomListPanel.name));    // UI should call OnRoomListButtonClicked() to activate this
