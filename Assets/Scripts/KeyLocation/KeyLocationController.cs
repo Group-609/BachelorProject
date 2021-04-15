@@ -149,13 +149,16 @@ public class KeyLocationController : MonoBehaviour
 
             for (int i = 0; i < players.Count; i++)
             {
-                if (players[i].GetComponent<PlayerManager>().health < 100)
+                PlayerManager playMan = players[i].GetComponent<PlayerManager>();
+                if (playMan.health < 100)
                 {
-                    players[i].GetComponent<PlayerManager>().health += players[i].GetComponent<PlayerManager>().healthRecoverySpeed * Time.deltaTime;
+                    playMan.health += playMan.healthRecoverySpeed * Time.deltaTime;
+                    playMan.UpdatePlayerHealthUI();
                 }
                 else
                 {
-                    players[i].GetComponent<PlayerManager>().health = 100;
+                    playMan.health = 100;
+                    playMan.UpdatePlayerHealthUI();
                 }
             }
 
