@@ -78,7 +78,7 @@ namespace Photon.Pun.Demo.Asteroids
             if (Input.GetKey("q") && Input.GetKeyDown("p"))
             {
                 isDevFlowActivated = !isDevFlowActivated;
-                //devFlowActiveText.SetActive(isDevFlowActivated);
+                devFlowActiveText.SetActive(isDevFlowActivated);
                 //DevTestingButton.SetActive(isDevFlowActivated);
                 JoinRandomRoomButton.SetActive(isDevFlowActivated);
             }
