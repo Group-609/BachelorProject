@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using Photon.Pun.Demo.PunBasics;
-
+using Photon.Pun;
 
 public class ConditionSwitcher : MonoBehaviour
 {
@@ -50,7 +50,7 @@ public class ConditionSwitcher : MonoBehaviour
         conditionSetter.ChangeCondition();
         Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
         yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene(secondConditionSceneName);
+        PhotonNetwork.LoadLevel(secondConditionSceneName);
         yield return null;
     }
 
