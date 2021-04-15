@@ -45,13 +45,8 @@ namespace Photon.Pun.Demo.PunBasics
 
 		private List<GameObject> players;
 
-		[Tooltip("Check to change the condition")]
-		[SerializeField]
 		private bool IsDDAEnabled = true;
 
-		[Tooltip("Check if we should receive condition from the server")]
-		[SerializeField]
-		private bool isLiveTest = true;
 		[Tooltip("Period at which the time based DDAAs are triggered")]
 		[SerializeField]
 		private float timeBasedDDAAPeriod;
@@ -70,7 +65,7 @@ namespace Photon.Pun.Demo.PunBasics
 		private void Awake()
 		{
 			GameObject conditionSetter = GameObject.Find("ConditionSetter");
-			if (isLiveTest && conditionSetter != null)
+			if (conditionSetter != null)
             {
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
 				//Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
@@ -121,6 +116,8 @@ namespace Photon.Pun.Demo.PunBasics
 				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
 			if (IsDDAEnabled)
 				InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
+
+			Debug.Log("Is DDA enabled: " + IsDDAEnabled);
 
 			InvokeRepeating(nameof(RefreshPlayers), 0, 1f);
 		}
