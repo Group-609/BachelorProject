@@ -8,6 +8,7 @@ public class ConditionSwitcher : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void FirstConditionFinished();
+    float gameCloseDelay = 7.0f;
 
     private bool firstCondition = true;
 
@@ -19,7 +20,7 @@ public class ConditionSwitcher : MonoBehaviour
             Debug.Log("First game finished!");
             firstCondition = false;
             LevelProgressionCondition.Instance.isGameFinished = false;
-            FirstConditionFinished();
+            Invoke(nameof(FirstConditionFinished), gameCloseDelay);
         }
         if (LevelProgressionCondition.Instance.isGameFinished && !firstCondition)
         {
@@ -28,6 +29,7 @@ public class ConditionSwitcher : MonoBehaviour
         }
 
     }
+
     public void LoadNextLevel()
     {
         //Reload level with condition switched or sth. Take look at GameManager script. Might also need to reset the DDA system.

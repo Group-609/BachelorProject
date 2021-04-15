@@ -49,3 +49,10 @@ function showSecondForm()
   var event = new CustomEvent('showSecondForm', { detail: data })
   window.parent.document.dispatchEvent(event)
 }
+
+function showLastForm()
+{
+  var data = { foo: 'showing last form' }
+  var event = new CustomEvent('showLastForm', { detail: data })
+  window.parent.document.dispatchEvent(event)
+}

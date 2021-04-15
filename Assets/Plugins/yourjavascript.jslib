@@ -6,4 +6,8 @@ mergeInto(LibraryManager.library, {
 	FirstConditionFinished: function () {
 		showSecondForm();
 	}, 
+
+	SecondConditionFinished: function () {
+		showLastForm();
+	}, 
 });
