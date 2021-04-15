@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Photon.Pun.Demo.Asteroids
 {
-    public class SecondConditionMainLobby : MonoBehaviourPunCallbacks
+    public class SecondConditionMainLobby : MonoBehaviourPunCallbacks, PlayerListEntry.ILocalPlayerPropertiesListener
     {
         public string SceneName = "Master";
 
@@ -33,7 +33,6 @@ namespace Photon.Pun.Demo.Asteroids
         private void Start()
         {
             SetActivePanel(SecondConditionInfoPanel.name);
-
             LoadPlayers();
         }
 
@@ -46,6 +45,7 @@ namespace Photon.Pun.Demo.Asteroids
                 entry.transform.SetParent(InsideRoomPanel.transform);
                 entry.transform.localScale = Vector3.one;
                 entry.GetComponent<PlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
+                entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
                 entry.GetComponent<PlayerListEntry>().SetPlayerReady(false);
                 
                 playerListEntries.Add(p.ActorNumber, entry);
@@ -53,10 +53,7 @@ namespace Photon.Pun.Demo.Asteroids
 
             StartGameButton.gameObject.SetActive(false);
 
-            Hashtable props = new Hashtable
-            {
-                {AsteroidsGame.PLAYER_LOADED_LEVEL, false}
-            };
+            Hashtable props = new Hashtable{ {AsteroidsGame.PLAYER_LOADED_LEVEL, false} };
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
 
@@ -85,6 +82,11 @@ namespace Photon.Pun.Demo.Asteroids
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.IsVisible = false;
+
+            foreach(KeyValuePair<int, GameObject> entry in playerListEntries)
+            {
+                entry.Value.GetComponent<PlayerListEntry>().RemoveLocalPlayerPropertiesListener(this);
+            }
 
             PhotonNetwork.LoadLevel(SceneName);
         }
@@ -117,6 +119,11 @@ namespace Photon.Pun.Demo.Asteroids
         {
             Debug.Log("Trying to enter room. Room name: " + PhotonNetwork.CurrentRoom.Name);
             SetActivePanel(InsideRoomPanel.name);
+        }
+
+        public void OnLocalPlayerPropertiesUpdated()
+        {
+            StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }
 
         public void SetActivePanel(string activePanel)

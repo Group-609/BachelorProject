@@ -10,15 +10,36 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using System.Collections.Generic;
 
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Photon.Pun.UtilityScripts;
 
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 namespace Photon.Pun.Demo.Asteroids
 {
     public class PlayerListEntry : MonoBehaviour
     {
+        public interface ILocalPlayerPropertiesListener
+        {
+            void OnLocalPlayerPropertiesUpdated();
+        }
+
+        public void AddLocalPlayerPropertiesListener(ILocalPlayerPropertiesListener listener)
+        {
+            localPlayerPropertiesListeners.Add(listener);
+        }
+
+        public void RemoveLocalPlayerPropertiesListener(ILocalPlayerPropertiesListener listener)
+        {
+            localPlayerPropertiesListeners.Remove(listener);
+        }
+
+        private List<ILocalPlayerPropertiesListener> localPlayerPropertiesListeners = new List<ILocalPlayerPropertiesListener>();
+
         [Header("UI References")]
         public Text PlayerNameText;
 
@@ -57,9 +78,7 @@ namespace Photon.Pun.Demo.Asteroids
                     PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
                     if (PhotonNetwork.IsMasterClient)
-                    {
-                        FindObjectOfType<LobbyMainPanel>().LocalPlayerPropertiesUpdated();
-                    }
+                        localPlayerPropertiesListeners.ForEach(listener => listener.OnLocalPlayerPropertiesUpdated());
                 });
             }
         }

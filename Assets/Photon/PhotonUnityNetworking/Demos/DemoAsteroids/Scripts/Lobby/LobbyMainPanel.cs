@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Photon.Pun.Demo.Asteroids
 {
-    public class LobbyMainPanel : MonoBehaviourPunCallbacks
+    public class LobbyMainPanel : MonoBehaviourPunCallbacks, PlayerListEntry.ILocalPlayerPropertiesListener
     {
         public string SceneName = "Master";
 
@@ -153,9 +153,9 @@ namespace Photon.Pun.Demo.Asteroids
                 entry.transform.SetParent(InsideRoomPanel.transform);
                 entry.transform.localScale = Vector3.one;
                 entry.GetComponent<PlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
+                entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
 
-                object isPlayerReady;
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool) isPlayerReady);
                 }
@@ -191,6 +191,7 @@ namespace Photon.Pun.Demo.Asteroids
             entry.transform.SetParent(InsideRoomPanel.transform);
             entry.transform.localScale = Vector3.one;
             entry.GetComponent<PlayerListEntry>().Initialize(newPlayer.ActorNumber, newPlayer.NickName);
+            entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
 
             playerListEntries.Add(newPlayer.ActorNumber, entry);
 
@@ -220,11 +221,9 @@ namespace Photon.Pun.Demo.Asteroids
                 playerListEntries = new Dictionary<int, GameObject>();
             }
 
-            GameObject entry;
-            if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out entry))
+            if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out GameObject entry))
             {
-                object isPlayerReady;
-                if (changedProps.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (changedProps.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool) isPlayerReady);
                 }
@@ -303,6 +302,11 @@ namespace Photon.Pun.Demo.Asteroids
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.IsVisible = false;
 
+            foreach (KeyValuePair<int, GameObject> entry in playerListEntries)
+            {
+                entry.Value.GetComponent<PlayerListEntry>().RemoveLocalPlayerPropertiesListener(this);
+            }
+
             PhotonNetwork.LoadLevel(SceneName);
         }
 
@@ -343,7 +347,7 @@ namespace Photon.Pun.Demo.Asteroids
             roomListEntries.Clear();
         }
 
-        public void LocalPlayerPropertiesUpdated()
+        public void OnLocalPlayerPropertiesUpdated()
         {
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }
