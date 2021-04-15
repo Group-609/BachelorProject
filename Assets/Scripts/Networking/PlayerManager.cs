@@ -368,6 +368,11 @@ namespace Photon.Pun.Demo.PunBasics
             animatorHands.Play("Shoot");
         }
 
+        public bool IsPlayerLocal()
+        {
+            return photonView.IsMine;
+        }
+
         private void PlayShootingSound()
         {
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
