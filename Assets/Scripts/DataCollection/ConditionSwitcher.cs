@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using Photon.Pun.Demo.PunBasics;
 
@@ -12,9 +13,19 @@ public class ConditionSwitcher : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void SecondConditionFinished(string gatheredData);
-    float gameCloseDelay = 7.0f;
+    float gameCloseDelay = 10.0f;
+
+    private string secondConditionSceneName = "SecondConditionLauncher";
 
     private bool firstCondition = true;
+
+    private ConditionSetter conditionSetter;
+
+    void Start()
+    {
+        conditionSetter = GameObject.Find("ConditionSetter").GetComponent<ConditionSetter>();
+        DontDestroyOnLoad(transform.gameObject);
+    }
 
     void Update()
     {
@@ -33,17 +44,27 @@ public class ConditionSwitcher : MonoBehaviour
         }
 
     }
-    
+
+    private IEnumerator ChangeConditionAndLoadSecondCondition()
+    {
+        conditionSetter.ChangeCondition();
+        Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(secondConditionSceneName);
+        yield return null;
+    }
+
     IEnumerator CallFirstConditionFinished()
     {
         yield return new WaitForSeconds(gameCloseDelay);
-        FirstConditionFinished(GetJsonToSend());
+        //FirstConditionFinished(GetJsonToSend());
+        LoadNextLevel();
     }
 
     IEnumerator CallSecondConditionFinished()
     {
         yield return new WaitForSeconds(gameCloseDelay);
-        SecondConditionFinished(GetJsonToSend());
+        //SecondConditionFinished(GetJsonToSend());
     }
 
     string GetJsonToSend()
@@ -62,6 +83,7 @@ public class ConditionSwitcher : MonoBehaviour
 
     public void LoadNextLevel()
     {
+        StartCoroutine(ChangeConditionAndLoadSecondCondition());
         //Reload level with condition switched or sth. Take look at GameManager script. Might also need to reset the DDA system.
     }
 }

@@ -329,7 +329,6 @@ GameObject:
   - component: {fileID: 523789982}
   - component: {fileID: 523789981}
   - component: {fileID: 523789979}
-  - component: {fileID: 523789978}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -337,14 +336,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &523789978
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 523789977}
-  m_Enabled: 1
 --- !u!124 &523789979
 Behaviour:
   m_ObjectHideFlags: 0
@@ -1043,8 +1034,7 @@ MonoBehaviour:
   SecondConditionInfoPanel: {fileID: 1771933899}
   InsideRoomPanel: {fileID: 1370510199}
   StartGameButton: {fileID: 800069350}
-  PlayerListEntryPrefab: {fileID: 0}
-  devFlowActiveText: {fileID: 0}
+  PlayerListEntryPrefab: {fileID: 195212, guid: d68bf8413681d9b4aa7328277e632e3f, type: 3}
 --- !u!222 &1310044698
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Master.unity
     guid: 764428c63577f4580af4ce54ca9f4b1b
+  - enabled: 1
+    path: Assets/Scenes/SecondConditionLauncher.unity
+    guid: 15a2670e504dca54da53546dbc1614f1
   m_configObjects: {}

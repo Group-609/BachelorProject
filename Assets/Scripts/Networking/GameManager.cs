@@ -212,6 +212,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		#region Private Methods
 
+
 		IEnumerator RespawnCheck()
         {
 			isRespawning = true;

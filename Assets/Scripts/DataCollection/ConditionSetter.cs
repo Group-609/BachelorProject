@@ -29,6 +29,12 @@ public class ConditionSetter : MonoBehaviour
         }
     }
 
+    public void ChangeCondition()
+    {
+        forceControl = !forceControl;
+        forceDDA = !forceDDA;
+    }
+
     public void ShouldGetConditionFromServer()
     {
         isLiveTest = true;
