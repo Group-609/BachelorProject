@@ -242,6 +242,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Update()
         {
+            UpdatePlayerHealthUI();
             // local player
             if (photonView.IsMine)
             {
@@ -317,7 +318,7 @@ namespace Photon.Pun.Demo.PunBasics
             this.health = startingHealth;
             animator.SetBool("isDown", false);
             animatorHands.SetBool("isDown", false);
-            UpdatePlayerHealthUI();
+            //UpdatePlayerHealthUI();
             StartCoroutine(ReturnPlayerControl(respawnTime + standUpAnimationTime)); //we reenable the FirstPersonController script after the respawn time is done
         }
 
@@ -337,7 +338,7 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
             PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
             player.health = Mathf.Clamp(player.health + value, 0f, startingHealth);
-            UpdatePlayerHealthUI();
+            //UpdatePlayerHealthUI();
             if (value < 0)
             {
                 player.totalDamageReceived += value;
