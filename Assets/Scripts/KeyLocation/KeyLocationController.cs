@@ -170,18 +170,10 @@ public class KeyLocationController : MonoBehaviour
             }
             fountainWaterObject.GetComponent<Renderer>().material.SetColor("_MainColor", cleanFountainMain);
             fountainWaterObject.GetComponent<Renderer>().material.SetColor("_SecondaryColor", cleanFountainSecondary);
-<<<<<<< HEAD
-
             directionalLight.GetComponent<Light>().intensity = exposureValue;
             RenderSettings.skybox.SetFloat("_Exposure", exposureValue);
-
             AreaClearedSound();
-=======
-            
->>>>>>> main
         }
-        AreaClearedSound();
-
     }
 
     public static KeyLocationController GetKeyLocationToDestroy(int areaIndex)
