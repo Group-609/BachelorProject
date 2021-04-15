@@ -155,12 +155,10 @@ public class KeyLocationController : MonoBehaviour
                 if (playMan.health < 100)
                 {
                     playMan.health += playMan.healthRecoverySpeed * Time.deltaTime;
-                    playMan.UpdatePlayerHealthUI();
                 }
                 else
                 {
                     playMan.health = 100;
-                    playMan.UpdatePlayerHealthUI();
                 }
             }
 
