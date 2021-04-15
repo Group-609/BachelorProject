@@ -3,11 +3,11 @@ mergeInto(LibraryManager.library, {
 		insertData(Pointer_stringify(message));
 	},
 
-	FirstConditionFinished: function () {
-		showSecondForm();
+	FirstConditionFinished: function (gatheredData) {
+		showSecondForm(Pointer_stringify(gatheredData));
 	}, 
 
-	SecondConditionFinished: function () {
-		showLastForm();
+	SecondConditionFinished: function (gatheredData) {
+		showLastForm(Pointer_stringify(gatheredData));
 	}, 
 });
