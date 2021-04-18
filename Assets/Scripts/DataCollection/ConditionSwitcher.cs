@@ -50,7 +50,13 @@ public class ConditionSwitcher : MonoBehaviour
     {
         conditionSetter.ChangeCondition();
         Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
-        yield return new WaitForSeconds(2f);
+        
+        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        players.ForEach(player =>
+        {
+            player.GetComponent<PlayerManager>().SetMouseLock(false);
+        });
+        
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.LoadLevel(secondConditionSceneName);
@@ -61,14 +67,17 @@ public class ConditionSwitcher : MonoBehaviour
     IEnumerator CallFirstConditionFinished()
     {
         yield return new WaitForSeconds(gameCloseDelay);
-        //FirstConditionFinished(GetJsonToSend());
-        LoadNextLevel();
+        if (!Application.isEditor)
+            FirstConditionFinished(GetJsonToSend());
+        StartCoroutine(ChangeConditionAndLoadSecondCondition());
+        //Reload level with condition switched or sth. Take look at GameManager script. Might also need to reset the DDA system.
     }
 
     IEnumerator CallSecondConditionFinished()
     {
         yield return new WaitForSeconds(gameCloseDelay);
-        //SecondConditionFinished(GetJsonToSend());
+        if (!Application.isEditor)
+            SecondConditionFinished(GetJsonToSend());
     }
 
     string GetJsonToSend()
@@ -82,17 +91,5 @@ public class ConditionSwitcher : MonoBehaviour
             }
         }
         return "ERROR: Didnt find player data";
-    }
-
-
-    public void LoadNextLevel()
-    {
-        StartCoroutine(ChangeConditionAndLoadSecondCondition());
-        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
-        players.ForEach(player =>
-        {
-            player.GetComponent<PlayerManager>().SetMouseLock(false);
-        });
-        //Reload level with condition switched or sth. Take look at GameManager script. Might also need to reset the DDA system.
     }
 }
