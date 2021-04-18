@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
 using Photon.Pun.Demo.PunBasics;
 using Photon.Pun;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class ConditionSwitcher : MonoBehaviour
 {
@@ -50,7 +51,10 @@ public class ConditionSwitcher : MonoBehaviour
         conditionSetter.ChangeCondition();
         Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
         yield return new WaitForSeconds(2f);
-        PhotonNetwork.LoadLevel(secondConditionSceneName);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel(secondConditionSceneName);
+        }
         yield return null;
     }
 
@@ -84,6 +88,11 @@ public class ConditionSwitcher : MonoBehaviour
     public void LoadNextLevel()
     {
         StartCoroutine(ChangeConditionAndLoadSecondCondition());
+        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        players.ForEach(player =>
+        {
+            player.GetComponent<PlayerManager>().SetMouseLock(false);
+        });
         //Reload level with condition switched or sth. Take look at GameManager script. Might also need to reset the DDA system.
     }
 }

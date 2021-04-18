@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Photon.Pun.Demo.Asteroids
 {
-    public class SecondConditionMainLobby : MonoBehaviourPunCallbacks, PlayerListEntry.ILocalPlayerPropertiesListener
+    public class SecondConditionMainLobby : MonoBehaviourPunCallbacks, CustomPlayerListEntry.ILocalPlayerPropertiesListener
     {
         public string SceneName = "Master";
 
@@ -26,8 +26,6 @@ namespace Photon.Pun.Demo.Asteroids
         public void Awake()
         {
             PhotonNetwork.AutomaticallySyncScene = true;
-            //PhotonNetwork.CurrentRoom.IsOpen = false;
-            //PhotonNetwork.CurrentRoom.IsVisible = false;
         }
 
         private void Start()
@@ -44,34 +42,13 @@ namespace Photon.Pun.Demo.Asteroids
                 GameObject entry = Instantiate(PlayerListEntryPrefab);
                 entry.transform.SetParent(InsideRoomPanel.transform);
                 entry.transform.localScale = Vector3.one;
-                entry.GetComponent<PlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
-                entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
-                entry.GetComponent<PlayerListEntry>().SetPlayerReady(false);
+                entry.GetComponent<CustomPlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
+                entry.GetComponent<CustomPlayerListEntry>().AddLocalPlayerPropertiesListener(this);
+                entry.GetComponent<CustomPlayerListEntry>().SetPlayerReady(false);
                 
                 playerListEntries.Add(p.ActorNumber, entry);
             }
-
             StartGameButton.gameObject.SetActive(false);
-
-            Hashtable props = new Hashtable{ {AsteroidsGame.PLAYER_LOADED_LEVEL, false} };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-        }
-
-        #endregion
-
-        #region PUN CALLBACKS
-
-        public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
-        {
-            if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out GameObject entry))
-            {
-                if (changedProps.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
-                {
-                    entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool)isPlayerReady);
-                }
-            }
-
-            StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }
 
         #endregion
@@ -80,15 +57,13 @@ namespace Photon.Pun.Demo.Asteroids
 
         public void OnStartGameButtonClicked()
         {
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-            PhotonNetwork.CurrentRoom.IsVisible = false;
-
-            foreach(KeyValuePair<int, GameObject> entry in playerListEntries)
+            foreach (KeyValuePair<int, GameObject> entry in playerListEntries)
             {
-                entry.Value.GetComponent<PlayerListEntry>().RemoveLocalPlayerPropertiesListener(this);
+                entry.Value.GetComponent<CustomPlayerListEntry>().RemoveLocalPlayerPropertiesListener(this);
             }
-
-            PhotonNetwork.LoadLevel(SceneName);
+            Debug.Log("Loading scene: " + SceneName);
+            if (PhotonNetwork.IsMasterClient)
+                PhotonNetwork.LoadLevel(SceneName);
         }
 
         #endregion
@@ -98,21 +73,17 @@ namespace Photon.Pun.Demo.Asteroids
             if (!PhotonNetwork.IsMasterClient)
                 return false;
 
-            foreach (Player p in PhotonNetwork.PlayerList)
+            foreach (KeyValuePair<int, GameObject> entry in playerListEntries)
             {
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
+                if (!entry.Value.GetComponent<CustomPlayerListEntry>().isPlayerReady)
                 {
-                    if (!(bool)isPlayerReady)
-                        return false;
+                    Debug.Log("Player (name: " + entry.Value.GetComponent<CustomPlayerListEntry>().name + ") is not ready yet");
+                    return false;
                 }
-                else return false;
+                   
             }
+            Debug.Log("All players are ready");
             return true;
-        }
-
-        public void LocalPlayerPropertiesUpdated()
-        {
-            StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }
 
         public void OnEnterRoomClicked()
@@ -123,13 +94,14 @@ namespace Photon.Pun.Demo.Asteroids
 
         public void OnLocalPlayerPropertiesUpdated()
         {
+            Debug.Log("Local player properties listener responded to being ready");
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }
 
         public void SetActivePanel(string activePanel)
         {
-            InsideRoomPanel.SetActive(activePanel.Equals(InsideRoomPanel.name));
             SecondConditionInfoPanel.SetActive(activePanel.Equals(SecondConditionInfoPanel.name));
+            InsideRoomPanel.SetActive(activePanel.Equals(InsideRoomPanel.name));
         }
     }
 }

@@ -70,6 +70,8 @@ namespace Photon.Pun.Demo.PunBasics
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
 				//Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
 			}
+
+			DDAEngine.ResetConditionsAndVariables();
 		}
 
 		/// <summary>
@@ -108,8 +110,9 @@ namespace Photon.Pun.Demo.PunBasics
 					player.transform.GetComponent<PlayerManager>().gameManager = this;	//We give the player a reference to the game manager
 				}
 				else{
-
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
+
+					PlayerManager.LocalPlayerInstance.transform.position = new Vector3(0f, 50f, 0f);
 				}
 			}
 			if (PhotonNetwork.IsMasterClient)
@@ -120,6 +123,7 @@ namespace Photon.Pun.Demo.PunBasics
 			Debug.Log("Is DDA enabled: " + IsDDAEnabled);
 
 			InvokeRepeating(nameof(RefreshPlayers), 0, 1f);
+			StartCoroutine(UnlockPlayerCursors());
 		}
 
 		/// <summary>
@@ -261,6 +265,24 @@ namespace Photon.Pun.Demo.PunBasics
 				}
 			}
 			return false;
+		}
+
+		private IEnumerator UnlockPlayerCursors()
+		{
+			bool isUnlocked = false;
+			while (isUnlocked)
+			{
+				GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+				if (players != null && players.Length > 0)
+				{
+					foreach(GameObject player in players)
+					{
+						player.GetComponent<PlayerManager>().SetMouseLock(true);
+					}
+					isUnlocked = true;
+				}
+				yield return null;
+			}
 		}
 
         #endregion

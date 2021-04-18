@@ -394,6 +394,18 @@ namespace Photon.Pun.Demo.PunBasics
             return debugPrintContent;
         }
 
+        public void SetMouseLock(bool shouldLock)
+        {
+            photonView.RPC(nameof(LockMouse), RpcTarget.All, shouldLock, GetComponent<PhotonView>().ViewID);
+            //fpsController.SetMouseLock(shouldLock);
+        }
+
+        [PunRPC]
+        private void LockMouse(bool shouldLock, int targetViewID)
+        {
+            PhotonView.Find(targetViewID).gameObject.GetComponent<FirstPersonController>().SetMouseLock(shouldLock);
+        }
+
         #endregion
 
         #region Private Methods
