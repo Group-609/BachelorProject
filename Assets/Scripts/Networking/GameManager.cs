@@ -109,10 +109,11 @@ namespace Photon.Pun.Demo.PunBasics
 					GameObject player = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f,5f,0f), Quaternion.identity, 0);
 					player.transform.GetComponent<PlayerManager>().gameManager = this;	//We give the player a reference to the game manager
 				}
-				else{
+				else
+				{
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
 
-					PlayerManager.LocalPlayerInstance.transform.position = new Vector3(0f, 50f, 0f);
+					PlayerManager.LocalPlayerInstance.transform.position = new Vector3(0f, 500f, 0f);
 				}
 			}
 			if (PhotonNetwork.IsMasterClient)
