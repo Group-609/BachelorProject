@@ -63,6 +63,7 @@ public class KeyLocationController : MonoBehaviour
                             playerManager.isPlayerInKeyLocZone = true;
                             if (firstPersonController.isActiveAndEnabled)
                                 firstPersonController.isPlayerInKeyLocZone = true;
+                            playerManager.ChangeBackgroundMusic();
                         }
                         if (firstPersonController.isActiveAndEnabled)
                         {
@@ -142,6 +143,7 @@ public class KeyLocationController : MonoBehaviour
             player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
             player.GetComponent<PlayerManager>().isPlayerInKeyLocZone = false;
             player.GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
+            player.GetComponent<PlayerManager>().ChangeBackgroundMusic();
         }
         while (sphere.transform.localScale.x > 0)
         {

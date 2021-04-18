@@ -307,26 +307,29 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
             //Time damage effect delay to when attack happens
             yield return new WaitForSeconds(attackAnimationDelay);
-            if (distanceToPlayer <= minDistForMeleeAttack)
+            if (currentHealth > 0) //Check if enemy is still alive since the animation delay started
             {
-                closestPlayer.GetComponent<HurtEffect>().Hit();
-                //TODO: play player melee hit sound
-                if (PhotonNetwork.IsMasterClient)
+                if (distanceToPlayer <= minDistForMeleeAttack)
                 {
-                    HitPlayer(closestPlayer.gameObject, -meleeDamage);
+                    closestPlayer.GetComponent<HurtEffect>().Hit();
+                    //TODO: play player melee hit sound
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        HitPlayer(closestPlayer.gameObject, -meleeDamage);
+                    }
                 }
-            }
-            else if (distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
-            {
-                GameObject projectile;
-                projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-                projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
-                projectile.GetComponent<EnemyProjectile>().damage = this.projectileDamage;
-                projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
-                projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
-                projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
+                else if (distanceToPlayer <= shootingDistance)   //if player too far, shoot instead
+                {
+                    GameObject projectile;
+                    projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+                    projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
+                    projectile.GetComponent<EnemyProjectile>().damage = this.projectileDamage;
+                    projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
+                    projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
+                    projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
 
-                audioSource.PlayOneShot(shootClip);
+                    audioSource.PlayOneShot(shootClip);
+                }
             }
 
             //Wait for attack animation to finish
