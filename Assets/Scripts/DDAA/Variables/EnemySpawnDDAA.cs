@@ -84,4 +84,9 @@ public sealed class EnemySpawnDDAA : IDDAA
             spawnListener.OnValueChanged(spawnAmount);
         }
     }
+
+    public void Reset()
+    {
+        spawnMultiplier = 1f;
+    }
 }

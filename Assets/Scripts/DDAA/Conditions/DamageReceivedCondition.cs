@@ -65,4 +65,10 @@ public sealed class DamageReceivedCondition
             ConditionValue = 1f;
         }
     }
+
+    public void Reset()
+    {
+        localPlayerTotalDamageReceived = 0f;
+        comparisonWithTeam = 1f;
+    }
 }
