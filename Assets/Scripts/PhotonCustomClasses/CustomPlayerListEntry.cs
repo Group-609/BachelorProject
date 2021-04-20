@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 namespace Photon.Pun.Demo.Asteroids
 {
     public class CustomPlayerListEntry : MonoBehaviour
@@ -44,12 +46,21 @@ namespace Photon.Pun.Demo.Asteroids
             }
             else
             {
+                Hashtable initialProps = new Hashtable() { { AsteroidsGame.PLAYER_READY, isPlayerReady } };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(initialProps);
+
+                Debug.Log("Player " + ownerId + " IS READY: " + isPlayerReady);
+
                 PlayerReadyButton.onClick.AddListener(() =>
                 {
                     isPlayerReady = !isPlayerReady;
                     SetPlayerReady(isPlayerReady);
 
-                    Debug.Log("Players ready clicked");
+                    Hashtable props = new Hashtable() { { AsteroidsGame.PLAYER_READY, isPlayerReady } };
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+
+                    Debug.Log("Player " + ownerId + " IS READY: " + isPlayerReady);
+                    Debug.Log("Players ready clicked for player: " + name);
                     if (PhotonNetwork.IsMasterClient)
                         localPlayerPropertiesListeners.ForEach(listener => listener.OnLocalPlayerPropertiesUpdated());
                 });
@@ -63,7 +74,7 @@ namespace Photon.Pun.Demo.Asteroids
             ownerId = playerId;
             PlayerNameText.text = playerName;
             Debug.Log("Custom player entry initialized. Owner id: " + ownerId);
-            PlayerColorImage.color = AsteroidsGame.GetColor(ownerId);
+            PlayerColorImage.color = AsteroidsGame.GetColor(ownerId - 1);
         }
 
         public void SetPlayerReady(bool playerReady)

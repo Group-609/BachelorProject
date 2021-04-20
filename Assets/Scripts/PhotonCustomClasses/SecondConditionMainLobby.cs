@@ -68,19 +68,50 @@ namespace Photon.Pun.Demo.Asteroids
 
         #endregion
 
+        public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+        {
+            if (playerListEntries == null)
+            {
+                playerListEntries = new Dictionary<int, GameObject>();
+            }
+
+            if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out GameObject entry))
+            {
+                if (changedProps.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
+                {
+                    entry.GetComponent<CustomPlayerListEntry>().SetPlayerReady((bool)isPlayerReady);
+                }
+            }
+
+            StartGameButton.gameObject.SetActive(CheckPlayersReady());
+        }
+
         private bool CheckPlayersReady()
         {
             if (!PhotonNetwork.IsMasterClient)
-                return false;
-
-            foreach (KeyValuePair<int, GameObject> entry in playerListEntries)
             {
-                if (!entry.Value.GetComponent<CustomPlayerListEntry>().isPlayerReady)
+                Debug.Log("Can't check for players being ready, because not master client");
+                return false;
+            }
+                
+
+            foreach (Player p in PhotonNetwork.PlayerList)
+            {
+                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
-                    Debug.Log("Player (name: " + entry.Value.GetComponent<CustomPlayerListEntry>().name + ") is not ready yet");
+                    if (!(bool)isPlayerReady)
+                    {
+                        Debug.Log("Player " + p.ActorNumber + " IS NOT READY");
+                        return false;
+                    }
+                    Debug.Log("Player " + p.ActorNumber + " IS READY");
+                }
+                else
+                {
+                    Debug.Log("Player " + p.ActorNumber + " IS NOT READY WAS NOT FOUND");
                     return false;
                 }
-                   
+                
             }
             Debug.Log("All players are ready");
             return true;
