@@ -40,7 +40,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		public const byte respawnEvent = 1;
 		public const byte destroyKeyLocationEvent = 2;
-		public const byte initialSpawnEvent = 3;
+		public const byte levelStartReset = 3;
 
 		private GameObject instance;
 
@@ -55,6 +55,8 @@ namespace Photon.Pun.Demo.PunBasics
 		[Tooltip("The prefab to use for representing the player")]
         [SerializeField]
         private GameObject playerPrefab;
+
+		private static readonly Vector3 initialSpawnPosition = new Vector3(0, 5f, 0);
 
 		bool isRespawning = false;
 		float respawnCheckTime = 1f;
@@ -100,21 +102,18 @@ namespace Photon.Pun.Demo.PunBasics
 				Debug.LogError("<Color=Red><b>Missing</b></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'", this);
 			} else {
 
-
 				if (PlayerManager.LocalPlayerInstance==null)
 				{
 				    //Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
-
-
+					
 					// we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-					GameObject player = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f,5f,0f), Quaternion.identity, 0);
+					GameObject player = PhotonNetwork.Instantiate(this.playerPrefab.name, initialSpawnPosition, Quaternion.identity, 0);
 					player.transform.GetComponent<PlayerManager>().gameManager = this;	//We give the player a reference to the game manager
 				}
 				else
 				{
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
-					PhotonNetwork.AddCallbackTarget(PlayerManager.LocalPlayerManager);
-					StartCoroutine(InitialSpawnPosition());
+					StartCoroutine(LevelStartReset(initialSpawnPosition));
 				}
 			}
 			if (PhotonNetwork.IsMasterClient)
@@ -125,7 +124,6 @@ namespace Photon.Pun.Demo.PunBasics
 			Debug.Log("Is DDA enabled: " + IsDDAEnabled);
 
 			InvokeRepeating(nameof(RefreshPlayers), 0, 1f);
-			StartCoroutine(UnlockPlayerCursors());
 		}
 
 		/// <summary>
@@ -238,12 +236,12 @@ namespace Photon.Pun.Demo.PunBasics
 			isRespawning = false;
 		}
 
-		IEnumerator InitialSpawnPosition()
+		IEnumerator LevelStartReset(Vector3 spawnPosition)
 		{
 			isRespawning = true;
-			Debug.Log("Raising initial spawn event");
-			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
-			PhotonNetwork.RaiseEvent(initialSpawnEvent, new Vector3(0, 5f, 0), raiseEventOptions, SendOptions.SendReliable);
+			// You would have to set the Receivers to All in order to receive this event on the local client as well
+			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; 
+			PhotonNetwork.RaiseEvent(levelStartReset, spawnPosition, raiseEventOptions, SendOptions.SendReliable);
 			yield return new WaitForSeconds(respawnCheckTime);
 			isRespawning = false;
 		}
@@ -278,25 +276,6 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 			return false;
 		}
-
-		private IEnumerator UnlockPlayerCursors()
-		{
-			bool isUnlocked = false;
-			while (isUnlocked)
-			{
-				GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-				if (players != null && players.Length > 0)
-				{
-					foreach(GameObject player in players)
-					{
-						player.GetComponent<PlayerManager>().SetMouseLock(true);
-					}
-					isUnlocked = true;
-				}
-				yield return null;
-			}
-		}
-
         #endregion
 
         #region DDA System methods

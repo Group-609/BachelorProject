@@ -283,12 +283,15 @@ namespace Photon.Pun.Demo.PunBasics
         {
             byte eventCode = photonEvent.Code;
             
-            if (eventCode == GameManager.respawnEvent || eventCode == GameManager.initialSpawnEvent)
+            if (eventCode == GameManager.respawnEvent || eventCode == GameManager.levelStartReset)
             {
+                if (eventCode == GameManager.levelStartReset)
+                {
+                    transform.position = (Vector3)photonEvent.CustomData;
+                    SetMouseLock(true);
+                }
                 if (eventCode == GameManager.respawnEvent)
                     transform.position = respawnTransform.position;
-                if (eventCode == GameManager.initialSpawnEvent)
-                    transform.position = (Vector3) photonEvent.CustomData;
 
                 isPlayerInKeyLocZone = false;
                 StartCoroutine(SetPlayerOutsideKeyLocationZone());

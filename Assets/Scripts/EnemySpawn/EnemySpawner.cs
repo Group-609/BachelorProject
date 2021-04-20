@@ -29,10 +29,6 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private int enemiesLeftToSpawnForArea = initialEnemyAmountToSpawn;
 
     private int activeSpawnPointIndex;
-    /*
-    private readonly List<List<EnemySpawnPoint>> enemyAreaSpawnPoints = new List<List<EnemySpawnPoint>>();
-    private readonly List<List<EnemySpawnPoint>> enemyProgressSpawnPoints = new List<List<EnemySpawnPoint>>(); // not sure about a correct name here
-    */
 
     private readonly List<EnemySpawnPoint> area0SpawnPoints = new List<EnemySpawnPoint>();
     private readonly List<EnemySpawnPoint> area1SpawnPoints = new List<EnemySpawnPoint>();
@@ -40,8 +36,6 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private readonly List<EnemySpawnPoint> progress0SpawnPoints = new List<EnemySpawnPoint>();
     private readonly List<EnemySpawnPoint> progress1SpawnPoints = new List<EnemySpawnPoint>();
     private readonly List<EnemySpawnPoint> progress2SpawnPoints = new List<EnemySpawnPoint>();
-
-
 
     private bool isInitialSpawnMade;
 

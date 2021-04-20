@@ -16,9 +16,10 @@ public class ConditionSwitcher : MonoBehaviour
     private static extern void SecondConditionFinished(string gatheredData);
     float gameCloseDelay = 10.0f;
 
-    private string secondConditionSceneName = "SecondConditionLauncher";
+    private readonly string secondConditionSceneName = "SecondConditionLauncher";
 
-    private bool firstCondition = true;
+    private bool isFirstCondition = true;
+    private bool bothConditionsFinished = false;
 
     private ConditionSetter conditionSetter;
 
@@ -30,20 +31,23 @@ public class ConditionSwitcher : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("LevelProgressionCondition.Instance.isGameFinished: " + LevelProgressionCondition.Instance.isGameFinished + " firstCondition: " + firstCondition);
-        if (LevelProgressionCondition.Instance.isGameFinished && firstCondition)
+        if (!bothConditionsFinished)
         {
-            Debug.Log("First game finished!");
-            firstCondition = false;
-            LevelProgressionCondition.Instance.isGameFinished = false;
-            StartCoroutine(CallFirstConditionFinished());
+            if (LevelProgressionCondition.Instance.isGameFinished && isFirstCondition)
+            {
+                Debug.Log("First game finished!");
+                isFirstCondition = false;
+                LevelProgressionCondition.Instance.isGameFinished = false;
+                StartCoroutine(CallFirstConditionFinished());
+            }
+            if (LevelProgressionCondition.Instance.isGameFinished && !isFirstCondition)
+            {
+                Debug.Log("Second game finished!");
+                StartCoroutine(CallSecondConditionFinished());
+                //TODO show some "YOU WIN" screen or something
+                bothConditionsFinished = true;
+            }
         }
-        if (LevelProgressionCondition.Instance.isGameFinished && !firstCondition)
-        {
-            Debug.Log("Second game finished!");
-            StartCoroutine(CallSecondConditionFinished());
-        }
-
     }
 
     private IEnumerator ChangeConditionAndLoadSecondCondition()

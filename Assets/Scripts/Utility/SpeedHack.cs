@@ -13,22 +13,27 @@ public class SpeedHack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        List<GameObject> playerObjects = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
-        foreach(GameObject playerObject in playerObjects)
-        {
-            if(playerObject.GetComponent<FirstPersonController>().isActiveAndEnabled)
-            {
-                firstPersonController = playerObject.GetComponent<FirstPersonController>();
-            }
-        }
-        if(firstPersonController == null)
-        {
-            Debug.Log("firstPersonController was not found by speedhack");
-        }
-        else
-        {
-            originalSpeed = firstPersonController.GetRunSpeed();
-        }
+        firstPersonController = GetFirstPersonController();
+        if (firstPersonController == null)
+            Debug.Log("firstPersonController was not found by speedhack at start");
+        else originalSpeed = firstPersonController.GetRunSpeed();
+    }
+
+    private void OnEnable()
+    {
+        firstPersonController = GetFirstPersonController();
+        if (firstPersonController == null)
+            Debug.Log("firstPersonController was not found by speedhack on enabled");
+    }
+
+    private FirstPersonController GetFirstPersonController()
+    {
+        return new List<GameObject>(GameObject.FindGameObjectsWithTag("Player")).Find(
+                delegate(GameObject playerObject)
+                {
+                    return playerObject.GetComponent<FirstPersonController>().isActiveAndEnabled;
+                }
+            ).GetComponent<FirstPersonController>();
     }
 
     public void ToggleSpeedHack(bool enable)
