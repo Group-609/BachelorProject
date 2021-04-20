@@ -11,6 +11,7 @@ TagManager:
   - PaintGun
   - DebugWindow
   - DirectionalLight
+  - HealthUI
   layers:
   - Default
   - TransparentFX
