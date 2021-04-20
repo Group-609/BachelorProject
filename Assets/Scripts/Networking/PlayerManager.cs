@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System;
+using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Photon.Pun;
 using ExitGames.Client.Photon;
@@ -115,6 +116,9 @@ namespace Photon.Pun.Demo.PunBasics
         private Animator animator;
         private Animator animatorHands;
 
+
+        public GameObject healthUI;
+
         private AudioSource audioSourceMusicBase;
         private AudioSource audioSourceMusicLow;
 
@@ -177,6 +181,9 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
+            try {healthUI = GameObject.FindWithTag("HealthUI");}
+            catch { Debug.LogError("Health UI not found", this); }
+
             try{animator = GetComponent<Animator>();}
             catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
@@ -235,6 +242,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Update()
         {
+            UpdatePlayerHealthUI();
             // local player
             if (photonView.IsMine)
             {
@@ -339,6 +347,12 @@ namespace Photon.Pun.Demo.PunBasics
                 }
                 else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
             }
+        }
+
+        public void UpdatePlayerHealthUI()
+        {
+            if(photonView.IsMine)
+                healthUI.GetComponent<Text>().text = (int)health + "%";
         }
 
         [PunRPC]
