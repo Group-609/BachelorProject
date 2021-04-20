@@ -40,6 +40,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		public const byte respawnEvent = 1;
 		public const byte destroyKeyLocationEvent = 2;
+		public const byte initialSpawnEvent = 3;
 
 		private GameObject instance;
 
@@ -112,8 +113,8 @@ namespace Photon.Pun.Demo.PunBasics
 				else
 				{
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
-
-					PlayerManager.LocalPlayerInstance.transform.position = new Vector3(0f, 500f, 0f);
+					PhotonNetwork.AddCallbackTarget(PlayerManager.LocalPlayerManager);
+					StartCoroutine(InitialSpawnPosition());
 				}
 			}
 			if (PhotonNetwork.IsMasterClient)
@@ -233,6 +234,16 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
 			PhotonNetwork.RaiseEvent(respawnEvent,0, raiseEventOptions, SendOptions.SendReliable);
+			yield return new WaitForSeconds(respawnCheckTime);
+			isRespawning = false;
+		}
+
+		IEnumerator InitialSpawnPosition()
+		{
+			isRespawning = true;
+			Debug.Log("Raising initial spawn event");
+			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
+			PhotonNetwork.RaiseEvent(initialSpawnEvent, new Vector3(0, 5f, 0), raiseEventOptions, SendOptions.SendReliable);
 			yield return new WaitForSeconds(respawnCheckTime);
 			isRespawning = false;
 		}

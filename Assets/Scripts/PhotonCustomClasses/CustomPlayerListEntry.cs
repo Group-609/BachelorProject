@@ -59,8 +59,6 @@ namespace Photon.Pun.Demo.Asteroids
                     Hashtable props = new Hashtable() { { AsteroidsGame.PLAYER_READY, isPlayerReady } };
                     PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
-                    Debug.Log("Player " + ownerId + " IS READY: " + isPlayerReady);
-                    Debug.Log("Players ready clicked for player: " + name);
                     if (PhotonNetwork.IsMasterClient)
                         localPlayerPropertiesListeners.ForEach(listener => listener.OnLocalPlayerPropertiesUpdated());
                 });
