@@ -69,7 +69,7 @@ namespace Photon.Pun.Demo.Asteroids
 
         private void Start()
         {
-            DevTestingButton = GameConditionSelectionPanel.transform.Find("DevTestingButton").gameObject;
+            DevTestingButton = GameConditionSelectionPanel.transform.Find("UserTestingButton").gameObject;
             JoinRandomRoomButton = RoomSelectionPanel.transform.Find("JoinRandomRoomButton").gameObject;
         }
 
