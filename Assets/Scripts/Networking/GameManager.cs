@@ -290,7 +290,7 @@ namespace Photon.Pun.Demo.PunBasics
 					}
 				);
 
-			Debug.Log("My team other member count:" + teamPlayers.Count);
+			Debug.Log("My team other members count:" + teamPlayers.Count);
 
 			StunCondition.Instance.UpdateConditionalValue(teamPlayers);
 			DamageReceivedCondition.Instance.UpdateConditionalValue(teamPlayers);

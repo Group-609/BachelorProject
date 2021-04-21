@@ -36,7 +36,7 @@ namespace Photon.Pun.Demo.Asteroids
 
         private void LoadPlayers()
         {
-            Debug.Log("SecondCondition. Loading players. Player count: " + PhotonNetwork.PlayerList.Length);
+            //Debug.Log("SecondCondition. Loading players. Player count: " + PhotonNetwork.PlayerList.Length);
             foreach (Player p in PhotonNetwork.PlayerList)
             {
                 GameObject entry = Instantiate(PlayerListEntryPrefab);
@@ -61,7 +61,6 @@ namespace Photon.Pun.Demo.Asteroids
             {
                 entry.Value.GetComponent<CustomPlayerListEntry>().RemoveLocalPlayerPropertiesListener(this);
             }
-            Debug.Log("Loading scene: " + SceneName);
             if (PhotonNetwork.IsMasterClient)
                 PhotonNetwork.LoadLevel(SceneName);
         }
@@ -89,28 +88,16 @@ namespace Photon.Pun.Demo.Asteroids
         private bool CheckPlayersReady()
         {
             if (!PhotonNetwork.IsMasterClient)
-            {
-                Debug.Log("Can't check for players being ready, because not master client");
                 return false;
-            }
-                
 
             foreach (Player p in PhotonNetwork.PlayerList)
             {
                 if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     if (!(bool)isPlayerReady)
-                    {
-                        Debug.Log("Player " + p.ActorNumber + " IS NOT READY");
                         return false;
-                    }
-                    Debug.Log("Player " + p.ActorNumber + " IS READY");
                 }
-                else
-                {
-                    Debug.Log("Player " + p.ActorNumber + " IS NOT READY WAS NOT FOUND");
-                    return false;
-                }
+                else return false;
                 
             }
             Debug.Log("All players are ready");
@@ -119,7 +106,6 @@ namespace Photon.Pun.Demo.Asteroids
 
         public void OnEnterRoomClicked()
         {
-            Debug.Log("Trying to enter room. Room name: " + PhotonNetwork.CurrentRoom.Name);
             SetActivePanel(InsideRoomPanel.name);
         }
 

@@ -217,9 +217,7 @@ namespace Photon.Pun.Demo.Asteroids
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             if (playerListEntries == null)
-            {
                 playerListEntries = new Dictionary<int, GameObject>();
-            }
 
             if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out GameObject entry))
             {
@@ -239,9 +237,7 @@ namespace Photon.Pun.Demo.Asteroids
         public void OnBackButtonClicked(string panelToActivate)
         {
             if (PhotonNetwork.InLobby)
-            {
                 PhotonNetwork.LeaveLobby();
-            }
 
             SetActivePanel(panelToActivate);
         }
@@ -251,8 +247,7 @@ namespace Photon.Pun.Demo.Asteroids
             string roomName = RoomNameInputField.text;
             roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
-            byte maxPlayers;
-            byte.TryParse(MaxPlayersInputField.text, out maxPlayers);
+            byte.TryParse(MaxPlayersInputField.text, out byte maxPlayers);
             maxPlayers = (byte) Mathf.Clamp(maxPlayers, 2, 8);
 
             RoomOptions options = new RoomOptions {MaxPlayers = maxPlayers, PlayerTtl = 10000 };
@@ -281,18 +276,13 @@ namespace Photon.Pun.Demo.Asteroids
                 PhotonNetwork.LocalPlayer.NickName = playerName;
                 PhotonNetwork.ConnectUsingSettings();
             }
-            else
-            {
-                Debug.LogError("Player Name is invalid.");
-            }
+            else Debug.LogError("Player Name is invalid.");
         }
 
         public void OnRoomListButtonClicked()
         {
             if (!PhotonNetwork.InLobby)
-            {
                 PhotonNetwork.JoinLobby();
-            }
 
             SetActivePanel(RoomListPanel.name);
         }
@@ -315,25 +305,17 @@ namespace Photon.Pun.Demo.Asteroids
         private bool CheckPlayersReady()
         {
             if (!PhotonNetwork.IsMasterClient)
-            {
                 return false;
-            }
 
             foreach (Player p in PhotonNetwork.PlayerList)
             {
                 if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     if (!(bool) isPlayerReady)
-                    {
                         return false;
-                    }
                 }
-                else
-                {
-                    return false;
-                }
+                else return false;
             }
-
             return true;
         }
         

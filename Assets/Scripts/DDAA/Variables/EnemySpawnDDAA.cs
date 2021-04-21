@@ -35,7 +35,7 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     //static parameters
     private static readonly float baseSpawnPoint = 1f;
-    private static readonly int minSpawnAmount = 0;
+    private static readonly int minSpawnAmount = 8;
     private static readonly float dpgContribution = 0.1f;
     private static readonly float spawnPointContribution = 2f;
 
