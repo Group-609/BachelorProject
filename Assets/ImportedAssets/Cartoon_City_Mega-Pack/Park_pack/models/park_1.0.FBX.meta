@@ -1,0 +1,180 @@
+fileFormatVersion: 2
+guid: 9494dd68542cd7a4ab79974bbbc3f7aa
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: bench
+    100002: bench01
+    100004: fir-tree
+    100006: fir-tree01
+    100008: flowerbed
+    100010: flowerbed01
+    100012: grass
+    100014: grass01
+    100016: //RootNode
+    100018: road
+    100020: road01
+    100022: road02
+    100024: road03
+    100026: round_bush
+    100028: round_bush01
+    100030: square_bush
+    100032: square_bush01
+    100034: square_bush02
+    100036: square_bush03
+    100038: trashcan
+    100040: trashcan01
+    100042: tree
+    100044: tree01
+    400000: bench
+    400002: bench01
+    400004: fir-tree
+    400006: fir-tree01
+    400008: flowerbed
+    400010: flowerbed01
+    400012: grass
+    400014: grass01
+    400016: //RootNode
+    400018: road
+    400020: road01
+    400022: road02
+    400024: road03
+    400026: round_bush
+    400028: round_bush01
+    400030: square_bush
+    400032: square_bush01
+    400034: square_bush02
+    400036: square_bush03
+    400038: trashcan
+    400040: trashcan01
+    400042: tree
+    400044: tree01
+    2300000: bench
+    2300002: bench01
+    2300004: fir-tree
+    2300006: fir-tree01
+    2300008: flowerbed
+    2300010: flowerbed01
+    2300012: grass
+    2300014: grass01
+    2300016: road
+    2300018: road01
+    2300020: road02
+    2300022: road03
+    2300024: round_bush
+    2300026: round_bush01
+    2300028: square_bush
+    2300030: square_bush01
+    2300032: square_bush02
+    2300034: square_bush03
+    2300036: trashcan
+    2300038: trashcan01
+    2300040: tree
+    2300042: tree01
+    3300000: bench
+    3300002: bench01
+    3300004: fir-tree
+    3300006: fir-tree01
+    3300008: flowerbed
+    3300010: flowerbed01
+    3300012: grass
+    3300014: grass01
+    3300016: road
+    3300018: road01
+    3300020: road02
+    3300022: road03
+    3300024: round_bush
+    3300026: round_bush01
+    3300028: square_bush
+    3300030: square_bush01
+    3300032: square_bush02
+    3300034: square_bush03
+    3300036: trashcan
+    3300038: trashcan01
+    3300040: tree
+    3300042: tree01
+    4300000: fir-tree
+    4300002: tree
+    4300004: square_bush
+    4300006: flowerbed
+    4300008: round_bush
+    4300010: bench
+    4300012: road
+    4300014: square_bush01
+    4300016: trashcan
+    4300018: road01
+    4300020: grass
+    4300022: fir-tree01
+    4300024: tree01
+    4300026: square_bush02
+    4300028: flowerbed01
+    4300030: round_bush01
+    4300032: bench01
+    4300034: road02
+    4300036: square_bush03
+    4300038: trashcan01
+    4300040: road03
+    4300042: grass01
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .150000006
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
