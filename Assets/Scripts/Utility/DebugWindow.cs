@@ -123,7 +123,12 @@ public class DebugWindow : MonoBehaviour
             debugStrings.Add("Stun comparison (SV-BP): " + StunCondition.Instance.ConditionValue);
             debugStrings.Add("Damage received comparison (SV-BP): " + DamageReceivedCondition.Instance.ConditionValue);
         }
-        else debugStrings.Add("Control condition is active.");
+        else
+        {
+            debugStrings.Add("Control condition is active. INFO");
+            debugStrings.Add("----------Conditions-----------");
+            debugStrings.Add("Level progression (Smaller value - better team): " + LevelProgressionCondition.Instance.ConditionValue);
+        }
 
         debugStrings.Add("\n");
         debugStrings.Add("---------------Variables----------------");
@@ -135,9 +140,9 @@ public class DebugWindow : MonoBehaviour
 
         debugStrings.Add("\n");
         debugStrings.Add("----------Current values in game-----------");
-            debugStrings.Add("Local player defeated enemies: " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
-            debugStrings.Add("Local player stun count: " + StunCondition.Instance.localPlayerStuntCount);
-            debugStrings.Add("Local player damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
+        debugStrings.Add("Local player defeated enemies: " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+        debugStrings.Add("Local player stun count: " + StunCondition.Instance.localPlayerStuntCount);
+        debugStrings.Add("Local player damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
         
 
         debugStrings.AddRange(GetGeneralDebugInfo());
