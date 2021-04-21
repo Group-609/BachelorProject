@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun.Demo.PunBasics;
 
-public sealed class StunCondition
+public sealed class StunCondition: ICondition
 {
     // --------------------------------- //
     // Singleton related implementation //

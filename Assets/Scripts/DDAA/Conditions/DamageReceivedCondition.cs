@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun.Demo.PunBasics;
 
-public sealed class DamageReceivedCondition
+public sealed class DamageReceivedCondition: ICondition
 {
     // --------------------------------- //
     // Singleton related implementation //

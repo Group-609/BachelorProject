@@ -18,6 +18,7 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -212,7 +213,6 @@ namespace Photon.Pun.Demo.PunBasics
                 new OnValueChangeListener(
                     (newValue) =>
                     {
-                        Debug.Log("DDA: Player paintball damage value changed. Old value = " + paintballDamage + ". New value = " + newValue);
                         paintballDamage = newValue;
                     }    
                 )
@@ -372,8 +372,12 @@ namespace Photon.Pun.Demo.PunBasics
 
         public void UpdatePlayerHealthUI()
         {
-            if(photonView.IsMine)
+            if (photonView.IsMine && SceneManager.GetActiveScene().name == "Master")
+            {
+                if (healthUI == null)
+                    healthUI = GameObject.FindWithTag("HealthUI");
                 healthUI.GetComponent<Text>().text = (int)health + "%";
+            }
         }
 
         [PunRPC]
@@ -471,7 +475,8 @@ namespace Photon.Pun.Demo.PunBasics
             string debugPrintContent = "----Player info----\n";
             if(photonView.IsMine){ debugPrintContent = debugPrintContent + "Your local player\n";  }
             else { debugPrintContent += "Other player\n"; }
-            debugPrintContent += "Stun count: " + stunCount + "\n";
+            debugPrintContent += "Player's stun count: " + stunCount + "\n";
+            debugPrintContent += "Player's received damage: " + totalDamageReceived + "\n";
             debugPrintContent += "In key location: " + isPlayerInKeyLocZone + "\n";
             debugPrintContent += "----------------";
             return debugPrintContent;
