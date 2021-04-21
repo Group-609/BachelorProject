@@ -54,6 +54,8 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Time between 2 shots")]
         public float shootWaitTime = 0.9f;
 
+        public float endHealEffectDealy = 3;
+
         [Header("DDA system variables")]
         [NonSerialized]
         public int stunCount;
@@ -67,10 +69,14 @@ namespace Photon.Pun.Demo.PunBasics
         [Header("Sounds")]
 
         public AudioClip shootingClip;
+        public AudioClip healClip;
         public AudioClip musicBase;
         public AudioClip musicLow;
         public float musicVolumeBase;
         public float musicVolumeLow;
+
+        [Header("Heal Effect")]
+        public GameObject healEffectObject;
 
         [Header("Other")]
 
@@ -224,7 +230,7 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicBase.Play();
                 audioSourceMusicLow.Play();
             }
-            
+            healEffectObject.SetActive(false);
 
         }
 
@@ -357,6 +363,11 @@ namespace Photon.Pun.Demo.PunBasics
                 }
                 //else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
             }
+            else if (value > 0)
+            {
+                photonView.RPC(nameof(HealEffect), RpcTarget.All);
+                
+            }
         }
 
         public void UpdatePlayerHealthUI()
@@ -415,6 +426,18 @@ namespace Photon.Pun.Demo.PunBasics
             animatorHands.Play("Shoot");
         }
 
+        [PunRPC]
+        public void HealEffect()
+        {
+            GetComponent<AudioSource>().PlayOneShot(healClip);
+            healEffectObject.SetActive(true);
+            StartCoroutine("WaitSec");
+        }
+        public IEnumerator WaitToEndHealEffect(float endHealEffectDealy)
+        {
+            yield return new WaitForSeconds(endHealEffectDealy);
+            healEffectObject.SetActive(false);
+        }
         public bool IsPlayerLocal()
         {
             return photonView.IsMine;
