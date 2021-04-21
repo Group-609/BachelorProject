@@ -35,7 +35,7 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
 
     //static parameters
     private static readonly float baseMeleeDamagePoint = 10f;
-    private static readonly float minMeleeDamage = 45f;
+    public static readonly float minMeleeDamage = 45f;
     private static readonly float dpgContribution = 0.3f;
     private static readonly float meleeDamagePointContribution = 3f;
 
@@ -50,7 +50,7 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
-    private float meleeDamageMultiplier = 1f;
+    public float meleeDamageMultiplier = 1f;
     private float meleeDamagePoint = baseMeleeDamagePoint;
 
     // THE IN-GAME VALUE USED

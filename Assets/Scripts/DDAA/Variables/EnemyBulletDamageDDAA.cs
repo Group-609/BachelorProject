@@ -35,7 +35,7 @@ public sealed class EnemyBulletDamageDDAA
 
     //static parameters
     private static readonly float baseBulletDamagePoint = 10f;
-    private static readonly float minBulletDamage = 15f;
+    public static readonly float minBulletDamage = 15f;
     private static readonly float dpgContribution = 0.3f;
     private static readonly float bulletDamagePointContribution = 2f;
 
@@ -50,7 +50,7 @@ public sealed class EnemyBulletDamageDDAA
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
-    private float bulletDamageMultiplier = 1f;
+    public float bulletDamageMultiplier = 1f;
     private float bulletDamagePoint = baseBulletDamagePoint;
 
     // THE IN-GAME VALUE USED

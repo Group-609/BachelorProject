@@ -35,7 +35,7 @@ public sealed class PlayerPainballDamageDDAA
 
     //static parameters
     private static readonly float basePaintballDamagePoint = 10f;
-    private static readonly float minPaintballDamage = 5f;
+    public static readonly float minPaintballDamage = 5f;
     private static readonly float dpgContribution = 0.2f;
     private static readonly float paintballDamagePointContribution = 1f;
 
@@ -47,7 +47,7 @@ public sealed class PlayerPainballDamageDDAA
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
-    private float painballDamageMultiplier = 1f;
+    public float painballDamageMultiplier = 1f;
     private float paintballDamagePoint = basePaintballDamagePoint;
 
     // THE IN-GAME VALUE USED

@@ -36,7 +36,7 @@ public sealed class HealingRateDDAA : IDDAA
 
     //static parameters
     private static readonly float baseHealingPoint = 1f;
-    private static readonly float minHealingRate = 5f;
+    public static readonly float minHealingRate = 5f;
     private static readonly float dpgContribution = 0.1f;
     private static readonly float healingPointContribution = 1.5f;
 
@@ -48,7 +48,7 @@ public sealed class HealingRateDDAA : IDDAA
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
-    private float healingMultiplier = 1f;
+    public float healingMultiplier = 1f;
     private float healingPoint = baseHealingPoint;
 
     // THE IN-GAME VALUE USED

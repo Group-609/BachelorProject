@@ -35,7 +35,7 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     //static parameters
     private static readonly float baseSpawnPoint = 1f;
-    private static readonly int minSpawnAmount = 8;
+    public static readonly int minSpawnAmount = 0;
     private static readonly float dpgContribution = 0.1f;
     private static readonly float spawnPointContribution = 2f;
 
@@ -47,7 +47,7 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     // Mutable parameters. 
     // Do not ajust these, it will change during the gameplay
-    private float spawnMultiplier = 1f;
+    public float spawnMultiplier = 1f;
     private float spawnPoint = baseSpawnPoint;
 
     // THE IN-GAME VALUE USED
