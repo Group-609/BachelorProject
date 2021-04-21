@@ -364,7 +364,7 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine && SceneManager.GetActiveScene().name == "Master")
             {
                 if (healthUI == null)
-                    healthUI = healthUI = GameObject.FindWithTag("HealthUI");
+                    healthUI = GameObject.FindWithTag("HealthUI");
                 healthUI.GetComponent<Text>().text = (int)health + "%";
             }
         }
