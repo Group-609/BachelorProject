@@ -40,13 +40,14 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
     private static readonly float meleeDamagePointContribution = 3f;
 
     // IMPORTANT! Both arrays have to be the same length
-    private static readonly float[] stunCountDiff = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // how many times was the player stunned more than other players
-    private static readonly float[] stunCountDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
+    private static readonly float[] stunCountDiffPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
     private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { 0.5f, 0.2f, 0f, -0.2f, -0.5f }; // additive values to multiplier
 
-    private static readonly float[] damageReceivedDiff = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // how many times was the player damaged more than other players
-    private static readonly float[] damageReceivedDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
+    private static readonly float[] damageReceivedDiffPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
     private static readonly float[] damageReceivedDiffMultiplierAdditiveValues = new float[] { 0.5f, 0.2f, 0f, -0.2f, -0.5f }; // additive values to multiplier
+
+    private static readonly float[] defeatedEnemiesDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
+    private static readonly float[] defeatedEnemiesDiffMultiplierAdditiveValues = new float[] { -0.5f, -0.2f, 0f, 0.2f, 0.5f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
@@ -85,13 +86,18 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
             meleeDamageMultiplier + 
             DDAEngine.GetAdditiveValue(
                 StunCondition.Instance.ConditionValue,
-                stunCountDiff,
+                StunCondition.stunCountDiff,
                 stunCountDiffMultiplierAdditiveValues
             ) +
             DDAEngine.GetAdditiveValue(
                 DamageReceivedCondition.Instance.ConditionValue,
-                damageReceivedDiff,
+                DamageReceivedCondition.damageReceivedDiff,
                 damageReceivedDiffMultiplierAdditiveValues
+            )+
+            DDAEngine.GetAdditiveValue(
+                DefeatedEnemiesCountCondition.Instance.ConditionValue,
+                DefeatedEnemiesCountCondition.defeatedEnemiesDiff,
+                defeatedEnemiesDiffMultiplierAdditiveValues
             )
         );
         return meleeDamageMultiplier;

@@ -40,8 +40,6 @@ public sealed class EnemySpawnDDAA : IDDAA
     private static readonly float spawnPointContribution = 2f;
 
     // IMPORTANT! Both arrays have to be the same length
-    private static readonly float[] levelProgression = new float[] { 0.5f, 0.75f, 0f, 1.25f, 1.5f }; // how many times were they faster than needed
-
     private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
     private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { 1f, 0.5f, 0f, -1.5f, -2f }; // additive values to multiplier
 
@@ -69,7 +67,7 @@ public sealed class EnemySpawnDDAA : IDDAA
             0f,
             spawnMultiplier + DDAEngine.GetAdditiveValue(
                 LevelProgressionCondition.Instance.ConditionValue,
-                levelProgression,
+                LevelProgressionCondition.levelProgression,
                 levelProgressionMultiplierAdditiveValues
             )
         );
