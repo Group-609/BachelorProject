@@ -20,7 +20,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private bool isEnemySpawning = false;
 
     // enemy count meant to be spawned in progress locations
-    private static readonly int[] enemyCountForProgressSpawnPoints = new int[] { 2, 4, 6 };
+    private readonly int[] enemyCountForProgressSpawnPoints = new int[] { 2, 4, 6 };
 
     // adds to the base enemy count when the level changes. First is always 0. 
     private static readonly int[] baseEnemyCountAddition = new int[] { 0, 5, 10 };
