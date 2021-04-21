@@ -1449,7 +1449,7 @@ GameObject:
   - component: {fileID: 558355486}
   - component: {fileID: 558355485}
   m_Layer: 5
-  m_Name: DevTestingButton
+  m_Name: UserTestingButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1472,7 +1472,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 622.97687, y: -325}
+  m_AnchoredPosition: {x: 727.217, y: -325}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &558355485
@@ -1549,6 +1549,30 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: TestConditionSelection
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6428829112012402726}
+        m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
+        m_MethodName: SetChangingCondition
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2043539397}
+        m_TargetAssemblyTypeName: ConditionSwitcher, Assembly-CSharp
+        m_MethodName: SetSendDataToServer
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &558355487
 MonoBehaviour:
@@ -2561,7 +2585,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 622.97687, y: -225}
+  m_AnchoredPosition: {x: 727.217, y: -225}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &824377089
@@ -2650,6 +2674,30 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6428829112012402726}
+        m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
+        m_MethodName: SetChangingCondition
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2043539397}
+        m_TargetAssemblyTypeName: ConditionSwitcher, Assembly-CSharp
+        m_MethodName: SetSendDataToServer
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &824377091
 MonoBehaviour:
@@ -3747,7 +3795,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 631.9488, y: -325}
+  m_AnchoredPosition: {x: 727.217, y: -225}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1020245481
@@ -3900,7 +3948,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 622.97687, y: -225}
+  m_AnchoredPosition: {x: 727.217, y: -125}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1122519548
@@ -4819,7 +4867,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 631.9488, y: -125}
+  m_AnchoredPosition: {x: 727.217, y: -125}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1452023754
@@ -6342,7 +6390,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 622.97687, y: -325}
+  m_AnchoredPosition: {x: 727.217, y: -225}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1790358220
@@ -7612,6 +7660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b35b71bdba28144b695079c633b789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shouldSendDataToServer: 0
 --- !u!850595691 &2045504552
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -7710,7 +7759,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 622.97687, y: -125}
+  m_AnchoredPosition: {x: 727.217, y: -125}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2079849582
@@ -7792,6 +7841,30 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
         m_MethodName: OnControlConditionButtonClicked
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6428829112012402726}
+        m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
+        m_MethodName: SetChangingCondition
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2043539397}
+        m_TargetAssemblyTypeName: ConditionSwitcher, Assembly-CSharp
+        m_MethodName: SetSendDataToServer
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

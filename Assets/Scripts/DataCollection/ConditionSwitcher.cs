@@ -21,11 +21,13 @@ public class ConditionSwitcher : MonoBehaviour
     private bool isFirstCondition = true;
     private bool bothConditionsFinished = false;
 
+    public bool shouldSendDataToServer;
+
     private ConditionSetter conditionSetter;
 
     void Start()
     {
-        conditionSetter = GameObject.Find("ConditionSetter").GetComponent<ConditionSetter>();
+        conditionSetter = GetComponent<ConditionSetter>();
         DontDestroyOnLoad(transform.gameObject);
     }
 
@@ -39,6 +41,12 @@ public class ConditionSwitcher : MonoBehaviour
                 isFirstCondition = false;
                 LevelProgressionCondition.Instance.isGameFinished = false;
                 StartCoroutine(CallFirstConditionFinished());
+                if (!conditionSetter.shouldChangeCondition)
+                {
+                    bothConditionsFinished = true;
+                    //TODO show some "YOU WIN" screen or something
+                }
+
             }
             if (LevelProgressionCondition.Instance.isGameFinished && !isFirstCondition)
             {
@@ -56,10 +64,7 @@ public class ConditionSwitcher : MonoBehaviour
         Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
         
         List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
-        players.ForEach(player =>
-        {
-            player.GetComponent<PlayerManager>().SetMouseLock(false);
-        });
+        players.ForEach(player => player.GetComponent<PlayerManager>().SetMouseLock(false));
         
         if (PhotonNetwork.IsMasterClient)
         {
@@ -71,17 +76,23 @@ public class ConditionSwitcher : MonoBehaviour
     IEnumerator CallFirstConditionFinished()
     {
         yield return new WaitForSeconds(gameCloseDelay);
-        if (!Application.isEditor)
+        if (!Application.isEditor && shouldSendDataToServer)
             FirstConditionFinished(GetJsonToSend());
-        StartCoroutine(ChangeConditionAndLoadSecondCondition());
+        if (conditionSetter.shouldChangeCondition)
+            StartCoroutine(ChangeConditionAndLoadSecondCondition());
         //Reload level with condition switched or sth. Take look at GameManager script. Might also need to reset the DDA system.
     }
 
     IEnumerator CallSecondConditionFinished()
     {
         yield return new WaitForSeconds(gameCloseDelay);
-        if (!Application.isEditor)
+        if (!Application.isEditor && shouldSendDataToServer)
             SecondConditionFinished(GetJsonToSend());
+    }
+
+    public void SetSendDataToServer(bool shouldSendData)
+    {
+        shouldSendDataToServer = shouldSendData;
     }
 
     string GetJsonToSend()
