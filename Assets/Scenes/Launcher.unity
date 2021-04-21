@@ -1363,7 +1363,6 @@ GameObject:
   - component: {fileID: 523789982}
   - component: {fileID: 523789981}
   - component: {fileID: 523789979}
-  - component: {fileID: 523789978}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1371,14 +1370,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &523789978
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 523789977}
-  m_Enabled: 1
 --- !u!124 &523789979
 Behaviour:
   m_ObjectHideFlags: 0
@@ -1458,7 +1449,7 @@ GameObject:
   - component: {fileID: 558355486}
   - component: {fileID: 558355485}
   m_Layer: 5
-  m_Name: DevTestingButton
+  m_Name: UserTestingButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1481,7 +1472,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 688.86487, y: -325}
+  m_AnchoredPosition: {x: 727.217, y: -325}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &558355485
@@ -1558,6 +1549,30 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: TestConditionSelection
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6428829112012402726}
+        m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
+        m_MethodName: SetChangingCondition
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2043539397}
+        m_TargetAssemblyTypeName: ConditionSwitcher, Assembly-CSharp
+        m_MethodName: SetSendDataToServer
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &558355487
 MonoBehaviour:
@@ -2570,7 +2585,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 688.86487, y: -225}
+  m_AnchoredPosition: {x: 727.217, y: -225}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &824377089
@@ -2659,6 +2674,30 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6428829112012402726}
+        m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
+        m_MethodName: SetChangingCondition
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 2043539397}
+        m_TargetAssemblyTypeName: ConditionSwitcher, Assembly-CSharp
+        m_MethodName: SetSendDataToServer
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &824377091
 MonoBehaviour:
@@ -3756,7 +3795,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 631.9488, y: -325}
+  m_AnchoredPosition: {x: 727.217, y: -225}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1020245481
@@ -3909,7 +3948,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 622.97687, y: -225}
+  m_AnchoredPosition: {x: 727.217, y: -125}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1122519548
@@ -4828,7 +4867,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 631.9488, y: -125}
+  m_AnchoredPosition: {x: 727.217, y: -125}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1452023754
@@ -6351,7 +6390,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 622.97687, y: -325}
+  m_AnchoredPosition: {x: 727.217, y: -225}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1790358220
@@ -7604,6 +7643,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1953383541}
   m_CullTransparentMesh: 0
+--- !u!1 &2043539396 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6428829112157688721, guid: 5081b484737a45246bc3f2eb35176f31, type: 3}
+  m_PrefabInstance: {fileID: 6428829112012402725}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2043539397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043539396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b35b71bdba28144b695079c633b789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shouldSendDataToServer: 0
 --- !u!850595691 &2045504552
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -7702,7 +7759,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 688.86487, y: -125}
+  m_AnchoredPosition: {x: 727.217, y: -125}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2079849582
@@ -7784,6 +7841,30 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
         m_MethodName: OnControlConditionButtonClicked
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6428829112012402726}
+        m_TargetAssemblyTypeName: ConditionSetter, Assembly-CSharp
+        m_MethodName: SetChangingCondition
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2043539397}
+        m_TargetAssemblyTypeName: ConditionSwitcher, Assembly-CSharp
+        m_MethodName: SetSendDataToServer
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -7892,7 +7973,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6428829112157688720, guid: 5081b484737a45246bc3f2eb35176f31, type: 3}
   m_PrefabInstance: {fileID: 6428829112012402725}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2043539396}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d7e90e04473a434e815045c441ee862, type: 3}

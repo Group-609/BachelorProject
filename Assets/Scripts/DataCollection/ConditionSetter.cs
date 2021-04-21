@@ -6,8 +6,11 @@ public class ConditionSetter : MonoBehaviour
 {
     public string condition;
 
+    [Tooltip("Check if both conditions should be played simultaneously")]
+    public bool shouldChangeCondition;
+
     [Tooltip("Check if we should receive condition from the server")]
-    public bool isLiveTest = true;
+    public bool receiveConditionFromServer = true;
 
     [Tooltip("Force control condition")]
     public bool forceControl;
@@ -29,25 +32,36 @@ public class ConditionSetter : MonoBehaviour
         }
     }
 
+    public void ChangeCondition()
+    {
+        forceControl = !forceControl;
+        forceDDA = !forceDDA;
+    }
+
     public void ShouldGetConditionFromServer()
     {
-        isLiveTest = true;
+        receiveConditionFromServer = true;
         forceControl = false;
         forceDDA = false;
     }
 
     public void OnControlConditionButtonClicked()
     {
-        isLiveTest = false;
+        receiveConditionFromServer = false;
         forceControl = true;
         forceDDA = false;
     }
 
     public void OnDDAConditionButtonClicked()
     {
-        isLiveTest = false;
+        receiveConditionFromServer = false;
         forceControl = false;
         forceDDA = true;
+    }
+
+    public void SetChangingCondition(bool shouldChangeCondition)
+    {
+        this.shouldChangeCondition = shouldChangeCondition;
     }
 
     public bool IsDDACondition()

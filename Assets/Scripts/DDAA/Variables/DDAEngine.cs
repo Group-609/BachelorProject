@@ -12,7 +12,22 @@ public static class DDAEngine
 {
     public static bool isDynamicAdjustmentEnabled;
 
-    private static float difficultiesPointGlobal = 10;
+    private static float difficultiesPointGlobal = 10f;
+
+    public static void ResetConditionsAndVariables()
+    {
+        LevelProgressionCondition.Instance.Reset();
+        DefeatedEnemiesCountCondition.Instance.Reset();
+        DamageReceivedCondition.Instance.Reset();
+        StunCondition.Instance.Reset();
+        EnemySpawnDDAA.Instance.Reset();
+        HealingRateDDAA.Instance.Reset();
+        PlayerPainballDamageDDAA.Instance.Reset();
+        EnemyBulletDamageDDAA.Instance.Reset();
+        EnemyMeleeDamageDDAA.Instance.Reset();
+
+        difficultiesPointGlobal = 10f;
+    }
 
     public static void AdjustDPG(float conditionValue, int[] conditionalValues, float[] additiveValues)
     {
@@ -21,7 +36,7 @@ public static class DDAEngine
             difficultiesPointGlobal + GetAdditiveValue(conditionValue, conditionalValues, additiveValues)
         );
     }
-
+    
     public static void AdjustDPG(float conditionValue, float[] conditionalValues, float[] additiveValues)
     {
         difficultiesPointGlobal = Mathf.Max(

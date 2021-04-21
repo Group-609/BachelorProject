@@ -82,4 +82,9 @@ public sealed class PlayerPainballDamageDDAA
             paintballDamageListener.OnValueChanged(paintballDamage);
         }
     }
+
+    public void Reset()
+    {
+        painballDamageMultiplier = 1f;
+    }
 }

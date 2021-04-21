@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun.Demo.PunBasics;
 
-public sealed class DamageReceivedCondition
+public sealed class DamageReceivedCondition: ICondition
 {
     // --------------------------------- //
     // Singleton related implementation //
@@ -64,5 +64,11 @@ public sealed class DamageReceivedCondition
         {
             ConditionValue = 1f;
         }
+    }
+
+    public void Reset()
+    {
+        localPlayerTotalDamageReceived = 0f;
+        comparisonWithTeam = 1f;
     }
 }

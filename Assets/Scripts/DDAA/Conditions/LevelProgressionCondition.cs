@@ -54,6 +54,13 @@ public sealed class LevelProgressionCondition : ICondition
         }
     }
 
+    public void Reset()
+    {
+        isGameFinished = false;
+        time = 0f;
+        currentLevel = 0;
+    }
+
     //call this in Update
     public void AddDeltaTime(float deltaTime)
     {

@@ -96,4 +96,9 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
         );
         return meleeDamageMultiplier;
     }
+
+    public void Reset()
+    {
+        meleeDamageMultiplier = 1f;
+    }
 }

@@ -47,4 +47,9 @@ public sealed class KillCountCondition : ICondition
             DDAEngine.AdjustDPG(value, dpgValues, dpgAdditiveValues);
         }
     }
+
+    public void Reset()
+    {
+        currentKillCount = 0;
+    }
 }

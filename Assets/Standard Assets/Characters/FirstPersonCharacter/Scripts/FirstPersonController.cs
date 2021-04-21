@@ -302,5 +302,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             return m_RunSpeed;
         }
+
+        public void SetMouseLock(bool shouldLock)
+        {
+            m_MouseLook.SetCursorLock(shouldLock);
+        }
     }
 }

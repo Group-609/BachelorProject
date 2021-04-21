@@ -47,7 +47,7 @@ public class PlayerDataRecorder : MonoBehaviour
     }
 
     //Forms the JSON string to be send to the database
-    string GetJsonToSend()
+    public string GetJsonToSend()
     {
         DataContainer data = new DataContainer();
         data.frames = frames.ToArray();
