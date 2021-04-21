@@ -206,7 +206,6 @@ namespace Photon.Pun.Demo.PunBasics
                 new OnValueChangeListener(
                     (newValue) =>
                     {
-                        Debug.Log("DDA: Player paintball damage value changed. Old value = " + paintballDamage + ". New value = " + newValue);
                         paintballDamage = newValue;
                     }    
                 )
@@ -459,7 +458,8 @@ namespace Photon.Pun.Demo.PunBasics
             string debugPrintContent = "----Player info----\n";
             if(photonView.IsMine){ debugPrintContent = debugPrintContent + "Your local player\n";  }
             else { debugPrintContent += "Other player\n"; }
-            debugPrintContent += "Stun count: " + stunCount + "\n";
+            debugPrintContent += "Player's stun count: " + stunCount + "\n";
+            debugPrintContent += "Player's received damage: " + totalDamageReceived + "\n";
             debugPrintContent += "In key location: " + isPlayerInKeyLocZone + "\n";
             debugPrintContent += "----------------";
             return debugPrintContent;
