@@ -83,4 +83,9 @@ public sealed class HealingRateDDAA : IDDAA
             healingListener.OnValueChanged(healingRate);
         }
     }
+
+    public void Reset()
+    {
+        healingMultiplier = 1f;
+    }
 }

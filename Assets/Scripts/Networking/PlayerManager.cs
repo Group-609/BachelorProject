@@ -79,6 +79,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Tooltip("The local player instance. Use this to know if the local player is represented in the Scene")]
         public static GameObject LocalPlayerInstance;
+        public static PlayerManager LocalPlayerManager;
 
         //where the player will respawn after both players get stunned
         [NonSerialized]
@@ -137,6 +138,7 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)
             {
                 LocalPlayerInstance = gameObject;
+                LocalPlayerManager = this;
                 gameObject.transform.Find("Character").gameObject.transform.Find("hat").gameObject.SetActive(false);
                 gameObject.transform.Find("Character").gameObject.transform.Find("head").gameObject.SetActive(false);
             }
@@ -287,19 +289,26 @@ namespace Photon.Pun.Demo.PunBasics
         #region Photon events
         public void OnEvent(EventData photonEvent)
         {
-            
             byte eventCode = photonEvent.Code;
-
-            if (eventCode == GameManager.respawnEvent)
+            
+            if (eventCode == GameManager.respawnEvent || eventCode == GameManager.levelStartReset)
             {
-                transform.position = respawnTransform.position;
+                if (eventCode == GameManager.levelStartReset)
+                {
+                    transform.position = (Vector3)photonEvent.CustomData;
+                    SetMouseLock(true);
+                }
+                if (eventCode == GameManager.respawnEvent)
+                    transform.position = respawnTransform.position;
+
                 isPlayerInKeyLocZone = false;
                 StartCoroutine(SetPlayerOutsideKeyLocationZone());
+                if (photonView.IsMine)
+                    Respawn();
             }
+                
             if (photonView.IsMine) 
             {
-                if (eventCode == GameManager.respawnEvent)
-                    Respawn();
                 if (eventCode == GameManager.destroyKeyLocationEvent)
                 {
                     Debug.Log("Destroy key location index " + (int) photonEvent.CustomData);
@@ -311,6 +320,7 @@ namespace Photon.Pun.Demo.PunBasics
         //Called when all players are stunned 
         public void Respawn()
         {
+            Debug.Log("Respawning local player. fpsController enabled = " + fpsController.enabled);
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
@@ -343,9 +353,9 @@ namespace Photon.Pun.Demo.PunBasics
                 if (receivedPhotonView.IsMine)
                 {
                     DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += value;
-                    Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
+                    //Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
                 }
-                else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
+                //else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
             }
         }
 
@@ -364,9 +374,9 @@ namespace Photon.Pun.Demo.PunBasics
             if (receivedPhotonView.IsMine)
             {
                 StunCondition.Instance.localPlayerStuntCount++;
-                Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
+                //Debug.Log("We were stunned! Local player stun count is " + StunCondition.Instance.localPlayerStuntCount);
             }
-            else Debug.Log("Someone is stunned! Player's stun count is " + player.stunCount);
+            //else Debug.Log("Someone is stunned! Player's stun count is " + player.stunCount);
         }
 
         //Function to call when an enemy is hit. 
@@ -403,6 +413,11 @@ namespace Photon.Pun.Demo.PunBasics
         {
             animator.Play("Shoot");
             animatorHands.Play("Shoot");
+        }
+
+        public bool IsPlayerLocal()
+        {
+            return photonView.IsMine;
         }
 
         private void PlayShootingSound()
@@ -448,6 +463,29 @@ namespace Photon.Pun.Demo.PunBasics
             debugPrintContent += "In key location: " + isPlayerInKeyLocZone + "\n";
             debugPrintContent += "----------------";
             return debugPrintContent;
+        }
+
+        public void SetMouseLock(bool shouldLock)
+        {
+            photonView.RPC(nameof(LockMouse), RpcTarget.All, shouldLock, GetComponent<PhotonView>().ViewID);
+        }
+
+        [PunRPC]
+        private void LockMouse(bool shouldLock, int targetViewID)
+        {
+            PhotonView.Find(targetViewID).gameObject.GetComponent<FirstPersonController>().SetMouseLock(shouldLock);
+        }
+
+        public IEnumerator ResetPlayerLocation(Vector3 position, float delaySec)
+        {
+            yield return new WaitForSeconds(delaySec);
+            photonView.RPC(nameof(ResetPlayerLocationAtStart), RpcTarget.All, position, GetComponent<PhotonView>().ViewID);
+        }
+
+        [PunRPC]
+        private void ResetPlayerLocationAtStart(Vector3 position, int targetViewID)
+        {
+            PhotonView.Find(targetViewID).gameObject.transform.position = position;
         }
 
         #endregion
@@ -546,6 +584,7 @@ namespace Photon.Pun.Demo.PunBasics
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.isStunned = false;
             isReturningControl = false;
+            Debug.Log("Return local player's control. fpsController enabled = " + fpsController.enabled);
         }
         
         private IEnumerator ShootPaintball()

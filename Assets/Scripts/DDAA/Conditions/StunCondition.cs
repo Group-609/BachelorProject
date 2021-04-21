@@ -65,4 +65,10 @@ public sealed class StunCondition
             ConditionValue = 1f;
         }
     }
+
+    public void Reset()
+    {
+        localPlayerStuntCount = 0;
+        comparisonWithTeam = 1f;
+    }
 }

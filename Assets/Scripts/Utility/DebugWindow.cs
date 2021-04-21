@@ -26,6 +26,18 @@ public class DebugWindow : MonoBehaviour
         StartCoroutine(GetInfoSources());    
     }
 
+    private void OnEnable()
+    {
+        if (speedHack != null)
+            speedHack.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        if (speedHack != null)
+            speedHack.enabled = false;
+    }
+
     // Update is called once per frame
     void Update()
     {

@@ -40,6 +40,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		public const byte respawnEvent = 1;
 		public const byte destroyKeyLocationEvent = 2;
+		public const byte levelStartReset = 3;
 
 		private GameObject instance;
 
@@ -54,6 +55,8 @@ namespace Photon.Pun.Demo.PunBasics
 		[Tooltip("The prefab to use for representing the player")]
         [SerializeField]
         private GameObject playerPrefab;
+
+		private static readonly Vector3 initialSpawnPosition = new Vector3(0, 5f, 0);
 
 		bool isRespawning = false;
 		float respawnCheckTime = 1f;
@@ -70,6 +73,8 @@ namespace Photon.Pun.Demo.PunBasics
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
 				//Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
 			}
+
+			DDAEngine.ResetConditionsAndVariables();
 		}
 
 		/// <summary>
@@ -97,19 +102,18 @@ namespace Photon.Pun.Demo.PunBasics
 				Debug.LogError("<Color=Red><b>Missing</b></Color> playerPrefab Reference. Please set it up in GameObject 'Game Manager'", this);
 			} else {
 
-
 				if (PlayerManager.LocalPlayerInstance==null)
 				{
 				    //Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
-
-
+					
 					// we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-					GameObject player = PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f,5f,0f), Quaternion.identity, 0);
+					GameObject player = PhotonNetwork.Instantiate(this.playerPrefab.name, initialSpawnPosition, Quaternion.identity, 0);
 					player.transform.GetComponent<PlayerManager>().gameManager = this;	//We give the player a reference to the game manager
 				}
-				else{
-
+				else
+				{
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
+					StartCoroutine(LevelStartReset(initialSpawnPosition));
 				}
 			}
 			if (PhotonNetwork.IsMasterClient)
@@ -212,6 +216,7 @@ namespace Photon.Pun.Demo.PunBasics
 
 		#region Private Methods
 
+
 		IEnumerator RespawnCheck()
         {
 			isRespawning = true;
@@ -227,6 +232,16 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; // You would have to set the Receivers to All in order to receive this event on the local client as well
 			PhotonNetwork.RaiseEvent(respawnEvent,0, raiseEventOptions, SendOptions.SendReliable);
+			yield return new WaitForSeconds(respawnCheckTime);
+			isRespawning = false;
+		}
+
+		IEnumerator LevelStartReset(Vector3 spawnPosition)
+		{
+			isRespawning = true;
+			// You would have to set the Receivers to All in order to receive this event on the local client as well
+			RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All }; 
+			PhotonNetwork.RaiseEvent(levelStartReset, spawnPosition, raiseEventOptions, SendOptions.SendReliable);
 			yield return new WaitForSeconds(respawnCheckTime);
 			isRespawning = false;
 		}
@@ -261,7 +276,6 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 			return false;
 		}
-
         #endregion
 
         #region DDA System methods
@@ -276,7 +290,7 @@ namespace Photon.Pun.Demo.PunBasics
 					}
 				);
 
-			Debug.Log("My team other member count:" + teamPlayers.Count);
+			Debug.Log("My team other members count:" + teamPlayers.Count);
 
 			StunCondition.Instance.UpdateConditionalValue(teamPlayers);
 			DamageReceivedCondition.Instance.UpdateConditionalValue(teamPlayers);

@@ -65,4 +65,10 @@ public class DefeatedEnemiesCountCondition : ICondition
             ConditionValue = 1f;
         }
     }
+
+    public void Reset()
+    {
+        localPlayerDefeatsCount = 0;
+        comparisonWithTeam = 1f;
+    }
 }

@@ -96,4 +96,9 @@ public sealed class EnemyBulletDamageDDAA
         );
         return bulletDamageMultiplier;
     }
+
+    public void Reset()
+    {
+        bulletDamageMultiplier = 1f;
+    }
 }

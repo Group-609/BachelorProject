@@ -1,27 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="PlayerListEntry.cs" company="Exit Games GmbH">
-//   Part of: Asteroid Demo,
-// </copyright>
-// <summary>
-//  Player List Entry
-// </summary>
-// <author>developer@exitgames.com</author>
-// --------------------------------------------------------------------------------------------------------------------
-
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
-
-using ExitGames.Client.Photon;
-using Photon.Realtime;
-using Photon.Pun.UtilityScripts;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Photon.Pun.Demo.Asteroids
 {
-    public class PlayerListEntry : MonoBehaviour
+    public class CustomPlayerListEntry : MonoBehaviour
     {
         public interface ILocalPlayerPropertiesListener
         {
@@ -48,14 +34,9 @@ namespace Photon.Pun.Demo.Asteroids
         public Image PlayerReadyImage;
 
         private int ownerId;
-        private bool isPlayerReady;
+        public bool isPlayerReady;
 
         #region UNITY
-
-        public void OnEnable()
-        {
-            PlayerNumbering.OnPlayerNumberingChanged += OnPlayerNumberingChanged;
-        }
 
         public void Start()
         {
@@ -65,16 +46,17 @@ namespace Photon.Pun.Demo.Asteroids
             }
             else
             {
-                Hashtable initialProps = new Hashtable() {{AsteroidsGame.PLAYER_READY, isPlayerReady}, {AsteroidsGame.PLAYER_LIVES, AsteroidsGame.PLAYER_MAX_LIVES}};
+                Hashtable initialProps = new Hashtable() { { AsteroidsGame.PLAYER_READY, isPlayerReady } };
                 PhotonNetwork.LocalPlayer.SetCustomProperties(initialProps);
-                PhotonNetwork.LocalPlayer.SetScore(0);
+
+                Debug.Log("Player " + ownerId + " IS READY: " + isPlayerReady);
 
                 PlayerReadyButton.onClick.AddListener(() =>
                 {
                     isPlayerReady = !isPlayerReady;
                     SetPlayerReady(isPlayerReady);
 
-                    Hashtable props = new Hashtable() {{AsteroidsGame.PLAYER_READY, isPlayerReady}};
+                    Hashtable props = new Hashtable() { { AsteroidsGame.PLAYER_READY, isPlayerReady } };
                     PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
                     if (PhotonNetwork.IsMasterClient)
@@ -83,28 +65,14 @@ namespace Photon.Pun.Demo.Asteroids
             }
         }
 
-        public void OnDisable()
-        {
-            PlayerNumbering.OnPlayerNumberingChanged -= OnPlayerNumberingChanged;
-        }
-
         #endregion
 
         public void Initialize(int playerId, string playerName)
         {
             ownerId = playerId;
             PlayerNameText.text = playerName;
-        }
-
-        private void OnPlayerNumberingChanged()
-        {
-            foreach (Player p in PhotonNetwork.PlayerList)
-            {
-                if (p.ActorNumber == ownerId)
-                {
-                    PlayerColorImage.color = AsteroidsGame.GetColor(p.GetPlayerNumber());
-                }
-            }
+            Debug.Log("Custom player entry initialized. Owner id: " + ownerId);
+            PlayerColorImage.color = AsteroidsGame.GetColor(ownerId - 1);
         }
 
         public void SetPlayerReady(bool playerReady)

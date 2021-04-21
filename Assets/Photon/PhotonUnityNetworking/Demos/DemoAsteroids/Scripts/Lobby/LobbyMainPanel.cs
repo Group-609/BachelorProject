@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Photon.Pun.Demo.Asteroids
 {
-    public class LobbyMainPanel : MonoBehaviourPunCallbacks
+    public class LobbyMainPanel : MonoBehaviourPunCallbacks, PlayerListEntry.ILocalPlayerPropertiesListener
     {
         public string SceneName = "Master";
 
@@ -78,7 +78,7 @@ namespace Photon.Pun.Demo.Asteroids
             if (Input.GetKey("q") && Input.GetKeyDown("p"))
             {
                 isDevFlowActivated = !isDevFlowActivated;
-                //devFlowActiveText.SetActive(isDevFlowActivated);
+                devFlowActiveText.SetActive(isDevFlowActivated);
                 //DevTestingButton.SetActive(isDevFlowActivated);
                 JoinRandomRoomButton.SetActive(isDevFlowActivated);
             }
@@ -153,9 +153,9 @@ namespace Photon.Pun.Demo.Asteroids
                 entry.transform.SetParent(InsideRoomPanel.transform);
                 entry.transform.localScale = Vector3.one;
                 entry.GetComponent<PlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
+                entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
 
-                object isPlayerReady;
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool) isPlayerReady);
                 }
@@ -191,6 +191,7 @@ namespace Photon.Pun.Demo.Asteroids
             entry.transform.SetParent(InsideRoomPanel.transform);
             entry.transform.localScale = Vector3.one;
             entry.GetComponent<PlayerListEntry>().Initialize(newPlayer.ActorNumber, newPlayer.NickName);
+            entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
 
             playerListEntries.Add(newPlayer.ActorNumber, entry);
 
@@ -216,15 +217,11 @@ namespace Photon.Pun.Demo.Asteroids
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             if (playerListEntries == null)
-            {
                 playerListEntries = new Dictionary<int, GameObject>();
-            }
 
-            GameObject entry;
-            if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out entry))
+            if (playerListEntries.TryGetValue(targetPlayer.ActorNumber, out GameObject entry))
             {
-                object isPlayerReady;
-                if (changedProps.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (changedProps.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     entry.GetComponent<PlayerListEntry>().SetPlayerReady((bool) isPlayerReady);
                 }
@@ -240,9 +237,7 @@ namespace Photon.Pun.Demo.Asteroids
         public void OnBackButtonClicked(string panelToActivate)
         {
             if (PhotonNetwork.InLobby)
-            {
                 PhotonNetwork.LeaveLobby();
-            }
 
             SetActivePanel(panelToActivate);
         }
@@ -252,8 +247,7 @@ namespace Photon.Pun.Demo.Asteroids
             string roomName = RoomNameInputField.text;
             roomName = (roomName.Equals(string.Empty)) ? "Room " + Random.Range(1000, 10000) : roomName;
 
-            byte maxPlayers;
-            byte.TryParse(MaxPlayersInputField.text, out maxPlayers);
+            byte.TryParse(MaxPlayersInputField.text, out byte maxPlayers);
             maxPlayers = (byte) Mathf.Clamp(maxPlayers, 2, 8);
 
             RoomOptions options = new RoomOptions {MaxPlayers = maxPlayers, PlayerTtl = 10000 };
@@ -282,18 +276,13 @@ namespace Photon.Pun.Demo.Asteroids
                 PhotonNetwork.LocalPlayer.NickName = playerName;
                 PhotonNetwork.ConnectUsingSettings();
             }
-            else
-            {
-                Debug.LogError("Player Name is invalid.");
-            }
+            else Debug.LogError("Player Name is invalid.");
         }
 
         public void OnRoomListButtonClicked()
         {
             if (!PhotonNetwork.InLobby)
-            {
                 PhotonNetwork.JoinLobby();
-            }
 
             SetActivePanel(RoomListPanel.name);
         }
@@ -303,6 +292,11 @@ namespace Photon.Pun.Demo.Asteroids
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.IsVisible = false;
 
+            foreach (KeyValuePair<int, GameObject> entry in playerListEntries)
+            {
+                entry.Value.GetComponent<PlayerListEntry>().RemoveLocalPlayerPropertiesListener(this);
+            }
+
             PhotonNetwork.LoadLevel(SceneName);
         }
 
@@ -311,26 +305,17 @@ namespace Photon.Pun.Demo.Asteroids
         private bool CheckPlayersReady()
         {
             if (!PhotonNetwork.IsMasterClient)
-            {
                 return false;
-            }
 
             foreach (Player p in PhotonNetwork.PlayerList)
             {
-                object isPlayerReady;
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out isPlayerReady))
+                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
                     if (!(bool) isPlayerReady)
-                    {
                         return false;
-                    }
                 }
-                else
-                {
-                    return false;
-                }
+                else return false;
             }
-
             return true;
         }
         
@@ -344,7 +329,7 @@ namespace Photon.Pun.Demo.Asteroids
             roomListEntries.Clear();
         }
 
-        public void LocalPlayerPropertiesUpdated()
+        public void OnLocalPlayerPropertiesUpdated()
         {
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
         }

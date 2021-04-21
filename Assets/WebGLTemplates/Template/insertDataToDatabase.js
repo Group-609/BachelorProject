@@ -43,9 +43,14 @@ function getCondition(callback)
   }, 
   })
 }
-function showSecondForm()
+function showSecondForm(gatheredData)
 {
-  var data = { foo: 'showing second form' }
-  var event = new CustomEvent('showSecondForm', { detail: data })
+  var event = new CustomEvent('showSecondForm', { detail: gatheredData })
+  window.parent.document.dispatchEvent(event)
+}
+
+function showLastForm(gatheredData)
+{
+  var event = new CustomEvent('showLastForm', { detail: gatheredData })
   window.parent.document.dispatchEvent(event)
 }
