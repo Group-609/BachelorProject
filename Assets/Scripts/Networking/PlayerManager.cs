@@ -367,7 +367,6 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 player.StartCoroutine(nameof(HealEffect));
 
-                //player.HealEffect();
             }
         }
 
@@ -426,14 +425,7 @@ namespace Photon.Pun.Demo.PunBasics
             animator.Play("Shoot");
             animatorHands.Play("Shoot");
         }
-        /*
-        public void HealEffect()
-        {
-            GetComponent<AudioSource>().PlayOneShot(healClip);
-            healEffectObject.SetActive(true);
-            StartCoroutine("WaitToEndHealEffect");
-        }
-        */
+        
         
         public bool IsPlayerLocal()
         {
