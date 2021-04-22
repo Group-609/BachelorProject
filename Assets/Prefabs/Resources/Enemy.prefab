@@ -745,6 +745,7 @@ MonoBehaviour:
   volumeWalk: 0.3
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimeSec: 1
+  spawnSizeScaleSpeed: 0.5
   distanceToKeyLocationToDespawn: 1
 --- !u!195 &5732855970157686023
 NavMeshAgent:
