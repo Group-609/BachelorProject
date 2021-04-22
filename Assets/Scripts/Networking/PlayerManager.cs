@@ -18,6 +18,7 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -54,6 +55,8 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Time between 2 shots")]
         public float shootWaitTime = 0.9f;
 
+        public float endHealEffectDealy = 3;
+
         [Header("DDA system variables")]
         [NonSerialized]
         public int stunCount;
@@ -67,10 +70,14 @@ namespace Photon.Pun.Demo.PunBasics
         [Header("Sounds")]
 
         public AudioClip shootingClip;
+        public AudioClip healClip;
         public AudioClip musicBase;
         public AudioClip musicLow;
         public float musicVolumeBase;
         public float musicVolumeLow;
+
+        [Header("Heal Effect")]
+        public GameObject healEffectObject;
 
         [Header("Other")]
 
@@ -223,7 +230,7 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicBase.Play();
                 audioSourceMusicLow.Play();
             }
-            
+            healEffectObject.SetActive(false);
 
         }
 
@@ -356,12 +363,21 @@ namespace Photon.Pun.Demo.PunBasics
                 }
                 //else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
             }
+            else if (value > 0)
+            {
+                player.StartCoroutine(nameof(HealEffect));
+
+            }
         }
 
         public void UpdatePlayerHealthUI()
         {
-            if(photonView.IsMine)
+            if (photonView.IsMine && SceneManager.GetActiveScene().name == "Master")
+            {
+                if (healthUI == null)
+                    healthUI = GameObject.FindWithTag("HealthUI");
                 healthUI.GetComponent<Text>().text = (int)health + "%";
+            }
         }
 
         [PunRPC]
@@ -413,7 +429,8 @@ namespace Photon.Pun.Demo.PunBasics
             animator.Play("Shoot");
             animatorHands.Play("Shoot");
         }
-
+        
+        
         public bool IsPlayerLocal()
         {
             return photonView.IsMine;
@@ -480,6 +497,13 @@ namespace Photon.Pun.Demo.PunBasics
         {
             yield return new WaitForSeconds(delaySec);
             photonView.RPC(nameof(ResetPlayerLocationAtStart), RpcTarget.All, position, GetComponent<PhotonView>().ViewID);
+        }
+        public IEnumerator HealEffect()
+        {
+            GetComponent<AudioSource>().PlayOneShot(healClip);
+            healEffectObject.SetActive(true);
+            yield return new WaitForSeconds(endHealEffectDealy);
+            healEffectObject.SetActive(false);
         }
 
         [PunRPC]
