@@ -1,4 +1,7 @@
 var condition = "not set";
+
+window.document.addEventListener('returnPlayerIdentifierToIframe', sendPlayerIdentifierToUnity, false)
+
 function insertData(message)
 {    
   const url = "https://coopgame.herokuapp.com/app.js";
@@ -8,13 +11,12 @@ function insertData(message)
   }); 
 }
 function getPlayerIdentifier(){
-  var data = { foo: 'bar' }
-  var event = new CustomEvent('myCustomEvent', { detail: data })
-  window.parent.document.dispatchEvent(event)
+  var event = new CustomEvent('getPlayerIdentifierFromWebsite');
+  window.parent.document.dispatchEvent(event);
 }
 
-function sendPlayerIdentifierToUnity(playerIdentifier){
-  unityInstance.SendMessage('ConditionSetter', 'GetPlayerIdentifier', playerIdentifier);
+function sendPlayerIdentifierToUnity(e){
+  unityInstance.SendMessage('ConditionSetter', 'GetPlayerIdentifier', e.playerIdentifier);
 }
 
 function getCondition(callback)

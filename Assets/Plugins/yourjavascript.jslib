@@ -10,4 +10,9 @@ mergeInto(LibraryManager.library, {
 	SecondConditionFinished: function (gatheredData) {
 		showLastForm(Pointer_stringify(gatheredData));
 	}, 
+
+	RequestPlayerIdentifier: function () {
+		getPlayerIdentifier();
+	}, 
+
 });
