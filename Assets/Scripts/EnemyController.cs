@@ -53,8 +53,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     [Header("Other variables")]
     [Tooltip("Prefab of projectile to shoot")]
-    [SerializeField]
-    private GameObject projectilePrefab;
+    public GameObject projectilePrefab;
 
     private SkinnedMeshRenderer meshRenderer;
     private Color maxHealthColor;
