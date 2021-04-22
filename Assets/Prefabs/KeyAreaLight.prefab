@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6658004521026591471
+--- !u!1 &3464441092092421030
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,43 +8,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 425141745273410960}
-  - component: {fileID: 6515205360101698331}
+  - component: {fileID: 7608753700435487961}
+  - component: {fileID: 3898843797156942418}
   m_Layer: 0
-  m_Name: StreetlightLightInArea
+  m_Name: KeyAreaLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
---- !u!4 &425141745273410960
+--- !u!4 &7608753700435487961
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6658004521026591471}
+  m_GameObject: {fileID: 3464441092092421030}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 1.2051032, y: 2.9411786, z: 1.0536149}
+  m_LocalPosition: {x: -59.59, y: -118.24, z: -159.24}
   m_LocalScale: {x: 0.29411763, y: 0.2941176, z: 0.2941176}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!108 &6515205360101698331
+--- !u!108 &3898843797156942418
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6658004521026591471}
+  m_GameObject: {fileID: 3464441092092421030}
   m_Enabled: 1
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.54937476, g: 0.4625756, b: 0.990566, a: 1}
-  m_Intensity: 3
-  m_Range: 50
+  m_Intensity: 2
+  m_Range: 95
   m_SpotAngle: 69
   m_InnerSpotAngle: 6
   m_CookieSize: 10
