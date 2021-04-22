@@ -7,6 +7,15 @@ function insertData(message)
     console.log("${data} and status is ${status}")
   }); 
 }
+function getPlayerIdentifier(){
+  var data = { foo: 'bar' }
+  var event = new CustomEvent('myCustomEvent', { detail: data })
+  window.parent.document.dispatchEvent(event)
+}
+
+function sendPlayerIdentifierToUnity(playerIdentifier){
+  unityInstance.SendMessage('ConditionSetter', 'GetPlayerIdentifier', playerIdentifier);
+}
 
 function getCondition(callback)
 {
