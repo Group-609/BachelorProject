@@ -325,7 +325,7 @@ MonoBehaviour:
   musicLow: {fileID: 8300000, guid: 8b2f864b7c866a8418e108425dba372c, type: 3}
   musicVolumeBase: 0.1
   musicVolumeLow: 0.2
-  healEffectObject: {fileID: 0}
+  healEffectObject: {fileID: 7209973787426819567, guid: 3d8065c60d7aac84894c5117c34329b4, type: 3}
   gameManager: {fileID: 0}
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}
   paintballPrefab: {fileID: 909444189230491489, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}

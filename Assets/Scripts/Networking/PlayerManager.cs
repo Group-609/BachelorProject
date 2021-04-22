@@ -230,7 +230,6 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicBase.Play();
                 audioSourceMusicLow.Play();
             }
-            healEffectObject.SetActive(false);
 
         }
 
