@@ -285,7 +285,7 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
-        private void OnEnable()
+        public override void OnEnable()
         {
             PhotonNetwork.AddCallbackTarget(this);
         }

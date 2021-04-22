@@ -123,21 +123,34 @@ public class DebugWindow : MonoBehaviour
             debugStrings.Add("Stun comparison (SV-BP): " + StunCondition.Instance.ConditionValue);
             debugStrings.Add("Damage received comparison (SV-BP): " + DamageReceivedCondition.Instance.ConditionValue);
         }
-        else debugStrings.Add("Control condition is active.");
+        else
+        {
+            debugStrings.Add("Control condition is active. INFO");
+            debugStrings.Add("----------Conditions-----------");
+            debugStrings.Add("Level progression (Smaller value - better team): " + LevelProgressionCondition.Instance.ConditionValue);
+        }
 
-        debugStrings.Add("\n");
         debugStrings.Add("---------------Variables----------------");
-        debugStrings.Add("Enemy spawn amount for area (TEAM): " + EnemySpawnDDAA.Instance.spawnAmount);
-        debugStrings.Add("Player healing rate (TEAM): " + HealingRateDDAA.Instance.healingRate);
-        debugStrings.Add("Player paintball damage: " + PlayerPainballDamageDDAA.Instance.paintballDamage);
-        debugStrings.Add("Enemy melee damage: " + EnemyMeleeDamageDDAA.Instance.meleeDamage);
-        debugStrings.Add("Enemy bullet damage: " + EnemyBulletDamageDDAA.Instance.bulletDamage);
+        debugStrings.Add("Enemy spawn amount for area (TEAM): " + EnemySpawnDDAA.Instance.spawnAmount + "; Min: " + EnemySpawnDDAA.minSpawnAmount);
+        debugStrings.Add("Player healing rate (TEAM): " + HealingRateDDAA.Instance.healingRate + "; Min: " + HealingRateDDAA.minHealingRate);
+        debugStrings.Add("Player paintball damage: " + PlayerPainballDamageDDAA.Instance.paintballDamage + "; Min: " + PlayerPainballDamageDDAA.minPaintballDamage);
+        debugStrings.Add("Enemy melee damage: " + EnemyMeleeDamageDDAA.Instance.meleeDamage + "; Min: " + EnemyMeleeDamageDDAA.minMeleeDamage);
+        debugStrings.Add("Enemy bullet damage: " + EnemyBulletDamageDDAA.Instance.bulletDamage + "; Min: " + EnemyBulletDamageDDAA.minBulletDamage);
 
-        debugStrings.Add("\n");
+        if (DDAEngine.isDynamicAdjustmentEnabled)
+        {
+            debugStrings.Add("----------Multipliers-----------");
+            debugStrings.Add("Enemy spawn multiplier for area (TEAM): " + EnemySpawnDDAA.Instance.spawnMultiplier);
+            debugStrings.Add("Player healing rate multiplier (TEAM): " + HealingRateDDAA.Instance.healingMultiplier);
+            debugStrings.Add("Player paintball damage multiplier: " + PlayerPainballDamageDDAA.Instance.painballDamageMultiplier);
+            debugStrings.Add("Enemy melee damage multiplier: " + EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier);
+            debugStrings.Add("Enemy bullet damage multiplier: " + EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier);
+        }
+
         debugStrings.Add("----------Current values in game-----------");
-            debugStrings.Add("Local player defeated enemies: " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
-            debugStrings.Add("Local player stun count: " + StunCondition.Instance.localPlayerStuntCount);
-            debugStrings.Add("Local player damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
+        debugStrings.Add("Local player defeated enemies: " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+        debugStrings.Add("Local player stun count: " + StunCondition.Instance.localPlayerStuntCount);
+        debugStrings.Add("Local player damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
         
 
         debugStrings.AddRange(GetGeneralDebugInfo());
@@ -149,9 +162,7 @@ public class DebugWindow : MonoBehaviour
     {
         List<string> debugStrings = new List<string>();
 
-        debugStrings.Add("\n");
         debugStrings.Add("--------------------------------------");
-        debugStrings.Add("\n");
 
         if (speedHackEnabled)
             debugStrings.Add("Speedhack enabled - press 'o' again to disable");

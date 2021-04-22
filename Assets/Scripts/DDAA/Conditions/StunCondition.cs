@@ -33,7 +33,7 @@ public sealed class StunCondition: ICondition
 
     // IMPORTANT! Both arrays have to be the same length
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
-    private static readonly float[] dpgValues = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // stun count difference, by which the DDAA's additive values would be mapped
+    public static readonly float[] stunCountDiff = new float[] { 0.5f, 0.75f, 1f, 1.25f, 1.5f }; // how many times was the player stunned more than other players
     private static readonly float[] dpgAdditiveValues = new float[] { 1.5f, 1f, 0f,-1f, -1.5f }; // additive values to DPG point
 
     public int localPlayerStuntCount = 0;
@@ -47,7 +47,7 @@ public sealed class StunCondition: ICondition
         {
             // should start the configuration of every DDAA here
             comparisonWithTeam = value;
-            DDAEngine.AdjustDPG(value, dpgValues, dpgAdditiveValues);
+            DDAEngine.AdjustDPG(value, stunCountDiff, dpgAdditiveValues);
         }
     }
 
