@@ -130,7 +130,6 @@ public class DebugWindow : MonoBehaviour
             debugStrings.Add("Level progression (Smaller value - better team): " + LevelProgressionCondition.Instance.ConditionValue);
         }
 
-        debugStrings.Add("\n");
         debugStrings.Add("---------------Variables----------------");
         debugStrings.Add("Enemy spawn amount for area (TEAM): " + EnemySpawnDDAA.Instance.spawnAmount + "; Min: " + EnemySpawnDDAA.minSpawnAmount);
         debugStrings.Add("Player healing rate (TEAM): " + HealingRateDDAA.Instance.healingRate + "; Min: " + HealingRateDDAA.minHealingRate);
@@ -140,7 +139,6 @@ public class DebugWindow : MonoBehaviour
 
         if (DDAEngine.isDynamicAdjustmentEnabled)
         {
-            debugStrings.Add("\n");
             debugStrings.Add("----------Multipliers-----------");
             debugStrings.Add("Enemy spawn multiplier for area (TEAM): " + EnemySpawnDDAA.Instance.spawnMultiplier);
             debugStrings.Add("Player healing rate multiplier (TEAM): " + HealingRateDDAA.Instance.healingMultiplier);
@@ -149,7 +147,6 @@ public class DebugWindow : MonoBehaviour
             debugStrings.Add("Enemy bullet damage multiplier: " + EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier);
         }
 
-        debugStrings.Add("\n");
         debugStrings.Add("----------Current values in game-----------");
         debugStrings.Add("Local player defeated enemies: " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
         debugStrings.Add("Local player stun count: " + StunCondition.Instance.localPlayerStuntCount);
@@ -165,9 +162,7 @@ public class DebugWindow : MonoBehaviour
     {
         List<string> debugStrings = new List<string>();
 
-        debugStrings.Add("\n");
         debugStrings.Add("--------------------------------------");
-        debugStrings.Add("\n");
 
         if (speedHackEnabled)
             debugStrings.Add("Speedhack enabled - press 'o' again to disable");

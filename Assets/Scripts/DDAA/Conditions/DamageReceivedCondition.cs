@@ -47,7 +47,7 @@ public sealed class DamageReceivedCondition: ICondition
         {
             // should start the configuration of every DDAA here
             comparisonWithTeam = value;
-            DDAEngine.AdjustDPG(value, dpgValues, dpgAdditiveValues);
+            DDAEngine.AdjustDPG(value, damageReceivedDiff, dpgAdditiveValues);
         }
     }
 
