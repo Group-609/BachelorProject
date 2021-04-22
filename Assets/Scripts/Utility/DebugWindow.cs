@@ -123,7 +123,12 @@ public class DebugWindow : MonoBehaviour
             debugStrings.Add("Stun comparison (SV-BP): " + StunCondition.Instance.ConditionValue);
             debugStrings.Add("Damage received comparison (SV-BP): " + DamageReceivedCondition.Instance.ConditionValue);
         }
-        else debugStrings.Add("Control condition is active.");
+        else
+        {
+            debugStrings.Add("Control condition is active. INFO");
+            debugStrings.Add("----------Conditions-----------");
+            debugStrings.Add("Level progression (Smaller value - better team): " + LevelProgressionCondition.Instance.ConditionValue);
+        }
 
         debugStrings.Add("\n");
         debugStrings.Add("---------------Variables----------------");

@@ -72,8 +72,7 @@ public sealed class LevelProgressionCondition : ICondition
         if (currentLevel < expectedTimeSpendInCombat.Length)
         {
             Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedTimeSpendInCombat[currentLevel]);
-            if (DDAEngine.isDynamicAdjustmentEnabled)
-                ConditionValue = time / expectedTimeSpendInCombat[currentLevel];
+            ConditionValue = time / expectedTimeSpendInCombat[currentLevel];
             currentLevel++;
             //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
 

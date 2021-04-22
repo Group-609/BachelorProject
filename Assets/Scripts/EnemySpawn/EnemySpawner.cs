@@ -260,14 +260,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
 
     private void ChangeEnemyCount(int addToEnemyCount)
     {
-        if (DDAEngine.isDynamicAdjustmentEnabled)
-        {
-            EnemySpawnDDAA.Instance.AdjustInGameValue(addToEnemyCount);
-        }
-        else
-        {
-            OnValueChanged(initialEnemyAmountToSpawn + addToEnemyCount);
-        }
+        EnemySpawnDDAA.Instance.AdjustInGameValue(addToEnemyCount);
     }
 
     public void OnValueChanged(float value)
