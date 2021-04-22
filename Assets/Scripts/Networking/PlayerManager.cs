@@ -365,7 +365,7 @@ namespace Photon.Pun.Demo.PunBasics
             }
             else if (value > 0)
             {
-                player.StartCoroutine(nameof(HealEffect));
+                player.HealEffect();
 
             }
         }
@@ -505,12 +505,11 @@ namespace Photon.Pun.Demo.PunBasics
             yield return new WaitForSeconds(delaySec);
             photonView.RPC(nameof(ResetPlayerLocationAtStart), RpcTarget.All, position, GetComponent<PhotonView>().ViewID);
         }
-        public IEnumerator HealEffect()
+        public void HealEffect()
         {
             GetComponent<AudioSource>().PlayOneShot(healClip);
-            healEffectObject.SetActive(true);
-            yield return new WaitForSeconds(endHealEffectDealy);
-            healEffectObject.SetActive(false);
+            GameObject healEffect = Instantiate(healEffectObject, transform.position, Quaternion.identity);
+            Destroy(healEffect, 5.0f);
         }
 
         [PunRPC]
