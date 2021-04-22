@@ -132,11 +132,22 @@ public class DebugWindow : MonoBehaviour
 
         debugStrings.Add("\n");
         debugStrings.Add("---------------Variables----------------");
-        debugStrings.Add("Enemy spawn amount for area (TEAM): " + EnemySpawnDDAA.Instance.spawnAmount);
-        debugStrings.Add("Player healing rate (TEAM): " + HealingRateDDAA.Instance.healingRate);
-        debugStrings.Add("Player paintball damage: " + PlayerPainballDamageDDAA.Instance.paintballDamage);
-        debugStrings.Add("Enemy melee damage: " + EnemyMeleeDamageDDAA.Instance.meleeDamage);
-        debugStrings.Add("Enemy bullet damage: " + EnemyBulletDamageDDAA.Instance.bulletDamage);
+        debugStrings.Add("Enemy spawn amount for area (TEAM): " + EnemySpawnDDAA.Instance.spawnAmount + "; Min: " + EnemySpawnDDAA.minSpawnAmount);
+        debugStrings.Add("Player healing rate (TEAM): " + HealingRateDDAA.Instance.healingRate + "; Min: " + HealingRateDDAA.minHealingRate);
+        debugStrings.Add("Player paintball damage: " + PlayerPainballDamageDDAA.Instance.paintballDamage + "; Min: " + PlayerPainballDamageDDAA.minPaintballDamage);
+        debugStrings.Add("Enemy melee damage: " + EnemyMeleeDamageDDAA.Instance.meleeDamage + "; Min: " + EnemyMeleeDamageDDAA.minMeleeDamage);
+        debugStrings.Add("Enemy bullet damage: " + EnemyBulletDamageDDAA.Instance.bulletDamage + "; Min: " + EnemyBulletDamageDDAA.minBulletDamage);
+
+        if (DDAEngine.isDynamicAdjustmentEnabled)
+        {
+            debugStrings.Add("\n");
+            debugStrings.Add("----------Multipliers-----------");
+            debugStrings.Add("Enemy spawn multiplier for area (TEAM): " + EnemySpawnDDAA.Instance.spawnMultiplier);
+            debugStrings.Add("Player healing rate multiplier (TEAM): " + HealingRateDDAA.Instance.healingMultiplier);
+            debugStrings.Add("Player paintball damage multiplier: " + PlayerPainballDamageDDAA.Instance.painballDamageMultiplier);
+            debugStrings.Add("Enemy melee damage multiplier: " + EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier);
+            debugStrings.Add("Enemy bullet damage multiplier: " + EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier);
+        }
 
         debugStrings.Add("\n");
         debugStrings.Add("----------Current values in game-----------");

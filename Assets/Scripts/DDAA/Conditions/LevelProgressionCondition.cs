@@ -29,11 +29,11 @@ public sealed class LevelProgressionCondition : ICondition
     }
 
     public int currentLevel;
-    private static readonly int[] expectedFinishTimes = new int[] { 50, 100, 180 }; // adjust these. Expected time (in sec), when player should complete level
+    private static readonly int[] expectedTimeSpendInCombat = new int[] { 50, 100, 180 }; // adjust these. Expected time (in sec), when player should complete level
 
     // IMPORTANT! Both arrays have to be the same length
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
-    private static readonly float[] dpgValues = new float[] { 0.8f, 0f, 1.2f}; // finish level time comparison, by which the DDAA's additive values would be mapped
+    public static readonly float[] levelProgression = new float[] { 0.5f, 0.75f, 0f, 1.25f, 1.5f }; // how many times were they faster than needed
     private static readonly float[] dpgAdditiveValues = new float[] { 2f, 0f, -2.5f }; // additive values to DPG point
 
     //holds the value of player's speed compared to what is expected (time/expectedTime)
@@ -50,7 +50,7 @@ public sealed class LevelProgressionCondition : ICondition
         {
             // should start the configuration of every DDAA here
             currentConditionalValue = value;
-            DDAEngine.AdjustDPG(currentConditionalValue, dpgValues, dpgAdditiveValues);
+            DDAEngine.AdjustDPG(currentConditionalValue, levelProgression, dpgAdditiveValues);
         }
     }
 
@@ -69,15 +69,15 @@ public sealed class LevelProgressionCondition : ICondition
 
     public void LevelFinished()
     {
-        if (currentLevel < expectedFinishTimes.Length)
+        if (currentLevel < expectedTimeSpendInCombat.Length)
         {
-            Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedFinishTimes[currentLevel]);
-            ConditionValue = time / expectedFinishTimes[currentLevel];
+            Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedTimeSpendInCombat[currentLevel]);
+            ConditionValue = time / expectedTimeSpendInCombat[currentLevel];
             currentLevel++;
             //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
 
             levelProgressionListeners.ForEach(listener => listener.OnLevelFinished());
-            if(currentLevel == expectedFinishTimes.Length)
+            if(currentLevel == expectedTimeSpendInCombat.Length)
             {
                 Debug.Log("Game is finished");
                 isGameFinished = true;
