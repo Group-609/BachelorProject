@@ -16,7 +16,8 @@ function getPlayerIdentifier(){
 }
 
 function sendPlayerIdentifierToUnity(e){
-  unityInstance.SendMessage('ConditionSetter', 'GetPlayerIdentifier', e.playerIdentifier);
+  console.log(e.detail.toString());
+  publicUnityInstance.SendMessage('ConditionSetter', 'GetPlayerIdentifier', e.detail.toString());
 }
 
 function getCondition(callback)

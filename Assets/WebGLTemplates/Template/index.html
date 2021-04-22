@@ -25,6 +25,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src='insertDataToDatabase.js'></script>
     <script>
+      var publicUnityInstance;
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/Build.loader.js";
       var config = {
@@ -58,6 +59,7 @@
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
+          publicUnityInstance = unityInstance;
           //var condition = getCondition(); //Get the condition for the game
           getCondition(function(condition) {
             // This function gets called by the function on success

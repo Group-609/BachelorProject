@@ -6808,9 +6808,9 @@ MonoBehaviour:
           m_StringArgument: DemoWorker
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 11500000, guid: 801f65fc7fa033a4db4cd4c89213be26, type: 3}
-        m_TargetAssemblyTypeName: UnityEngine.Object, UnityEngine
-        m_MethodName: 
+      - m_Target: {fileID: 2043539398}
+        m_TargetAssemblyTypeName: PlayerIdentifier, Assembly-CSharp
+        m_MethodName: RequestPlayerIdentifier
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7664,6 +7664,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71b35b71bdba28144b695079c633b789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2043539398 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2043539398, guid: 5081b484737a45246bc3f2eb35176f31, type: 3}
+  m_PrefabInstance: {fileID: 6428829112012402725}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 801f65fc7fa033a4db4cd4c89213be26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!850595691 &2045504552

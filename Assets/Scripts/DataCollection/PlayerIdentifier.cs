@@ -10,7 +10,7 @@ public class PlayerIdentifier : MonoBehaviour
     [DllImport("__Internal")]
     public static extern void RequestPlayerIdentifier();
 
-    string playerIdentifier;
+    public string playerIdentifier;
 
     void GetPlayerIdentifier(string data)
     {

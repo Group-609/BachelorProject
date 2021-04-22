@@ -14,7 +14,6 @@ public class PlayerDataRecorder : MonoBehaviour
     private StreamWriter writer;
     private int counter = 0;
     [SerializeField] private int framesBetweenRecordTakes = 60; // How many frames between recording of gameobject coordinates
-    [SerializeField] private int framesBetweenSavingOfData = 600;   //Save data every 10 seconds
     [System.NonSerialized] public bool testEnded = false;       //Set to true when the player finishes the game
     private JsonDateTime sessionStartTime;
     
@@ -37,6 +36,7 @@ public class PlayerDataRecorder : MonoBehaviour
     public string GetJsonToSend()
     {
         DataContainer data = new DataContainer();
+        data.playerID = GameObject.Find("ConditionSetter").GetComponent<PlayerIdentifier>().playerIdentifier;
         data.frames = frames.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
         if (DDAEngine.isDynamicAdjustmentEnabled)
@@ -56,6 +56,7 @@ class DataContainer{
     public string sessionStartTime;
     public FrameData[] frames;
     public string condition;
+    public string playerID;
 }
 
 struct JsonDateTime
