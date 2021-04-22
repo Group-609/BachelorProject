@@ -507,7 +507,7 @@ namespace Photon.Pun.Demo.PunBasics
         public void HealEffect()
         {
             GetComponent<AudioSource>().PlayOneShot(healClip);
-            GameObject healEffect = Instantiate(healEffectObject, transform.position, Quaternion.identity);
+            GameObject healEffect = Instantiate(healEffectObject, transform.Find("HealEffectSpawn"));
             Destroy(healEffect, 5.0f);
         }
 
