@@ -14,7 +14,6 @@ public class PlayerDataRecorder : MonoBehaviour
     private StreamWriter writer;
     private int counter = 0;
     [SerializeField] private int framesBetweenRecordTakes = 60; // How many frames between recording of gameobject coordinates
-    [SerializeField] private int framesBetweenSavingOfData = 600;   //Save data every 10 seconds
     [System.NonSerialized] public bool testEnded = false;       //Set to true when the player finishes the game
     private JsonDateTime sessionStartTime;
     
@@ -29,7 +28,29 @@ public class PlayerDataRecorder : MonoBehaviour
         counter++;
         if (counter % framesBetweenRecordTakes == 0)
         {
-            frames.Add(new FrameData(transform.position.x, transform.position.y, transform.position.z, Time.fixedTime));
+            frames.Add(new FrameData(
+                LevelProgressionCondition.Instance.ConditionValue,
+                DefeatedEnemiesCountCondition.Instance.ConditionValue,
+                StunCondition.Instance.ConditionValue,
+                DamageReceivedCondition.Instance.ConditionValue,
+
+                EnemySpawnDDAA.Instance.spawnAmount,
+                HealingRateDDAA.Instance.healingRate,
+                PlayerPainballDamageDDAA.Instance.paintballDamage,
+                EnemyMeleeDamageDDAA.Instance.meleeDamage,
+                EnemyBulletDamageDDAA.Instance.bulletDamage,
+
+                EnemySpawnDDAA.Instance.spawnMultiplier,
+                HealingRateDDAA.Instance.healingMultiplier,
+                PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
+                EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
+                EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
+
+                DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
+                StunCondition.Instance.localPlayerStuntCount,
+                DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
+
+                Time.fixedTime));
         }
     }
 
@@ -37,6 +58,7 @@ public class PlayerDataRecorder : MonoBehaviour
     public string GetJsonToSend()
     {
         DataContainer data = new DataContainer();
+        data.playerID = GameObject.Find("ConditionSetter").GetComponent<PlayerIdentifier>().playerIdentifier;
         data.frames = frames.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
         if (DDAEngine.isDynamicAdjustmentEnabled)
@@ -56,6 +78,7 @@ class DataContainer{
     public string sessionStartTime;
     public FrameData[] frames;
     public string condition;
+    public string playerID;
 }
 
 struct JsonDateTime

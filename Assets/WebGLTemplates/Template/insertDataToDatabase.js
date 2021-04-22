@@ -1,4 +1,7 @@
 var condition = "not set";
+
+window.document.addEventListener('returnPlayerIdentifierToIframe', sendPlayerIdentifierToUnity, false)
+
 function insertData(message)
 {    
   const url = "https://coopgame.herokuapp.com/app.js";
@@ -6,6 +9,15 @@ function insertData(message)
   $.post(url,data, function(data, status){
     console.log("${data} and status is ${status}")
   }); 
+}
+function getPlayerIdentifier(){
+  var event = new CustomEvent('getPlayerIdentifierFromWebsite');
+  window.parent.document.dispatchEvent(event);
+}
+
+function sendPlayerIdentifierToUnity(e){
+  console.log(e.detail.toString());
+  publicUnityInstance.SendMessage('ConditionSetter', 'GetPlayerIdentifier', e.detail.toString());
 }
 
 function getCondition(callback)
