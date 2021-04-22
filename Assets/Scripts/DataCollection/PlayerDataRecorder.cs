@@ -29,7 +29,29 @@ public class PlayerDataRecorder : MonoBehaviour
         counter++;
         if (counter % framesBetweenRecordTakes == 0)
         {
-            frames.Add(new FrameData(transform.position.x, transform.position.y, transform.position.z, Time.fixedTime));
+            frames.Add(new FrameData(
+                LevelProgressionCondition.Instance.ConditionValue,
+                DefeatedEnemiesCountCondition.Instance.ConditionValue,
+                StunCondition.Instance.ConditionValue,
+                DamageReceivedCondition.Instance.ConditionValue,
+
+                EnemySpawnDDAA.Instance.spawnAmount,
+                HealingRateDDAA.Instance.healingRate,
+                PlayerPainballDamageDDAA.Instance.paintballDamage,
+                EnemyMeleeDamageDDAA.Instance.meleeDamage,
+                EnemyBulletDamageDDAA.Instance.bulletDamage,
+
+                EnemySpawnDDAA.Instance.spawnMultiplier,
+                HealingRateDDAA.Instance.healingMultiplier,
+                PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
+                EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
+                EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
+
+                DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
+                StunCondition.Instance.localPlayerStuntCount,
+                DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
+
+                Time.fixedTime));
         }
     }
 

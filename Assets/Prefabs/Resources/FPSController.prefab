@@ -496,7 +496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e86fdeca6e87b45beef2fcb1a12907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  framesBetweenRecordTakes: 4
+  framesBetweenRecordTakes: 60
   framesBetweenSavingOfData: 1800
 --- !u!1 &100002
 GameObject:
