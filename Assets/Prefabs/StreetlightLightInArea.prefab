@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 425141745273410960}
   - component: {fileID: 6515205360101698331}
   m_Layer: 0
-  m_Name: StreelightLightInArea
+  m_Name: StreetlightLightInArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,7 +43,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.54937476, g: 0.4625756, b: 0.990566, a: 1}
-  m_Intensity: 2
+  m_Intensity: 3
   m_Range: 50
   m_SpotAngle: 69
   m_InnerSpotAngle: 6
