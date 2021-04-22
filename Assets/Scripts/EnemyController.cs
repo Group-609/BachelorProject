@@ -126,6 +126,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
         // we want to find nav target not every frame because it's computationally a bit heavy
         InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec);
+
+        gameObject.transform.localScale = new Vector3(1, 1, 1) * spawnSizeScale;
+
     }
 
     void Update()
@@ -186,6 +189,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     [PunRPC]
     void Blobify()
     {
+        spawningFinished = true;
         animator.SetBool("IsDead", true);
         audioSource.PlayOneShot(shrinkingClip);
         isBlobified = true;
