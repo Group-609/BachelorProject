@@ -461,6 +461,12 @@ namespace Photon.Pun.Demo.PunBasics
                     audioSourceMusicBase.volume = musicVolumeBase;
                     audioSourceMusicLow.volume = 0;
                 }
+
+                if (LevelProgressionCondition.Instance.isGameFinished)
+                {
+                    audioSourceMusicBase.Stop();
+                    audioSourceMusicLow.Stop();
+                }
             }
                 
         }
@@ -468,6 +474,7 @@ namespace Photon.Pun.Demo.PunBasics
         public void OnLevelFinished()
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
+            ChangeBackgroundMusic();
         }
 
         public string GetPlayerDebugInfo()
