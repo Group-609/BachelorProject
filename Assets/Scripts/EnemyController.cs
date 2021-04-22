@@ -65,6 +65,11 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     [System.NonSerialized]
     public bool isBlobified = false;
 
+    private float spawnSizeScale = 0;
+    public float spawnSizeScaleSpeed = 1;
+
+    private bool spawningFinished = false;
+
     [SerializeField]
     private float distanceToKeyLocationToDespawn = 1f;
 
@@ -120,7 +125,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         
 
         // we want to find nav target not every frame because it's computationally a bit heavy
-        InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec); 
+        InvokeRepeating(nameof(FindNavTarget), 0, refreshTargetTimeSec);
     }
 
     void Update()
@@ -138,6 +143,20 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                 PhotonNetwork.Destroy(gameObject);
             }
         }
+
+        if (!spawningFinished)
+        {
+            spawnSizeScale += spawnSizeScaleSpeed * Time.deltaTime;
+
+            if (spawnSizeScale >= 1)
+            {
+                spawnSizeScale = 1;
+                spawningFinished = true;
+            }
+
+            gameObject.transform.localScale = new Vector3(1, 1, 1) * spawnSizeScale;
+        }
+
         if (!isBlobified)
         {
           
@@ -148,7 +167,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
             else
             { 
                 distanceToPlayer = Vector3.Distance(closestPlayer.position, transform.position);
-                if (distanceToPlayer <= minDistForMovement)
+                if (spawningFinished && distanceToPlayer <= minDistForMovement)
                 {
                     SetSpeed(speed);
                     if (isAttackReady)
@@ -160,7 +179,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                 {
                     SetSpeed(0);
                 }
-            }
+            } 
         }
     }
 
