@@ -52,6 +52,7 @@ public class ConditionSwitcher : MonoBehaviour
             {
                 Debug.Log("Second game finished!");
                 StartCoroutine(CallSecondConditionFinished());
+
                 //TODO show some "YOU WIN" screen or something
                 bothConditionsFinished = true;
             }
@@ -62,15 +63,20 @@ public class ConditionSwitcher : MonoBehaviour
     {
         conditionSetter.ChangeCondition();
         Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
-        
-        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
-        players.ForEach(player => player.GetComponent<PlayerManager>().SetMouseLock(false));
-        
+
+        UnlockPlayersMouse();
+
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.LoadLevel(secondConditionSceneName);
         }
         yield return null;
+    }
+
+    private void UnlockPlayersMouse()
+    {
+        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        players.ForEach(player => player.GetComponent<PlayerManager>().SetMouseLock(false));
     }
 
     IEnumerator CallFirstConditionFinished()
