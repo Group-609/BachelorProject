@@ -108,10 +108,34 @@ namespace Photon.Pun.Demo.PunBasics
 				targetPosition.y += characterControllerHeight;
 				
 				this.transform.position = Camera.main.WorldToScreenPoint (targetPosition) + screenOffset;
+
+				//Fix to remove the ally healthbar when looking away from them
+				GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+				foreach (GameObject player in players)
+                {
+					if (player.transform != targetTransform && player.GetComponent<PlayerManager>().IsPlayerLocal())
+					{
+						Vector3 dir = (targetTransform.position - player.transform.position).normalized;
+						float dot = Vector3.Dot(dir, player.transform.forward); //We get 1 to 0 if we look more than 90 deg away from the target, 0 to -1 if we look closer.
+						
+						if(dot > 0)
+						{
+							for (int i = 0; i < transform.childCount; ++i) //Disabling children as the script runs on the main UI element. Disabling this would prevent enabling the UI when we look at ally again.
+							{
+								transform.GetChild(i).gameObject.SetActive(true);
+							}
+						}
+						else
+						{
+							for (int i = 0; i < transform.childCount; ++i)
+							{
+								transform.GetChild(i).gameObject.SetActive(false);
+							}
+						}
+					}
+                }
 			}
-
 		}
-
 
 
 
@@ -123,29 +147,39 @@ namespace Photon.Pun.Demo.PunBasics
 		/// Assigns a Player Target to Follow and represent.
 		/// </summary>
 		/// <param name="target">Target.</param>
-		public void SetTarget(PlayerManager _target){
+		public void SetTarget(PlayerManager _target)
+		{
 
-			if (_target == null) {
+			if (_target == null)
+			{
 				Debug.LogError("<Color=Red><b>Missing</b></Color> PlayMakerManager target for PlayerUI.SetTarget.", this);
 				return;
 			}
 
 			// Cache references for efficiency because we are going to reuse them.
 			this.target = _target;
-            targetTransform = this.target.GetComponent<Transform>();
-            targetRenderer = this.target.GetComponentInChildren<Renderer>();
+			targetTransform = this.target.GetComponent<Transform>();
+			targetRenderer = this.target.GetComponentInChildren<Renderer>();
 
 
-            CharacterController _characterController = this.target.GetComponent<CharacterController> ();
+			CharacterController _characterController = this.target.GetComponent<CharacterController>();
 
 			// Get data from the Player that won't change during the lifetime of this Component
-			if (_characterController != null){
+			if (_characterController != null)
+			{
 				characterControllerHeight = _characterController.height;
 			}
 
-			if (playerNameText != null) {
-                playerNameText.text = this.target.photonView.Owner.NickName;
+			if (playerNameText != null)
+			{
+				playerNameText.text = this.target.photonView.Owner.NickName;
 			}
+
+			if (this.target.IsPlayerLocal())
+			{
+				gameObject.SetActive(false);
+			}
+
 		}
 
 		#endregion
