@@ -49,6 +49,9 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Damage of this player's paintballs")]
         private float paintballDamage = PlayerPainballDamageDDAA.Instance.paintballDamage;
 
+        [Tooltip("Healing rate of this player's paintballs")]
+        private float paintballHealingRate = HealingRateDDAA.Instance.healingRate;
+
         [Tooltip("Time it takes for the player to get control back after dying")]
         public float respawnTime;
 
@@ -155,6 +158,10 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
             }
+
+            HealingRateDDAA.Instance.SetHealingListener(
+                new OnValueChangeListener(newValue => paintballHealingRate = newValue)
+            );
 
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
@@ -429,7 +436,6 @@ namespace Photon.Pun.Demo.PunBasics
             animatorHands.Play("Shoot");
         }
         
-        
         public bool IsPlayerLocal()
         {
             return photonView.IsMine;
@@ -624,6 +630,7 @@ namespace Photon.Pun.Demo.PunBasics
             paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
             paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
             paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
+            paintball.GetComponent<PaintBall>().paintballHealingRate = this.paintballHealingRate;
             paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
             PlayShootingSound();
