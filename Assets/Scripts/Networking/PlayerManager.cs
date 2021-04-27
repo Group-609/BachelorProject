@@ -187,17 +187,6 @@ namespace Photon.Pun.Demo.PunBasics
                 Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
             }
 
-            // Create the UI
-            if (this.playerUiPrefab != null)
-            {
-                GameObject _uiGo = Instantiate(this.playerUiPrefab);
-                _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
-            }
-            else
-            {
-                Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
-            }
-
             try{animator = GetComponent<Animator>();}
             catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
@@ -291,6 +280,17 @@ namespace Photon.Pun.Demo.PunBasics
          
         public void FindNewGameObjects()
         {
+            // Create the UI
+            if (this.playerUiPrefab != null)
+            {
+                GameObject _uiGo = Instantiate(this.playerUiPrefab);
+                _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
+            }
+            else
+            {
+                Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
+            }
+
             if (gameManager == null)
             {
                 gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
