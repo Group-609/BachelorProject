@@ -50,6 +50,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
         public float volume;
+        [NonSerialized] public bool areSettingsEnabled;
+        [NonSerialized] public float mouseSensitivity = 5;
 
         [System.NonSerialized]
         public bool isStunned;
@@ -73,7 +75,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
         // Update is called once per frame
         private void Update()
         {
-            RotateView();
+            if (!areSettingsEnabled)
+            {
+                RotateView();
+            }
             // the jump state needs to read here to make sure it is not missed
             if (!m_Jump)
             {
@@ -93,6 +98,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
+
+            //Update mouse speed values set in in-game settings
+            m_MouseLook.XSensitivity = mouseSensitivity;
+            m_MouseLook.YSensitivity = mouseSensitivity;
         }
 
         private void PlayLandingSound()
@@ -100,7 +109,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_AudioSource.clip = m_LandSound;
             m_AudioSource.Play();
             m_NextStep = m_StepCycle + .5f;
-            m_AudioSource.volume = volume;
+            SetAudioLevel();
         }
 
 
@@ -176,9 +185,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             m_AudioSource.clip = m_JumpSound;
             m_AudioSource.Play();
-            m_AudioSource.volume = volume;
+            SetAudioLevel();
         }
 
+        public void SetAudioLevel()
+        {
+            m_AudioSource.volume = volume;
+        }
 
         private void ProgressStepCycle(float speed)
         {
@@ -213,7 +226,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // move picked sound to index 0 so it's not picked next time
             m_FootstepSounds[n] = m_FootstepSounds[0];
             m_FootstepSounds[0] = m_AudioSource.clip;
-            m_AudioSource.volume = volume;
+            SetAudioLevel();
         }
 
 

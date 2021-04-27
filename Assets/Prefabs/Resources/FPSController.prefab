@@ -320,6 +320,7 @@ MonoBehaviour:
   respawnTime: 0.5
   shootWaitTime: 1
   endHealEffectDealy: 3
+  masterVolume: 0
   shootingClip: {fileID: 8300000, guid: dadcbab627eabef4e999297f97faa002, type: 3}
   healClip: {fileID: 8300000, guid: 293ad64286076a54faaf360193da27a0, type: 3}
   musicBase: {fileID: 8300000, guid: 6f1dd8b727a76e44c965a083554b5a15, type: 3}

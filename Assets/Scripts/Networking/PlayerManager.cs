@@ -72,6 +72,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Header("Sounds")]
 
+        public float masterVolume;
         public AudioClip shootingClip;
         public AudioClip healClip;
         public AudioClip musicBase;
@@ -230,7 +231,7 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicBase = gameObject.AddComponent<AudioSource>() as AudioSource;
                 audioSourceMusicLow = gameObject.AddComponent<AudioSource>() as AudioSource;
                 SetBackgroundMusic();
-                audioSourceMusicBase.volume = musicVolumeBase;
+                audioSourceMusicBase.volume = musicVolumeBase * masterVolume;
                 audioSourceMusicLow.volume = 0;
                 audioSourceMusicBase.loop = true;
                 audioSourceMusicLow.loop = true;
@@ -284,7 +285,7 @@ namespace Photon.Pun.Demo.PunBasics
                     animatorHands.SetBool("isDown", true);
                 }   
             }
-            if (IsFiring && !waitingToShoot && health > 0f)
+            if (IsFiring && !waitingToShoot && health > 0f && !gameObject.GetComponent<FirstPersonController>().areSettingsEnabled)
             {
                 AnimateShoot();
                 StartCoroutine(ShootPaintball());
@@ -464,11 +465,11 @@ namespace Photon.Pun.Demo.PunBasics
                 if (isPlayerInKeyLocZone)
                 {
                     audioSourceMusicBase.volume = 0;
-                    audioSourceMusicLow.volume = musicVolumeLow;
+                    audioSourceMusicLow.volume = musicVolumeLow * masterVolume;
                 }
                 else
                 {
-                    audioSourceMusicBase.volume = musicVolumeBase;
+                    audioSourceMusicBase.volume = musicVolumeBase * masterVolume;
                     audioSourceMusicLow.volume = 0;
                 }                
             }  
