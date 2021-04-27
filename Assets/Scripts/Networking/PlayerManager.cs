@@ -130,8 +130,6 @@ namespace Photon.Pun.Demo.PunBasics
         private AudioSource audioSourceMusicBase;
         private AudioSource audioSourceMusicLow;
 
-        GameObject _uiGo;
-
         #endregion
 
         #region MonoBehaviour CallBacks
@@ -185,7 +183,7 @@ namespace Photon.Pun.Demo.PunBasics
             // Create the UI
             if (this.playerUiPrefab != null)
             {
-                _uiGo = Instantiate(this.playerUiPrefab);
+                GameObject _uiGo = Instantiate(this.playerUiPrefab);
                 _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
             }
             else
@@ -327,16 +325,6 @@ namespace Photon.Pun.Demo.PunBasics
         //Called when all players are stunned 
         public void Respawn()
         {
-            // Create the UI if it is gone because of level change
-            if (this.playerUiPrefab != null)
-            {
-                _uiGo = Instantiate(this.playerUiPrefab);
-                _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
-            }
-            else
-            {
-                Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
-            }
             Debug.Log("Respawning local player. fpsController enabled = " + fpsController.enabled);
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
