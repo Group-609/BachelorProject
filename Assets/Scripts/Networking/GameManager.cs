@@ -114,7 +114,6 @@ namespace Photon.Pun.Demo.PunBasics
 				{
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
 					StartCoroutine(LevelStartReset(initialSpawnPosition));
-					PlayerManager.LocalPlayerManager.FindNewGameObjects();
 				}
 			}
 			if (PhotonNetwork.IsMasterClient)
@@ -125,6 +124,8 @@ namespace Photon.Pun.Demo.PunBasics
 			Debug.Log("Is DDA enabled: " + IsDDAEnabled);
 
 			InvokeRepeating(nameof(RefreshPlayers), 0, 1f);
+			
+			players.ForEach(player => player.GetComponent<PlayerManager>().FindNewGameObjects());
 		}
 
 		/// <summary>
