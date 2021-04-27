@@ -471,8 +471,11 @@ namespace Photon.Pun.Demo.PunBasics
 
         public void DisableMusic()
         {
-            audioSourceMusicBase.Stop();
-            audioSourceMusicLow.Stop();
+            if (photonView.IsMine)
+            {
+                audioSourceMusicBase.Stop();
+                audioSourceMusicLow.Stop();
+            }
         }
 
         public string GetPlayerDebugInfo()
