@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class PlayerPainballDamageDDAA
+public sealed class PlayerPainballDamageDDAA : IDDAA
 {
     // --------------------------------- //
     // Singleton related implementation //

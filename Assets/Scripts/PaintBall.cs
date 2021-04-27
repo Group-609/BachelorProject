@@ -14,10 +14,8 @@ public class PaintBall : MonoBehaviour
     [System.NonSerialized]
     public float paintballDamage; //Damage this specific paintball does
 
-    private static readonly float basePaintballHealingRate = 6f;
-
     [System.NonSerialized]
-    private float paintballHealingRate; //Healing power that this specific paintball does
+    public float paintballHealingRate; //Healing power that this specific paintball does
 
     [System.NonSerialized]
     public bool isLocal; //true if this is a real bullet that does damage
@@ -27,10 +25,6 @@ public class PaintBall : MonoBehaviour
 
     void Start()
     {
-        if (DDAEngine.isDynamicAdjustmentEnabled)
-            paintballHealingRate = HealingRateDDAA.Instance.healingRate;
-        else paintballHealingRate = basePaintballHealingRate;
-
         gameObject.GetComponent<Renderer>().material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, .33f));
 
         Destroy(gameObject, despawnTime);

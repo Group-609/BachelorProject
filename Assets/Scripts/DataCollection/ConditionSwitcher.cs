@@ -64,7 +64,9 @@ public class ConditionSwitcher : MonoBehaviour
         conditionSetter.ChangeCondition();
         Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
 
-        UnlockPlayersMouse();
+        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        UnlockPlayersMouse(players);
+        StopMusic(players);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -72,10 +74,13 @@ public class ConditionSwitcher : MonoBehaviour
         }
         yield return null;
     }
-
-    private void UnlockPlayersMouse()
+    private void StopMusic(List<GameObject> players)
     {
-        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        players.ForEach(player => player.GetComponent<PlayerManager>().DisableMusic());
+    }
+
+    private void UnlockPlayersMouse(List<GameObject> players)
+    {
         players.ForEach(player => player.GetComponent<PlayerManager>().SetMouseLock(false));
     }
 
