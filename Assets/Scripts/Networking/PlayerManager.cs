@@ -461,6 +461,7 @@ namespace Photon.Pun.Demo.PunBasics
         public void GetPlayerIdentifier(string playerIdentifier)
         {
             this.playerIdentifier = playerIdentifier;
+            Debug.Log("Identified player: " + playerIdentifier);
         }
 
         public bool IsPlayerLocal()

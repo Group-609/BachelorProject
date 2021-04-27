@@ -26,7 +26,6 @@ public class PlayerIdentifier : MonoBehaviour
             if (player.GetComponent<PlayerManager>().IsPlayerLocal())
             {
                 player.GetComponent<PlayerManager>().CallGetPlayerIdentifier(playerIdentifier);            //we send other players our player identifier
-                Debug.Log("Identified player: " + playerIdentifier);
             }
 
         }
