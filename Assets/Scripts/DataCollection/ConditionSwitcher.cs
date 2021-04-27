@@ -65,12 +65,18 @@ public class ConditionSwitcher : MonoBehaviour
         Debug.Log("Changed condition. Is DDA condition: " + conditionSetter.IsDDACondition());
 
         UnlockPlayersMouse();
+        StopMusic();
 
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.LoadLevel(secondConditionSceneName);
         }
         yield return null;
+    }
+    private void StopMusic()
+    {
+        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        players.ForEach(player => player.GetComponent<PlayerManager>().DisableMusic());
     }
 
     private void UnlockPlayersMouse()

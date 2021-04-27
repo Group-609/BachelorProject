@@ -459,21 +459,20 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     audioSourceMusicBase.volume = musicVolumeBase;
                     audioSourceMusicLow.volume = 0;
-                }
-
-                if (LevelProgressionCondition.Instance.isGameFinished)
-                {
-                    audioSourceMusicBase.Stop();
-                    audioSourceMusicLow.Stop();
-                }
-            }
-                
+                }                
+            }  
         }
 
         public void OnLevelFinished()
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
             ChangeBackgroundMusic();
+        }
+
+        void DisableMusic()
+        {
+            audioSourceMusicBase.Stop();
+            audioSourceMusicLow.Stop();
         }
 
         public string GetPlayerDebugInfo()
