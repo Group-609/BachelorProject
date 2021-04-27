@@ -211,7 +211,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     public void Die()
     {
-        currentHealth = 0;
+        if(spawningFinished)
+            currentHealth = 0;
     }
 
     private IEnumerator DestroyEnemyWithDelay()

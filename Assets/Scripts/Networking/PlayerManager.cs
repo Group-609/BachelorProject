@@ -197,8 +197,6 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
             }
-            try {healthUI = GameObject.FindWithTag("HealthUI");}
-            catch { Debug.LogError("Health UI not found", this); }
 
             try{animator = GetComponent<Animator>();}
             catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
@@ -209,12 +207,7 @@ namespace Photon.Pun.Demo.PunBasics
             try{fpsController = GetComponent<FirstPersonController>();}
             catch{Debug.LogError("Missing fpsController.", this);}
 
-            if(gameManager == null)
-            {
-                gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
-            }
-            try{respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform;}
-            catch{Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this);}
+            FindNewGameObjects();
 
             PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
                 new OnValueChangeListener(
@@ -296,6 +289,20 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonNetwork.AddCallbackTarget(this);
         }
          
+        public void FindNewGameObjects()
+        {
+            if (gameManager == null)
+            {
+                gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+            }
+
+            try { healthUI = GameObject.FindWithTag("HealthUI"); }
+            catch { Debug.LogError("Health UI not found", this); }
+
+            try { respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform; }
+            catch { Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this); }
+        }
+
         #endregion
 
         #region Photon events
