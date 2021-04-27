@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public sealed class EnemyBulletDamageDDAA
+public sealed class EnemyBulletDamageDDAA : IDDAA
 {
     // --------------------------------- //
     // Singleton related implementation //

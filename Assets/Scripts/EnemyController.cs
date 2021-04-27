@@ -380,7 +380,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         receivedPhotonView.gameObject.GetComponent<PlayerManager>().ChangeHealth(value, targetViewID);
         receivedPhotonView.gameObject.GetComponent<HurtEffect>().Hit();
     }
-
+    
     private void LoadDDAAListeners()
     {
         //Debug.Log("DDA at enemy controller start: Melee damage = " + meleeDamage);
