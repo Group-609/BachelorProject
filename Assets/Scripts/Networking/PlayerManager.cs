@@ -173,7 +173,13 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Start()
         {
-            try{animator = GetComponent<Animator>();}
+            if (gameObject.TryGetComponent(out CameraWork cameraWork) && photonView.IsMine)
+            {
+                cameraWork.OnStartFollowing(); 
+            }
+            else Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
+            
+            try {animator = GetComponent<Animator>();}
             catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
             try{animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();}
@@ -185,12 +191,7 @@ namespace Photon.Pun.Demo.PunBasics
             FindNewGameObjects();
 
             PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
-                new OnValueChangeListener(
-                    (newValue) =>
-                    {
-                        paintballDamage = newValue;
-                    }    
-                )
+                new OnValueChangeListener(newValue => paintballDamage = newValue)
             );
 
             if (photonView.IsMine)
@@ -266,19 +267,6 @@ namespace Photon.Pun.Demo.PunBasics
          
         public void FindNewGameObjects()
         {
-            CameraWork _cameraWork = gameObject.GetComponent<CameraWork>();
-
-            if (_cameraWork != null)
-            {
-                if (photonView.IsMine)
-                {
-                    _cameraWork.OnStartFollowing();
-                }
-            }
-            else
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
-            }
             // Create the UI
             if (this.playerUiPrefab != null)
             {
