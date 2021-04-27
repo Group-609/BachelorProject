@@ -329,6 +329,11 @@ namespace Photon.Pun.Demo.PunBasics
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
+            if (!audioSourceMusicBase.isPlaying || !audioSourceMusicLow.isPlaying)
+            {
+                audioSourceMusicBase.Play();
+                audioSourceMusicLow.Play();
+            }
             ChangeBackgroundMusic();
             this.health = startingHealth;
             animator.SetBool("isDown", false);
