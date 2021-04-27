@@ -99,6 +99,11 @@ public class ConditionSwitcher : MonoBehaviour
         yield return new WaitForSeconds(gameCloseDelay);
         if (!Application.isEditor && shouldSendDataToServer)
             SecondConditionFinished(GetJsonToSend());
+        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        UnlockPlayersMouse(players);
+        StopMusic(players);
+        yield return new WaitForSeconds(gameCloseDelay);
+        Application.Quit();
     }
 
     public void SetSendDataToServer(bool shouldSendData)
