@@ -343,6 +343,11 @@ namespace Photon.Pun.Demo.PunBasics
             GetComponentInChildren<ApplyPostProcessing>().vignetteLayer.intensity.value = 0;
             fpsController.enabled = false;   //We disable the script so that we can teleport the player
             GetComponent<FirstPersonController>().isPlayerInKeyLocZone = false;
+            if (!audioSourceMusicBase.isPlaying || !audioSourceMusicLow.isPlaying)
+            {
+                audioSourceMusicBase.Play();
+                audioSourceMusicLow.Play();
+            }
             ChangeBackgroundMusic();
             this.health = startingHealth;
             animator.SetBool("isDown", false);
@@ -472,21 +477,23 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     audioSourceMusicBase.volume = musicVolumeBase;
                     audioSourceMusicLow.volume = 0;
-                }
-
-                if (LevelProgressionCondition.Instance.isGameFinished)
-                {
-                    audioSourceMusicBase.Stop();
-                    audioSourceMusicLow.Stop();
-                }
-            }
-                
+                }                
+            }  
         }
 
         public void OnLevelFinished()
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
             ChangeBackgroundMusic();
+        }
+
+        public void DisableMusic()
+        {
+            if (photonView.IsMine)
+            {
+                audioSourceMusicBase.Stop();
+                audioSourceMusicLow.Stop();
+            }
         }
 
         public string GetPlayerDebugInfo()
