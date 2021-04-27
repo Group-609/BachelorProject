@@ -12,7 +12,7 @@ public static class DDAEngine
 {
     public static bool isDynamicAdjustmentEnabled;
 
-    private static float difficultiesPointGlobal = 10f;
+    public static float difficultiesPointGlobal = 10f;
 
     public static void ResetConditionsAndVariables()
     {

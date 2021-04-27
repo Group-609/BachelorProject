@@ -28,29 +28,34 @@ public class PlayerDataRecorder : MonoBehaviour
         counter++;
         if (counter % framesBetweenRecordTakes == 0)
         {
-            frames.Add(new FrameData(
-                LevelProgressionCondition.Instance.ConditionValue,
-                DefeatedEnemiesCountCondition.Instance.ConditionValue,
-                StunCondition.Instance.ConditionValue,
-                DamageReceivedCondition.Instance.ConditionValue,
+            frames.Add(
+                new FrameData(
+                    DDAEngine.difficultiesPointGlobal,
 
-                EnemySpawnDDAA.Instance.spawnAmount,
-                HealingRateDDAA.Instance.healingRate,
-                PlayerPainballDamageDDAA.Instance.paintballDamage,
-                EnemyMeleeDamageDDAA.Instance.meleeDamage,
-                EnemyBulletDamageDDAA.Instance.bulletDamage,
+                    LevelProgressionCondition.Instance.ConditionValue,
+                    DefeatedEnemiesCountCondition.Instance.ConditionValue,
+                    StunCondition.Instance.ConditionValue,
+                    DamageReceivedCondition.Instance.ConditionValue,
 
-                EnemySpawnDDAA.Instance.spawnMultiplier,
-                HealingRateDDAA.Instance.healingMultiplier,
-                PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
-                EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
-                EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
+                    EnemySpawnDDAA.Instance.spawnAmount,
+                    HealingRateDDAA.Instance.healingRate,
+                    PlayerPainballDamageDDAA.Instance.paintballDamage,
+                    EnemyMeleeDamageDDAA.Instance.meleeDamage,
+                    EnemyBulletDamageDDAA.Instance.bulletDamage,
 
-                DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
-                StunCondition.Instance.localPlayerStuntCount,
-                DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
+                    EnemySpawnDDAA.Instance.spawnMultiplier,
+                    HealingRateDDAA.Instance.healingMultiplier,
+                    PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
+                    EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
+                    EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
 
-                Time.fixedTime));
+                    DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
+                    StunCondition.Instance.localPlayerStuntCount,
+                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
+
+                    Time.fixedTime
+                )
+            );
         }
     }
 
