@@ -469,7 +469,7 @@ namespace Photon.Pun.Demo.PunBasics
             ChangeBackgroundMusic();
         }
 
-        void DisableMusic()
+        public void DisableMusic()
         {
             audioSourceMusicBase.Stop();
             audioSourceMusicLow.Stop();
