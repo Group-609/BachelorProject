@@ -286,7 +286,7 @@ namespace Photon.Pun.Demo.PunBasics
 			List<GameObject> teamPlayers = GameObject.FindGameObjectsWithTag("Player").ToList().FindAll(
 					delegate (GameObject player)
 					{
-						return !photonView.IsMine;
+						return !player.GetComponent<PhotonView>().IsMine;
 					}
 				);
 
