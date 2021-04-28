@@ -14,6 +14,7 @@ public class KeyLocationController : MonoBehaviour
     public int areaIndex;
     public float radius;
     public GameObject sphere;
+    public GameObject fountain;
     public GameObject clearSphere;
     public int clearSphereSpawnAmount;
     public List<GameObject> players = new List<GameObject>();
@@ -30,9 +31,13 @@ public class KeyLocationController : MonoBehaviour
     [System.NonSerialized] public bool isEventToDestroySent;
     [System.NonSerialized] public bool hasEventToDestroyStarted;
 
+
+    [System.NonSerialized] public float sfxVolume;
     public AudioClip clearedClip;
     public float volume;
     private AudioSource audioSource;
+    private Component[] fountainAudio;
+    public float fountainSoundsBaseVolume = 1f;
 
     void Start()
     {
@@ -40,6 +45,8 @@ public class KeyLocationController : MonoBehaviour
         sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
         audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
         directionalLight = GameObject.FindGameObjectWithTag("DirectionalLight");
+
+        fountainAudio = fountain.GetComponents(typeof(AudioSource));
     }
 
     void Update()
@@ -105,6 +112,9 @@ public class KeyLocationController : MonoBehaviour
                 DestroyKeyLocation();
             }
         }
+
+        foreach (AudioSource audioSource in fountainAudio)
+            audioSource.volume = fountainSoundsBaseVolume * PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
     }
 
     private IEnumerator GetPlayers()
@@ -128,7 +138,8 @@ public class KeyLocationController : MonoBehaviour
     void AreaClearedSound()
     {
         audioSource.clip = clearedClip;
-        audioSource.volume = volume;
+        sfxVolume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
+        audioSource.volume = volume * sfxVolume;
         audioSource.Play();
         Debug.Log("Area Cleared");
         

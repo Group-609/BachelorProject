@@ -72,6 +72,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Header("Sounds")]
 
+        [NonSerialized]public float musicVolume = 0.5f;
         public AudioClip shootingClip;
         public AudioClip healClip;
         public AudioClip musicBase;
@@ -123,6 +124,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
+        [NonSerialized] public bool areSettingsEnabled;
 
         private bool isReturningControl = false;
 
@@ -202,7 +204,7 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicBase = gameObject.AddComponent<AudioSource>() as AudioSource;
                 audioSourceMusicLow = gameObject.AddComponent<AudioSource>() as AudioSource;
                 SetBackgroundMusic();
-                audioSourceMusicBase.volume = musicVolumeBase;
+                audioSourceMusicBase.volume = musicVolumeBase * musicVolume;
                 audioSourceMusicLow.volume = 0;
                 audioSourceMusicBase.loop = true;
                 audioSourceMusicLow.loop = true;
@@ -459,6 +461,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void PlayShootingSound()
         {
+            GetComponent<AudioSource>().volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
         }
 
@@ -475,11 +478,11 @@ namespace Photon.Pun.Demo.PunBasics
                 if (isPlayerInKeyLocZone)
                 {
                     audioSourceMusicBase.volume = 0;
-                    audioSourceMusicLow.volume = musicVolumeLow;
+                    audioSourceMusicLow.volume = musicVolumeLow * musicVolume;
                 }
                 else
                 {
-                    audioSourceMusicBase.volume = musicVolumeBase;
+                    audioSourceMusicBase.volume = musicVolumeBase * musicVolume;
                     audioSourceMusicLow.volume = 0;
                 }                
             }  
@@ -533,6 +536,7 @@ namespace Photon.Pun.Demo.PunBasics
         }
         public void HealEffect()
         {
+            GetComponent<AudioSource>().volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
             GetComponent<AudioSource>().PlayOneShot(healClip);
             GameObject healEffect = Instantiate(healEffectObject, transform.Find("HealEffectSpawn"));
             Destroy(healEffect, 5.0f);
@@ -570,7 +574,10 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     //	return;
                 }
-                this.IsFiring = true;
+                if(!areSettingsEnabled)
+                {
+                    this.IsFiring = true;
+                }
             }
 
             if (Input.GetButtonUp("Fire1"))
