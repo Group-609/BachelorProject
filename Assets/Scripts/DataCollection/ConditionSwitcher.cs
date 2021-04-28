@@ -89,6 +89,7 @@ public class ConditionSwitcher : MonoBehaviour
         yield return new WaitForSeconds(gameCloseDelay);
         if (!Application.isEditor && shouldSendDataToServer)
             FirstConditionFinished(GetJsonToSend());
+        else Debug.Log("Json data to send: " + GetJsonToSend());
         if (conditionSetter.shouldChangeCondition)
             StartCoroutine(ChangeConditionAndLoadSecondCondition());
         //Reload level with condition switched or sth. Take look at GameManager script. Might also need to reset the DDA system.
@@ -99,6 +100,7 @@ public class ConditionSwitcher : MonoBehaviour
         yield return new WaitForSeconds(gameCloseDelay);
         if (!Application.isEditor && shouldSendDataToServer)
             SecondConditionFinished(GetJsonToSend());
+        else Debug.Log("Json data to send: " + GetJsonToSend());
     }
 
     public void SetSendDataToServer(bool shouldSendData)
@@ -108,13 +110,9 @@ public class ConditionSwitcher : MonoBehaviour
 
     string GetJsonToSend()
     {
-        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
-        foreach(GameObject player in players)
+        if(PlayerManager.LocalPlayerInstance != null)
         {
-            if(player.GetComponent<PlayerManager>().IsPlayerLocal())
-            {
-                return player.GetComponent<PlayerDataRecorder>().GetJsonToSend();
-            }
+            return PlayerManager.LocalPlayerInstance.GetComponent<PlayerDataRecorder>().GetJsonToSend();
         }
         return "ERROR: Didnt find player data";
     }

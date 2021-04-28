@@ -301,6 +301,8 @@ namespace Photon.Pun.Demo.PunBasics
 			EnemyMeleeDamageDDAA.Instance.AdjustInGameValue();
 			EnemyBulletDamageDDAA.Instance.AdjustInGameValue();
 			PlayerPainballDamageDDAA.Instance.AdjustInGameValue();
+
+			PlayerManager.LocalPlayerInstance.GetComponent<PlayerDataRecorder>().AddTimeBasedData();
 		}
 
         #endregion

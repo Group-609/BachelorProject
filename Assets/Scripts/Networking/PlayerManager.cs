@@ -472,6 +472,9 @@ namespace Photon.Pun.Demo.PunBasics
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
             ChangeBackgroundMusic();
+
+            if (photonView.IsMine)
+                GetComponent<PlayerDataRecorder>().AddTeamData();
         }
 
         public void DisableMusic()
