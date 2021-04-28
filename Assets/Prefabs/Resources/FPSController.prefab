@@ -328,6 +328,7 @@ MonoBehaviour:
   musicVolumeLow: 0.2
   healEffectObject: {fileID: 7209973787426819567, guid: 3d8065c60d7aac84894c5117c34329b4, type: 3}
   gameManager: {fileID: 0}
+  playerIdentifier: 
   playerUiPrefab: {fileID: 170056, guid: e41946a981c3b444a84d15eb7c608ca4, type: 3}
   paintballPrefab: {fileID: 909444189230491489, guid: 7bc009cf459f4f8498981e77d6b4be88, type: 3}
   healthUI: {fileID: 0}
@@ -559,7 +560,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 300
   field of view: 60
   orthographic: 0
   orthographic size: 5
