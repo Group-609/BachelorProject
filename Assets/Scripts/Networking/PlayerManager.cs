@@ -669,6 +669,7 @@ namespace Photon.Pun.Demo.PunBasics
             GameObject paintball;
             paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
             paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
+            paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
             paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
             PlayShootingSound();

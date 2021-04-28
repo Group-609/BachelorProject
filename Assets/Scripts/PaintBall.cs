@@ -38,7 +38,7 @@ public class PaintBall : MonoBehaviour
         {
             if (collision.collider.gameObject.CompareTag("Player"))
             {
-                playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, paintballHealingRate);   //We heal friend :)
+                playerWhoShot.GetComponent<PlayerManager>().HitPlayer(collision.collider.gameObject, true);   //We heal friend :)
             }
             else if (collision.collider.gameObject.CompareTag("Enemy") && !collision.collider.gameObject.GetComponent<EnemyController>().isBlobified)
             {

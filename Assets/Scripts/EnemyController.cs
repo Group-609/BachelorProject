@@ -287,7 +287,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         {
             closestPlayer = null;
         }
-
     }
 
     private List<GameObject> GetPlayersToAttack()
