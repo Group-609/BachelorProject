@@ -38,7 +38,7 @@ public sealed class DamageReceivedCondition: ICondition
 
     public float localPlayerTotalDamageReceived = 0;
 
-    private float comparisonWithTeam; // smaller value - better player
+    private float comparisonWithTeam = 1f; // smaller value - better player
 
     public float ConditionValue
     {

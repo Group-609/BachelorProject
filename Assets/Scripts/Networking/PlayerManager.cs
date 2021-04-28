@@ -70,10 +70,10 @@ namespace Photon.Pun.Demo.PunBasics
         [NonSerialized]
         public int defeatedEnemiesCount;
 
-        [Tooltip("Damage that player receives from enemies meelee attacks")]
+        [Tooltip("Damage that player receives from enemy's meelee attacks")]
         private float enemyMeleeDamage = EnemyMeleeDamageDDAA.Instance.meleeDamage;
 
-        [Tooltip("Damage that player receives from enemies projectile attacks")]
+        [Tooltip("Damage that player receives from enemy's projectile attacks")]
         private float enemyProjectileDamage = EnemyBulletDamageDDAA.Instance.bulletDamage;
 
         [Header("Sounds")]
@@ -358,7 +358,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// Change the player's health.
         /// </summary>
         [PunRPC]
-        public void ChangeHealth(bool isHealing, bool isMeeleeAttack, int targetViewID)
+        public void ChangeHealth(bool isHealing, bool isMeleeAttack, int targetViewID)
         {
             PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
             PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
@@ -366,15 +366,17 @@ namespace Photon.Pun.Demo.PunBasics
             float healthChange;
             if (isHealing)
             {
+                Debug.Log("Healed the player. Healing rate: " + paintballHealingRate);
                 player.HealEffect();
-                healthChange = paintballHealingRate;
+                healthChange = player.paintballHealingRate;
             }
             else
             {
-                if (isMeeleeAttack)
-                    healthChange = enemyMeleeDamage;
-                else healthChange = enemyProjectileDamage;
+                if (isMeleeAttack)
+                    healthChange = -enemyMeleeDamage;
+                else healthChange = -enemyProjectileDamage;
 
+                Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage received: " + healthChange);
                 player.totalDamageReceived += healthChange;
                 if (receivedPhotonView.IsMine)
                 {
@@ -427,7 +429,8 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonView playerPhotonView = PhotonView.Find(playerViewID);
             PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
 
-            enemy.currentHealth += player.paintballDamage;
+            Debug.Log("Damaged enemy. Paintball damage: " + player.paintballDamage);
+            enemy.currentHealth += -player.paintballDamage;
             enemy.OnDamageTaken();
             if (enemy.currentHealth <= 0)
             {

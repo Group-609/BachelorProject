@@ -37,7 +37,7 @@ public sealed class LevelProgressionCondition : ICondition
     private static readonly float[] dpgAdditiveValues = new float[] { 1f, 0.5f, 0f, -0.5f, -1f }; // additive values to DPG point
 
     //holds the value of player's speed compared to what is expected (time/expectedTime)
-    private float currentConditionalValue;
+    private float currentConditionalValue = 1f;
 
     private float time;
 

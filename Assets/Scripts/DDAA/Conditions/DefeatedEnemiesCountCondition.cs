@@ -38,7 +38,7 @@ public class DefeatedEnemiesCountCondition : ICondition
 
     public int localPlayerDefeatsCount = 0;
 
-    private float comparisonWithTeam; // bigger value - better player
+    private float comparisonWithTeam = 1f; // bigger value - better player
 
     public float ConditionValue
     {

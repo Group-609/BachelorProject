@@ -38,7 +38,7 @@ public sealed class StunCondition: ICondition
 
     public int localPlayerStuntCount = 0;
 
-    private float comparisonWithTeam; // smaller value - better player
+    private float comparisonWithTeam = 1f; // smaller value - better player
 
     public float ConditionValue
     {

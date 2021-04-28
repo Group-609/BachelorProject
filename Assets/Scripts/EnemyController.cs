@@ -307,6 +307,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     public void OnDamageTaken()
     {
+        Debug.Log("Enemy took damage. Current health: " + currentHealth);
         audioSourceHit.volume = volumeHit * sfxVolume;
         audioSourceHit.Play();
         HurtSound();
