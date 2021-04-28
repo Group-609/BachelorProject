@@ -124,8 +124,6 @@ namespace Photon.Pun.Demo.PunBasics
 			Debug.Log("Is DDA enabled: " + IsDDAEnabled);
 
 			InvokeRepeating(nameof(RefreshPlayers), 0, 1f);
-			
-			players.ForEach(player => player.GetComponent<PlayerManager>().FindNewGameObjects());
 		}
 
 		/// <summary>

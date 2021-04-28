@@ -306,6 +306,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     transform.position = (Vector3)photonEvent.CustomData;
                     SetMouseLock(true);
+                    FindNewGameObjects();
                 }
                 if (eventCode == GameManager.respawnEvent)
                     transform.position = respawnTransform.position;
