@@ -25,12 +25,14 @@ public class SettingsController : MonoBehaviour
                 settingsWindow.SetActive(false);
                 PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().SetMouseLock(true);
                 PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().areSettingsEnabled = false;
+                PlayerManager.LocalPlayerInstance.GetComponent<PlayerManager>().areSettingsEnabled = false;
             } 
             else
             {
                 settingsWindow.SetActive(true);
                 PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().SetMouseLock(false);
                 PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().areSettingsEnabled = true;
+                PlayerManager.LocalPlayerInstance.GetComponent<PlayerManager>().areSettingsEnabled = true;
             }
             settingsEnabled = !settingsEnabled;
         }

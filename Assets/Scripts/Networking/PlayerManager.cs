@@ -124,6 +124,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
+        [NonSerialized] public bool areSettingsEnabled;
 
         private bool isReturningControl = false;
 
@@ -257,7 +258,7 @@ namespace Photon.Pun.Demo.PunBasics
                     animatorHands.SetBool("isDown", true);
                 }   
             }
-            if (IsFiring && !waitingToShoot && health > 0f && !gameObject.GetComponent<FirstPersonController>().areSettingsEnabled)
+            if (IsFiring && !waitingToShoot && health > 0f && !areSettingsEnabled)
             {
                 AnimateShoot();
                 StartCoroutine(ShootPaintball());
