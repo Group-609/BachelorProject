@@ -60,7 +60,7 @@ public class DebugWindow : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown("o"))
+            if (Input.GetKeyDown("l"))
             {
                 speedHackEnabled = !speedHackEnabled;
                 speedHack.ToggleSpeedHack(speedHackEnabled);
@@ -165,8 +165,8 @@ public class DebugWindow : MonoBehaviour
         debugStrings.Add("--------------------------------------");
 
         if (speedHackEnabled)
-            debugStrings.Add("Speedhack enabled - press 'o' again to disable");
-        else debugStrings.Add("Press 'o' for speedhack");
+            debugStrings.Add("Speedhack enabled - press 'l' again to disable");
+        else debugStrings.Add("Press 'l' for speedhack");
 
         if (isDDAInfoShown)
             debugStrings.Add("Press 'u' to show general debug info");

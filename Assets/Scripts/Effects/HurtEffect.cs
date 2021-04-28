@@ -84,6 +84,7 @@ public class HurtEffect : MonoBehaviourPun
             if (audioSource != null && !audioSource.isPlaying)
             {
                 audioSource.clip = (AudioClip)hurtSound.GetRandomItem();
+                audioSource.volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
                 audioSource.Play();
             }
             if (isDisplayingEffect)

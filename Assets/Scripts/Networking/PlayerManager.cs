@@ -72,6 +72,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Header("Sounds")]
 
+        [NonSerialized]public float musicVolume = 0.5f;
         public AudioClip shootingClip;
         public AudioClip healClip;
         public AudioClip musicBase;
@@ -123,6 +124,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         //True when the shooting coroutine is running, used for fake bullets of other player
         bool waitingToShoot = false;
+        [NonSerialized] public bool areSettingsEnabled;
 
         private bool isReturningControl = false;
 
@@ -175,32 +177,13 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Start()
         {
-            CameraWork _cameraWork = gameObject.GetComponent<CameraWork>();
-
-            if (_cameraWork != null)
+            if (gameObject.TryGetComponent(out CameraWork cameraWork) && photonView.IsMine)
             {
-                if (photonView.IsMine)
-                {
-                    _cameraWork.OnStartFollowing();
-                }
+                cameraWork.OnStartFollowing(); 
             }
-            else
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
-            }
-
-            // Create the UI
-            if (this.playerUiPrefab != null)
-            {
-                GameObject _uiGo = Instantiate(this.playerUiPrefab);
-                _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
-            }
-            else
-            {
-                Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
-            }
-
-            try{animator = GetComponent<Animator>();}
+            else Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
+            
+            try {animator = GetComponent<Animator>();}
             catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
             try{animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();}
@@ -212,12 +195,7 @@ namespace Photon.Pun.Demo.PunBasics
             FindNewGameObjects();
 
             PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
-                new OnValueChangeListener(
-                    (newValue) =>
-                    {
-                        paintballDamage = newValue;
-                    }    
-                )
+                new OnValueChangeListener(newValue => paintballDamage = newValue)
             );
 
             if (photonView.IsMine)
@@ -226,7 +204,7 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicBase = gameObject.AddComponent<AudioSource>() as AudioSource;
                 audioSourceMusicLow = gameObject.AddComponent<AudioSource>() as AudioSource;
                 SetBackgroundMusic();
-                audioSourceMusicBase.volume = musicVolumeBase;
+                audioSourceMusicBase.volume = musicVolumeBase * musicVolume;
                 audioSourceMusicLow.volume = 0;
                 audioSourceMusicBase.loop = true;
                 audioSourceMusicLow.loop = true;
@@ -294,6 +272,17 @@ namespace Photon.Pun.Demo.PunBasics
          
         public void FindNewGameObjects()
         {
+            // Create the UI
+            if (this.playerUiPrefab != null)
+            {
+                GameObject _uiGo = Instantiate(this.playerUiPrefab);
+                _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
+            }
+            else
+            {
+                Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
+            }
+
             if (gameManager == null)
             {
                 gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -319,6 +308,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     transform.position = (Vector3)photonEvent.CustomData;
                     SetMouseLock(true);
+                    FindNewGameObjects();
                 }
                 if (eventCode == GameManager.respawnEvent)
                     transform.position = respawnTransform.position;
@@ -471,6 +461,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void PlayShootingSound()
         {
+            GetComponent<AudioSource>().volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
         }
 
@@ -487,11 +478,11 @@ namespace Photon.Pun.Demo.PunBasics
                 if (isPlayerInKeyLocZone)
                 {
                     audioSourceMusicBase.volume = 0;
-                    audioSourceMusicLow.volume = musicVolumeLow;
+                    audioSourceMusicLow.volume = musicVolumeLow * musicVolume;
                 }
                 else
                 {
-                    audioSourceMusicBase.volume = musicVolumeBase;
+                    audioSourceMusicBase.volume = musicVolumeBase * musicVolume;
                     audioSourceMusicLow.volume = 0;
                 }                
             }  
@@ -501,6 +492,9 @@ namespace Photon.Pun.Demo.PunBasics
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
             ChangeBackgroundMusic();
+
+            if (photonView.IsMine)
+                GetComponent<PlayerDataRecorder>().AddTeamData();
         }
 
         public void DisableMusic()
@@ -542,6 +536,7 @@ namespace Photon.Pun.Demo.PunBasics
         }
         public void HealEffect()
         {
+            GetComponent<AudioSource>().volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
             GetComponent<AudioSource>().PlayOneShot(healClip);
             GameObject healEffect = Instantiate(healEffectObject, transform.Find("HealEffectSpawn"));
             Destroy(healEffect, 5.0f);
@@ -579,7 +574,10 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     //	return;
                 }
-                this.IsFiring = true;
+                if(!areSettingsEnabled)
+                {
+                    this.IsFiring = true;
+                }
             }
 
             if (Input.GetButtonUp("Fire1"))

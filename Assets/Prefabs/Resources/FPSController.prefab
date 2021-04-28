@@ -188,7 +188,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8bc94ec6ed537e743b481638bdcd503d, type: 3}
   m_JumpSound: {fileID: 8300000, guid: 5897aeed9b676024fbb8c694b421a861, type: 3}
   m_LandSound: {fileID: 8300000, guid: 3b09d59f4499d45428baa7a21e954296, type: 3}
-  volume: 0.3
 --- !u!54 &5400000
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -324,8 +323,8 @@ MonoBehaviour:
   healClip: {fileID: 8300000, guid: 293ad64286076a54faaf360193da27a0, type: 3}
   musicBase: {fileID: 8300000, guid: 6f1dd8b727a76e44c965a083554b5a15, type: 3}
   musicLow: {fileID: 8300000, guid: 8b2f864b7c866a8418e108425dba372c, type: 3}
-  musicVolumeBase: 0.1
-  musicVolumeLow: 0.2
+  musicVolumeBase: 0.2
+  musicVolumeLow: 0.4
   healEffectObject: {fileID: 7209973787426819567, guid: 3d8065c60d7aac84894c5117c34329b4, type: 3}
   gameManager: {fileID: 0}
   playerIdentifier: 
