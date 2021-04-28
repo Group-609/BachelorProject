@@ -11,9 +11,6 @@ public class EnemyProjectile : MonoBehaviour
     public Transform target;
 
 	[NonSerialized]
-	public float damage; //Damage this specific paintball does
-
-	[NonSerialized]
 	public GameObject enemyWhoShot;
 
 	[NonSerialized]
@@ -38,7 +35,7 @@ public class EnemyProjectile : MonoBehaviour
 		}
 		else if (isLocal && hitObject.CompareTag("Player"))
 		{
-			enemyWhoShot.GetComponent<EnemyController>().HitPlayer(hitObject, -damage);
+			enemyWhoShot.GetComponent<EnemyController>().HitPlayer(hitObject, false);
 		}
 		//TODO: projectile hit sound
 		Destroy(gameObject);

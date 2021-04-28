@@ -70,6 +70,12 @@ namespace Photon.Pun.Demo.PunBasics
         [NonSerialized]
         public int defeatedEnemiesCount;
 
+        [Tooltip("Damage that player receives from enemies meelee attacks")]
+        private float enemyMeleeDamage = EnemyMeleeDamageDDAA.Instance.meleeDamage;
+
+        [Tooltip("Damage that player receives from enemies projectile attacks")]
+        private float enemyProjectileDamage = EnemyBulletDamageDDAA.Instance.bulletDamage;
+
         [Header("Sounds")]
 
         [NonSerialized]public float musicVolume = 0.5f;
@@ -163,10 +169,6 @@ namespace Photon.Pun.Demo.PunBasics
                 LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
             }
 
-            HealingRateDDAA.Instance.SetHealingListener(
-                new OnValueChangeListener(newValue => paintballHealingRate = newValue)
-            );
-
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
             DontDestroyOnLoad(gameObject);
@@ -194,10 +196,6 @@ namespace Photon.Pun.Demo.PunBasics
 
             FindNewGameObjects();
 
-            PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
-                new OnValueChangeListener(newValue => paintballDamage = newValue)
-            );
-
             if (photonView.IsMine)
             {
                 GameObject.Find("ConditionSetter").GetComponent<PlayerIdentifier>().SetPlayerIdentifiers();
@@ -210,8 +208,9 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicLow.loop = true;
                 audioSourceMusicBase.Play();
                 audioSourceMusicLow.Play();
-            }
 
+                LoadDDAAListeners();
+            }
         }
 
 
@@ -350,35 +349,42 @@ namespace Photon.Pun.Demo.PunBasics
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
         //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
-        public void HitPlayer(GameObject player, float healthChange)
+        public void HitPlayer(GameObject player, bool isHealing = false, bool isMeleeAttack = false)
         {
-            photonView.RPC(nameof(ChangeHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeHealth), RpcTarget.All, isHealing, isMeleeAttack, player.GetComponent<PhotonView>().ViewID);
         }
         
         /// <summary>
         /// Change the player's health.
         /// </summary>
         [PunRPC]
-        public void ChangeHealth(float value, int targetViewID)
+        public void ChangeHealth(bool isHealing, bool isMeeleeAttack, int targetViewID)
         {
             PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
             PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
-            player.health = Mathf.Clamp(player.health + value, 0f, startingHealth);
-            if (value < 0)
+
+            float healthChange;
+            if (isHealing)
             {
-                player.totalDamageReceived += value;
+                player.HealEffect();
+                healthChange = paintballHealingRate;
+            }
+            else
+            {
+                if (isMeeleeAttack)
+                    healthChange = enemyMeleeDamage;
+                else healthChange = enemyProjectileDamage;
+
+                player.totalDamageReceived += healthChange;
                 if (receivedPhotonView.IsMine)
                 {
-                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += value;
+                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
+                    GetComponent<HurtEffect>().Hit();
                     //Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
                 }
                 //else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
             }
-            else if (value > 0)
-            {
-                player.HealEffect();
-
-            }
+            player.health = Mathf.Clamp(player.health + healthChange, 0f, startingHealth);
         }
 
         public void UpdatePlayerHealthUI()
@@ -408,22 +414,23 @@ namespace Photon.Pun.Demo.PunBasics
         //Function to call when an enemy is hit. 
         // enemy - the enemy we hit
         // healthChange - the effect on the enemies health (negative values for hurting)
-        public void HitEnemy(GameObject enemy, float healthChange)
+        public void HitEnemy(GameObject enemy)
         {
-            photonView.RPC(nameof(ChangeEnemyHealth), RpcTarget.All, healthChange, GetComponent<PhotonView>().ViewID, enemy.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeEnemyHealth), RpcTarget.All, GetComponent<PhotonView>().ViewID, enemy.GetComponent<PhotonView>().ViewID);
         }
 
         [PunRPC]
-        public void ChangeEnemyHealth(float value, int playerViewID, int targetViewID)
+        public void ChangeEnemyHealth(int playerViewID, int targetViewID)
         {
-            PhotonView enemyPhotonView = PhotonView.Find(targetViewID);
-            EnemyController enemy = enemyPhotonView.gameObject.GetComponent<EnemyController>();
-            enemy.currentHealth += value;
+            EnemyController enemy = PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>();
+            
+            PhotonView playerPhotonView = PhotonView.Find(playerViewID);
+            PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
+
+            enemy.currentHealth += player.paintballDamage;
             enemy.OnDamageTaken();
             if (enemy.currentHealth <= 0)
             {
-                PhotonView playerPhotonView = PhotonView.Find(playerViewID);
-                PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
                 player.defeatedEnemiesCount++;
                 if (playerPhotonView.IsMine)
                 {
@@ -657,8 +664,6 @@ namespace Photon.Pun.Demo.PunBasics
             GameObject paintball;
             paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
             paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
-            paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
-            paintball.GetComponent<PaintBall>().paintballHealingRate = this.paintballHealingRate;
             paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
             PlayShootingSound();
@@ -666,11 +671,27 @@ namespace Photon.Pun.Demo.PunBasics
             waitingToShoot = false;
         }
 
-    #endregion
+        private void LoadDDAAListeners()
+        {
+            HealingRateDDAA.Instance.SetHealingListener(
+                new OnValueChangeListener(newValue => paintballHealingRate = newValue)
+            );
+            PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
+                new OnValueChangeListener(newValue => paintballDamage = newValue)
+            );
+            EnemyMeleeDamageDDAA.Instance.SetMeleeDamageListener(
+                new OnValueChangeListener(newValue => enemyMeleeDamage = newValue)
+            );
+            EnemyBulletDamageDDAA.Instance.SetBulletDamageListener(
+                new OnValueChangeListener(newValue => enemyProjectileDamage = newValue)
+            );
+        }
 
-    #region IPunObservable implementation
+        #endregion
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        #region IPunObservable implementation
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
