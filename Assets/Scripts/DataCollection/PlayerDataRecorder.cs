@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Runtime.InteropServices;
+using Photon.Pun.Demo.PunBasics;
 
 
 public class PlayerDataRecorder : MonoBehaviour
@@ -79,7 +80,7 @@ public class PlayerDataRecorder : MonoBehaviour
     public string GetJsonToSend()
     {
         DataContainer data = new DataContainer();
-        data.playerID = GameObject.Find("ConditionSetter").GetComponent<PlayerIdentifier>().playerIdentifier;
+        data.playerIDs = CollectPlayerIDs();
         data.timeBasedData = timeBasedData.ToArray();
         data.teamData = teamData.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
@@ -93,15 +94,25 @@ public class PlayerDataRecorder : MonoBehaviour
         }
         return JsonUtility.ToJson(data);
     }
+    private string[] CollectPlayerIDs()
+    {
+        List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+        List<string> playerIdentifiers = new List<string>();
+        foreach(GameObject player in players)
+        {
+            playerIdentifiers.Add(player.GetComponent<PlayerManager>().playerIdentifier);
+        }
+        return playerIdentifiers.ToArray();
+    }
 }
 
 //This data container is needed as we should send the data as a single object for MongoDB to accept it
 class DataContainer{
     public string sessionStartTime;
+    public string condition;
+    public string[] playerIDs;
     public FrameData[] timeBasedData;
     public FrameData[] teamData;
-    public string condition;
-    public string playerID;
 }
 
 struct JsonDateTime

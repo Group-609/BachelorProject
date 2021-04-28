@@ -95,6 +95,8 @@ namespace Photon.Pun.Demo.PunBasics
         [NonSerialized]
         public Transform respawnTransform;
 
+        public string playerIdentifier = ""; //user for telling which player filled out the forms in the website
+
         [NonSerialized] public bool isPlayerInKeyLocZone = false;   //is this player in a key location zone
 
         #endregion
@@ -196,6 +198,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (photonView.IsMine)
             {
+                GameObject.Find("ConditionSetter").GetComponent<PlayerIdentifier>().SetPlayerIdentifiers();
                 audioSourceMusicBase = gameObject.AddComponent<AudioSource>() as AudioSource;
                 audioSourceMusicLow = gameObject.AddComponent<AudioSource>() as AudioSource;
                 SetBackgroundMusic();
@@ -434,7 +437,20 @@ namespace Photon.Pun.Demo.PunBasics
             animator.Play("Shoot");
             animatorHands.Play("Shoot");
         }
-        
+
+        //this is only called for other players 
+        public void CallGetPlayerIdentifier(string playerIdentifier)
+        {
+            photonView.RPC(nameof(GetPlayerIdentifier), RpcTarget.All, playerIdentifier);
+        }
+
+        [PunRPC]
+        public void GetPlayerIdentifier(string playerIdentifier)
+        {
+            this.playerIdentifier = playerIdentifier;
+            Debug.Log("Identified player: " + playerIdentifier);
+        }
+
         public bool IsPlayerLocal()
         {
             return photonView.IsMine;
