@@ -258,7 +258,7 @@ namespace Photon.Pun.Demo.PunBasics
                     animatorHands.SetBool("isDown", true);
                 }   
             }
-            if (IsFiring && !waitingToShoot && health > 0f && !areSettingsEnabled)
+            if (IsFiring && !waitingToShoot && health > 0f)
             {
                 AnimateShoot();
                 StartCoroutine(ShootPaintball());
@@ -574,7 +574,10 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     //	return;
                 }
-                this.IsFiring = true;
+                if(!areSettingsEnabled)
+                {
+                    this.IsFiring = true;
+                }
             }
 
             if (Input.GetButtonUp("Fire1"))
