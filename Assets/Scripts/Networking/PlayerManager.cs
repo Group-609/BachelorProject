@@ -72,7 +72,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         [Header("Sounds")]
 
-        public float masterVolume;
+        [NonSerialized]public float musicVolume = 0.5f;
         public AudioClip shootingClip;
         public AudioClip healClip;
         public AudioClip musicBase;
@@ -224,7 +224,7 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicBase = gameObject.AddComponent<AudioSource>() as AudioSource;
                 audioSourceMusicLow = gameObject.AddComponent<AudioSource>() as AudioSource;
                 SetBackgroundMusic();
-                audioSourceMusicBase.volume = musicVolumeBase * masterVolume;
+                audioSourceMusicBase.volume = musicVolumeBase * musicVolume;
                 audioSourceMusicLow.volume = 0;
                 audioSourceMusicBase.loop = true;
                 audioSourceMusicLow.loop = true;
@@ -472,11 +472,11 @@ namespace Photon.Pun.Demo.PunBasics
                 if (isPlayerInKeyLocZone)
                 {
                     audioSourceMusicBase.volume = 0;
-                    audioSourceMusicLow.volume = musicVolumeLow * masterVolume;
+                    audioSourceMusicLow.volume = musicVolumeLow * musicVolume;
                 }
                 else
                 {
-                    audioSourceMusicBase.volume = musicVolumeBase * masterVolume;
+                    audioSourceMusicBase.volume = musicVolumeBase * musicVolume;
                     audioSourceMusicLow.volume = 0;
                 }                
             }  

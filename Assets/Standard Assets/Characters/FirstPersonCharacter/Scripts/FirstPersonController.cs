@@ -49,7 +49,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
-        public float volume;
+        [NonSerialized] public float volume = 0.5f;
         [NonSerialized] public bool areSettingsEnabled;
         [NonSerialized] public float mouseSensitivity = 5;
 

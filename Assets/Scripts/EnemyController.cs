@@ -34,6 +34,8 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     public float currentHealth = 50f;
 
     [Header("Sounds")]
+
+    [NonSerialized] public float sfxVolume = 0.5f;
     public float soundDistance;
     public AudioClip spawningClip;
     public AudioClip movementClip;
@@ -45,6 +47,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     public float volumeHurt;
     public float volumeSpawn;
     public float volumeWalk;
+    public float volumeHit;
     private AudioSource audioSource;
     private AudioSource audioSourceWalking;
     private AudioSource audioSourceHit;
@@ -91,12 +94,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void Start()
     {
+        UpdateVolumeLevel();
         audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
         audioSourceWalking = gameObject.AddComponent<AudioSource>() as AudioSource;
         audioSourceHit = gameObject.AddComponent<AudioSource>() as AudioSource;
         audioSourceHurt = gameObject.AddComponent<AudioSource>() as AudioSource;
         SetInitialAudioClips();
-        audioSource.volume = volumeSpawn;
+        audioSource.volume = volumeSpawn * sfxVolume;
         audioSource.Play();
 
         LoadDDAAListeners();
@@ -133,6 +137,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void Update()
     {
+        UpdateVolumeLevel();
         PlayWalkingSound();
         if (PhotonNetwork.IsMasterClient && currentHealth <= 0)
         {
@@ -236,11 +241,16 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         
     }
 
+    void UpdateVolumeLevel()
+    {
+        sfxVolume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
+    }
+
     void PlayWalkingSound()
     {
         if (agent.velocity != Vector3.zero && !audioSourceWalking.isPlaying)
         {
-            audioSourceWalking.volume = volumeWalk;
+            audioSourceWalking.volume = volumeWalk * sfxVolume;
             audioSourceWalking.Play();
         }
         if (agent.velocity == Vector3.zero)
@@ -306,6 +316,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     public void OnDamageTaken()
     {
+        audioSourceHit.volume = volumeHit * sfxVolume;
         audioSourceHit.Play();
         HurtSound();
         if (meshRenderer != null)
@@ -315,7 +326,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     {
         int n = Random.Range(1, hurtClip.Length);
         audioSourceHurt.clip = hurtClip[n];
-        audioSourceHurt.volume = volumeHurt;
+        audioSourceHurt.volume = volumeHurt * sfxVolume;
         audioSourceHurt.PlayOneShot(audioSourceHurt.clip);
         hurtClip[n] = hurtClip[0];
         hurtClip[0] = audioSourceHurt.clip;
@@ -351,6 +362,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                     projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
                     projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
 
+                    audioSource.volume = volumeSpawn * sfxVolume;
                     audioSource.PlayOneShot(shootClip);
                 }
             }

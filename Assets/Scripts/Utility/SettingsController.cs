@@ -36,7 +36,13 @@ public class SettingsController : MonoBehaviour
         }
     }
 
-    public void SetVolume(float value)
+    public void SetMusicVolume(float value)
+    {
+        PlayerManager.LocalPlayerInstance.GetComponent<PlayerManager>().musicVolume = value;
+        PlayerManager.LocalPlayerInstance.GetComponent<PlayerManager>().ChangeBackgroundMusic();
+    }
+
+    public void SetSfxVolume(float value)
     {
         PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume = value;
         PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().SetAudioLevel();
@@ -45,6 +51,5 @@ public class SettingsController : MonoBehaviour
     public void SetMouseSensitivity(float value)
     {
         PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().mouseSensitivity = value;
-        PlayerManager.LocalPlayerInstance.GetComponent<PlayerManager>().masterVolume = value;
     }
 }
