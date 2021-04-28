@@ -367,8 +367,6 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     }
 
     //Function to call when an enemy attacks player. 
-    // enemy - the enemy we hit
-    // healthChange - the effect on the enemies health (negative values for hurting)
     public void HitPlayer(GameObject player, bool isMeleeAttack)
     {
         if(player.GetComponent<PlayerManager>().health > 0)

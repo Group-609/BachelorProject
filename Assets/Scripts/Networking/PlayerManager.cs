@@ -360,33 +360,35 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeHealth(bool isHealing, bool isMeleeAttack, int targetViewID)
         {
-            PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
-            PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
-
-            float healthChange;
             if (isHealing)
             {
-                Debug.Log("Healed the player. Healing rate: " + paintballHealingRate);
+                PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
+                PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
                 player.HealEffect();
-                healthChange = player.paintballHealingRate;
             }
-            else
+            if (targetViewID == photonView.ViewID && photonView.IsMine)
             {
-                if (isMeleeAttack)
-                    healthChange = -enemyMeleeDamage;
-                else healthChange = -enemyProjectileDamage;
+                
 
-                Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage received: " + healthChange);
-                player.totalDamageReceived += healthChange;
-                if (receivedPhotonView.IsMine)
+                float healthChange;
+                if (isHealing)
                 {
+                    Debug.Log("Healed the player. Healing rate: " + paintballHealingRate);
+                    healthChange = paintballHealingRate;
+                }
+                else
+                {
+                    if (isMeleeAttack)
+                        healthChange = enemyMeleeDamage;
+                    else healthChange = enemyProjectileDamage;
+
+                    Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage dealt: " + healthChange);
+                    totalDamageReceived += health;
                     DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
                     GetComponent<HurtEffect>().Hit();
-                    //Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
                 }
-                //else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
+                health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
             }
-            player.health = Mathf.Clamp(player.health + healthChange, 0f, startingHealth);
         }
 
         public void UpdatePlayerHealthUI()
@@ -416,21 +418,21 @@ namespace Photon.Pun.Demo.PunBasics
         //Function to call when an enemy is hit. 
         // enemy - the enemy we hit
         // healthChange - the effect on the enemies health (negative values for hurting)
-        public void HitEnemy(GameObject enemy)
+        public void HitEnemy(GameObject enemy, float healthChange)
         {
-            photonView.RPC(nameof(ChangeEnemyHealth), RpcTarget.All, GetComponent<PhotonView>().ViewID, enemy.GetComponent<PhotonView>().ViewID);
+            photonView.RPC(nameof(ChangeEnemyHealth), RpcTarget.All, healthChange, GetComponent<PhotonView>().ViewID, enemy.GetComponent<PhotonView>().ViewID);
         }
 
         [PunRPC]
-        public void ChangeEnemyHealth(int playerViewID, int targetViewID)
+        public void ChangeEnemyHealth(float healthChange, int playerViewID, int targetViewID)
         {
             EnemyController enemy = PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>();
             
             PhotonView playerPhotonView = PhotonView.Find(playerViewID);
             PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
 
-            Debug.Log("Damaged enemy. Paintball damage: " + player.paintballDamage);
-            enemy.currentHealth += -player.paintballDamage;
+            Debug.Log("Damaged enemy. Paintball damage: " + healthChange);
+            enemy.currentHealth += healthChange;
             enemy.OnDamageTaken();
             if (enemy.currentHealth <= 0)
             {
