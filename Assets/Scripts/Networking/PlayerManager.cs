@@ -456,6 +456,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void PlayShootingSound()
         {
+            GetComponent<AudioSource>().volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
         }
 
@@ -527,6 +528,7 @@ namespace Photon.Pun.Demo.PunBasics
         }
         public void HealEffect()
         {
+            GetComponent<AudioSource>().volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
             GetComponent<AudioSource>().PlayOneShot(healClip);
             GameObject healEffect = Instantiate(healEffectObject, transform.Find("HealEffectSpawn"));
             Destroy(healEffect, 5.0f);

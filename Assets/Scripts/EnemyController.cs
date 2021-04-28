@@ -248,9 +248,9 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
 
     void PlayWalkingSound()
     {
+        audioSourceWalking.volume = volumeWalk * sfxVolume;
         if (agent.velocity != Vector3.zero && !audioSourceWalking.isPlaying)
         {
-            audioSourceWalking.volume = volumeWalk * sfxVolume;
             audioSourceWalking.Play();
         }
         if (agent.velocity == Vector3.zero)
