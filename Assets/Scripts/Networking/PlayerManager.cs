@@ -368,8 +368,6 @@ namespace Photon.Pun.Demo.PunBasics
             }
             if (targetViewID == photonView.ViewID && photonView.IsMine)
             {
-                
-
                 float healthChange;
                 if (isHealing)
                 {
@@ -379,8 +377,8 @@ namespace Photon.Pun.Demo.PunBasics
                 else
                 {
                     if (isMeleeAttack)
-                        healthChange = enemyMeleeDamage;
-                    else healthChange = enemyProjectileDamage;
+                        healthChange = -enemyMeleeDamage;
+                    else healthChange = -enemyProjectileDamage;
 
                     Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage dealt: " + healthChange);
                     totalDamageReceived += health;
