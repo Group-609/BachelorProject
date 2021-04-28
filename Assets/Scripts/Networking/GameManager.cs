@@ -114,7 +114,6 @@ namespace Photon.Pun.Demo.PunBasics
 				{
 					Debug.LogFormat("Ignoring scene load for {0}", SceneManagerHelper.ActiveSceneName);
 					StartCoroutine(LevelStartReset(initialSpawnPosition));
-					PlayerManager.LocalPlayerManager.FindNewGameObjects();
 				}
 			}
 			if (PhotonNetwork.IsMasterClient)
@@ -287,7 +286,7 @@ namespace Photon.Pun.Demo.PunBasics
 			List<GameObject> teamPlayers = GameObject.FindGameObjectsWithTag("Player").ToList().FindAll(
 					delegate (GameObject player)
 					{
-						return !photonView.IsMine;
+						return !player.GetComponent<PhotonView>().IsMine;
 					}
 				);
 
@@ -300,6 +299,8 @@ namespace Photon.Pun.Demo.PunBasics
 			EnemyMeleeDamageDDAA.Instance.AdjustInGameValue();
 			EnemyBulletDamageDDAA.Instance.AdjustInGameValue();
 			PlayerPainballDamageDDAA.Instance.AdjustInGameValue();
+
+			PlayerManager.LocalPlayerInstance.GetComponent<PlayerDataRecorder>().AddTimeBasedData();
 		}
 
         #endregion

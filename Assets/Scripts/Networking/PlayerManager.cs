@@ -175,32 +175,13 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Start()
         {
-            CameraWork _cameraWork = gameObject.GetComponent<CameraWork>();
-
-            if (_cameraWork != null)
+            if (gameObject.TryGetComponent(out CameraWork cameraWork) && photonView.IsMine)
             {
-                if (photonView.IsMine)
-                {
-                    _cameraWork.OnStartFollowing();
-                }
+                cameraWork.OnStartFollowing(); 
             }
-            else
-            {
-                Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
-            }
-
-            // Create the UI
-            if (this.playerUiPrefab != null)
-            {
-                GameObject _uiGo = Instantiate(this.playerUiPrefab);
-                _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
-            }
-            else
-            {
-                Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
-            }
-
-            try{animator = GetComponent<Animator>();}
+            else Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
+            
+            try {animator = GetComponent<Animator>();}
             catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}
 
             try{animatorHands = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").GetComponent<Animator>();}
@@ -212,12 +193,7 @@ namespace Photon.Pun.Demo.PunBasics
             FindNewGameObjects();
 
             PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
-                new OnValueChangeListener(
-                    (newValue) =>
-                    {
-                        paintballDamage = newValue;
-                    }    
-                )
+                new OnValueChangeListener(newValue => paintballDamage = newValue)
             );
 
             if (photonView.IsMine)
@@ -294,6 +270,17 @@ namespace Photon.Pun.Demo.PunBasics
          
         public void FindNewGameObjects()
         {
+            // Create the UI
+            if (this.playerUiPrefab != null)
+            {
+                GameObject _uiGo = Instantiate(this.playerUiPrefab);
+                _uiGo.SendMessage("SetTarget", this, SendMessageOptions.RequireReceiver);
+            }
+            else
+            {
+                Debug.LogWarning("<Color=Red><b>Missing</b></Color> PlayerUiPrefab reference on player Prefab.", this);
+            }
+
             if (gameManager == null)
             {
                 gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -319,6 +306,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     transform.position = (Vector3)photonEvent.CustomData;
                     SetMouseLock(true);
+                    FindNewGameObjects();
                 }
                 if (eventCode == GameManager.respawnEvent)
                     transform.position = respawnTransform.position;
@@ -501,6 +489,9 @@ namespace Photon.Pun.Demo.PunBasics
         {
             HealingRateDDAA.Instance.AdjustInGameValue();
             ChangeBackgroundMusic();
+
+            if (photonView.IsMine)
+                GetComponent<PlayerDataRecorder>().AddTeamData();
         }
 
         public void DisableMusic()
