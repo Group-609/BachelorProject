@@ -35,10 +35,10 @@ public sealed class HealingRateDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseHealingPoint = 1f;
-    public static readonly float minHealingRate = 5f;
+    private static readonly float baseHealingPoint = 3f;
+    public static readonly float minHealingRate = 4f;
     private static readonly float dpgContribution = 0.1f;
-    private static readonly float healingPointContribution = 1.5f;
+    private static readonly float healingPointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] levelProgressionPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
