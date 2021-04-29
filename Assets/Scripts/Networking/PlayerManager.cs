@@ -164,11 +164,8 @@ namespace Photon.Pun.Demo.PunBasics
             }
             paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("hand_right.001").Find("PaintGun");
 
-            if (PhotonNetwork.IsMasterClient)
-            {
-                LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
-            }
-
+            LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
+            
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
             DontDestroyOnLoad(gameObject);
