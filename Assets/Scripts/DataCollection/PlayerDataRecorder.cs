@@ -21,6 +21,10 @@ public class PlayerDataRecorder : MonoBehaviour
     
     void Start()
     {
+        if(!GetComponent<PlayerManager>().IsPlayerLocal())
+        {
+            this.enabled = false;
+        }
         sessionStartTime = (JsonDateTime)System.DateTime.Now;
 
         //Initial data added

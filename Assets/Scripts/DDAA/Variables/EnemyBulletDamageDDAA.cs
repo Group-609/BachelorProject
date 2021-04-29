@@ -112,6 +112,7 @@ public sealed class EnemyBulletDamageDDAA : IDDAA
     public void Reset()
     {
         bulletDamageMultiplier = 1f;
+        bulletDamagePoint = baseBulletDamagePoint;
         CalculateInGameValue();
     }
 }

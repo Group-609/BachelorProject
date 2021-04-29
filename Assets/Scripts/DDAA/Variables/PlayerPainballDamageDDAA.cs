@@ -111,6 +111,7 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
     public void Reset()
     {
         painballDamageMultiplier = 1f;
+        paintballDamagePoint = basePaintballDamagePoint;
         CalculateInGameValue();
     }
 }

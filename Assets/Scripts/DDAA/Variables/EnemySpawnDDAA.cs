@@ -92,6 +92,7 @@ public sealed class EnemySpawnDDAA : IDDAA
     public void Reset()
     {
         spawnMultiplier = 1f;
+        spawnPoint = baseSpawnPoint;
         CalculateInGameValue();
     }
 }
