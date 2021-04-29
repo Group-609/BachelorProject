@@ -55,10 +55,10 @@ public sealed class DamageReceivedCondition: ICondition
     {
         if (teamPlayers.Count > 0)
         {
-            float totalTeamDamageReceived = 0;
+            float totalTeamDamageReceived = 1; //we add 1 to not devide by 0. This is mathematically valid
             teamPlayers.ForEach(player => totalTeamDamageReceived += player.GetComponent<PlayerManager>().totalDamageReceived);
             float teamDamageReceivedAverage = totalTeamDamageReceived / teamPlayers.Count;
-            ConditionValue = localPlayerTotalDamageReceived / teamDamageReceivedAverage;
+            ConditionValue = (localPlayerTotalDamageReceived + 1) / teamDamageReceivedAverage;
         }
         else
         {
