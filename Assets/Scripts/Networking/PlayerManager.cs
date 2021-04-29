@@ -429,19 +429,21 @@ namespace Photon.Pun.Demo.PunBasics
             
             PhotonView playerPhotonView = PhotonView.Find(playerViewID);
             PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
-
-            Debug.Log("Damaged enemy. Paintball damage: " + healthChange);
-            enemy.currentHealth = Mathf.Max(0f, enemy.currentHealth + healthChange);
-            enemy.OnDamageTaken();
-            if (enemy.currentHealth <= 0)
+            if (enemy.currentHealth > 0)
             {
-                player.defeatedEnemiesCount++;
-                if (playerPhotonView.IsMine)
+                Debug.Log("Damaged enemy. Paintball damage: " + healthChange);
+                enemy.currentHealth = Mathf.Max(0f, enemy.currentHealth + healthChange);
+                enemy.OnDamageTaken();
+                if (enemy.currentHealth <= 0)
                 {
-                    DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount++;
-                    Debug.Log("We defeated enemy! Local player defeated enemy count is " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+                    player.defeatedEnemiesCount++;
+                    if (playerPhotonView.IsMine)
+                    {
+                        DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount++;
+                        Debug.Log("We defeated enemy! Local player defeated enemy count is " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+                    }
+                    else Debug.Log("Someone defeated enemy! Player's defeated enemy count is " + player.defeatedEnemiesCount);
                 }
-                else Debug.Log("Someone defeated enemy! Player's defeated enemy count is " + player.defeatedEnemiesCount);
             }
         }
 
