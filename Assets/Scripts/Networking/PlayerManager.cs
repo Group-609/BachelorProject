@@ -360,29 +360,35 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeHealth(bool isHealing, bool isMeleeAttack, int targetViewID)
         {
-            float healthChange = 0f;
             if (isHealing)
             {
                 PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
                 PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
                 player.HealEffect();
-                Debug.Log("Healed the player. Healing rate: " + paintballHealingRate);
-                healthChange = paintballHealingRate;
-                player.health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
             }
-            else if (targetViewID == photonView.ViewID && photonView.IsMine)
+            if (targetViewID == photonView.ViewID && photonView.IsMine)
             {
-                if (isMeleeAttack)
-                    healthChange = -enemyMeleeDamage;
-                else healthChange = -enemyProjectileDamage;
+                float healthChange = 0f;
+                if (isHealing)
+                {
+                    Debug.Log("Healed the player. Healing rate: " + paintballHealingRate + ". Current health: " + health);
+                    healthChange = paintballHealingRate;
+                    health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
+                }
+                else
+                {
+                    if (isMeleeAttack)
+                        healthChange = -enemyMeleeDamage;
+                    else healthChange = -enemyProjectileDamage;
 
-                Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage dealt: " + healthChange);
-                totalDamageReceived += health;
-                DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
-                GetComponent<HurtEffect>().Hit();
-                health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
+                    Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage dealt: " + healthChange);
+                    totalDamageReceived += health;
+                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
+                    GetComponent<HurtEffect>().Hit();
+                    health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
+                }
             }
-            
+                
         }
 
         public void UpdatePlayerHealthUI()
