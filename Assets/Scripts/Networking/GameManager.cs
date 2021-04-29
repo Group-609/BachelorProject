@@ -136,11 +136,10 @@ namespace Photon.Pun.Demo.PunBasics
 			{
 				//QuitApplication();
 			}
-			if(PhotonNetwork.IsMasterClient)
+			if (!LevelProgressionCondition.Instance.isGameFinished && ArePlayersInCombat())
+				LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
+			if (PhotonNetwork.IsMasterClient)
             {
-				if (!LevelProgressionCondition.Instance.isGameFinished && ArePlayersInCombat())
-					LevelProgressionCondition.Instance.AddDeltaTime(Time.deltaTime);
-
 				if (!isRespawning)
 					StartCoroutine(RespawnCheck());
 			}
