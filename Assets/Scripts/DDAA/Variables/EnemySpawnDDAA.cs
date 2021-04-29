@@ -71,11 +71,17 @@ public sealed class EnemySpawnDDAA : IDDAA
                 levelProgressionMultiplierAdditiveValues
             )
         );
+
+        CalculateInGameValue(addToInGameValue);
+    }
+
+    private void CalculateInGameValue(int addToInGameValue = 0)
+    {
         // adjust multiplier and point values
         spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
 
         //set reloadTime
-        spawnAmount = (int) DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
+        spawnAmount = (int)DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
 
         if (spawnListener != null)
         {
@@ -86,5 +92,6 @@ public sealed class EnemySpawnDDAA : IDDAA
     public void Reset()
     {
         spawnMultiplier = 1f;
+        CalculateInGameValue();
     }
 }

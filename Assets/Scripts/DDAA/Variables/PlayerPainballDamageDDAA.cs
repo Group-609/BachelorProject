@@ -70,13 +70,7 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
         // adjust multiplier and point values
         paintballDamagePoint = basePaintballDamagePoint * UpdatedMultiplier(); // possible to add value directly as well
 
-        //set healing rate
-        paintballDamage = DDAEngine.CalculateInGameValue(paintballDamagePoint, paintballDamagePointContribution, dpgContribution, minPaintballDamage + addToInGameValue);
-
-        if (paintballDamageListener != null)
-        {
-            paintballDamageListener.OnValueChanged(paintballDamage);
-        }
+        CalculateInGameValue(addToInGameValue);
     }
 
     private float UpdatedMultiplier()
@@ -103,8 +97,20 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
         return painballDamageMultiplier;
     }
 
+    private void CalculateInGameValue(int addToInGameValue = 0)
+    {
+        //set healing rate
+        paintballDamage = DDAEngine.CalculateInGameValue(paintballDamagePoint, paintballDamagePointContribution, dpgContribution, minPaintballDamage + addToInGameValue);
+
+        if (paintballDamageListener != null)
+        {
+            paintballDamageListener.OnValueChanged(paintballDamage);
+        }
+    }
+
     public void Reset()
     {
         painballDamageMultiplier = 1f;
+        CalculateInGameValue();
     }
 }

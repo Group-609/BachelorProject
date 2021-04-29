@@ -70,6 +70,12 @@ public sealed class HealingRateDDAA : IDDAA
                 levelProgressionMultiplierAdditiveValues
             )
         );
+
+        CalculateInGameValue(addToInGameValue);
+    }
+
+    private void CalculateInGameValue(int addToInGameValue = 0)
+    {
         // adjust multiplier and point values
         healingPoint = baseHealingPoint * healingMultiplier; // possible to add value directly
 
@@ -85,5 +91,6 @@ public sealed class HealingRateDDAA : IDDAA
     public void Reset()
     {
         healingMultiplier = 1f;
+        CalculateInGameValue();
     }
 }

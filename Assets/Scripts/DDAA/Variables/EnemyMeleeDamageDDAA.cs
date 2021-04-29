@@ -69,14 +69,7 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
     {
         // adjust multiplier and point values
         meleeDamagePoint = baseMeleeDamagePoint * UpdatedMultiplier(); // possible to add value directly as well
-
-        //set healing rate
-        meleeDamage = DDAEngine.CalculateInGameValue(meleeDamagePoint, meleeDamagePointContribution, dpgContribution, minMeleeDamage + addToInGameValue);
-
-        if (meleeDamageListener != null)
-        {
-            meleeDamageListener.OnValueChanged(meleeDamage);
-        }
+        CalculateInGameValue(addToInGameValue);
     }
 
     private float UpdatedMultiplier()
@@ -103,8 +96,20 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
         return meleeDamageMultiplier;
     }
 
+    private void CalculateInGameValue(int addToInGameValue = 0)
+    {
+        //set healing rate
+        meleeDamage = DDAEngine.CalculateInGameValue(meleeDamagePoint, meleeDamagePointContribution, dpgContribution, minMeleeDamage + addToInGameValue);
+
+        if (meleeDamageListener != null)
+        {
+            meleeDamageListener.OnValueChanged(meleeDamage);
+        }
+    }
+
     public void Reset()
     {
         meleeDamageMultiplier = 1f;
+        CalculateInGameValue();
     }
 }
