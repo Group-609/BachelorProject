@@ -368,6 +368,7 @@ namespace Photon.Pun.Demo.PunBasics
                 player.HealEffect();
                 Debug.Log("Healed the player. Healing rate: " + paintballHealingRate);
                 healthChange = paintballHealingRate;
+                player.health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
             }
             if (targetViewID == photonView.ViewID && photonView.IsMine)
             {
@@ -379,8 +380,9 @@ namespace Photon.Pun.Demo.PunBasics
                 totalDamageReceived += health;
                 DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
                 GetComponent<HurtEffect>().Hit();
+                health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
             }
-            health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
+            
         }
 
         public void UpdatePlayerHealthUI()
