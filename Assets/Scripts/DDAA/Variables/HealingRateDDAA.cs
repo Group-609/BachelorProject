@@ -91,6 +91,7 @@ public sealed class HealingRateDDAA : IDDAA
     public void Reset()
     {
         healingMultiplier = 1f;
+        healingPoint = baseHealingPoint;
         CalculateInGameValue();
     }
 }

@@ -110,6 +110,7 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
     public void Reset()
     {
         meleeDamageMultiplier = 1f;
+        meleeDamagePoint = baseMeleeDamagePoint;
         CalculateInGameValue();
     }
 }
