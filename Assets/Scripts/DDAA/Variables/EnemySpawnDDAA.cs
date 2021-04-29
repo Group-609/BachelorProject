@@ -34,10 +34,10 @@ public sealed class EnemySpawnDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseSpawnPoint = 1f;
-    public static readonly int minSpawnAmount = 8;
+    private static readonly float baseSpawnPoint = 4f;
+    public static readonly int minSpawnAmount = 7;
     private static readonly float dpgContribution = 0.1f;
-    private static readonly float spawnPointContribution = 2f;
+    private static readonly float spawnPointContribution = 1.5f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
@@ -71,11 +71,17 @@ public sealed class EnemySpawnDDAA : IDDAA
                 levelProgressionMultiplierAdditiveValues
             )
         );
+
+        CalculateInGameValue(addToInGameValue);
+    }
+
+    private void CalculateInGameValue(int addToInGameValue = 0)
+    {
         // adjust multiplier and point values
         spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
 
         //set reloadTime
-        spawnAmount = (int) DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
+        spawnAmount = (int)DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
 
         if (spawnListener != null)
         {
@@ -86,5 +92,7 @@ public sealed class EnemySpawnDDAA : IDDAA
     public void Reset()
     {
         spawnMultiplier = 1f;
+        spawnPoint = baseSpawnPoint;
+        CalculateInGameValue();
     }
 }

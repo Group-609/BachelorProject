@@ -70,6 +70,12 @@ namespace Photon.Pun.Demo.PunBasics
         [NonSerialized]
         public int defeatedEnemiesCount;
 
+        [Tooltip("Damage that player receives from enemy's meelee attacks")]
+        private float enemyMeleeDamage = EnemyMeleeDamageDDAA.Instance.meleeDamage;
+
+        [Tooltip("Damage that player receives from enemy's projectile attacks")]
+        private float enemyProjectileDamage = EnemyBulletDamageDDAA.Instance.bulletDamage;
+
         [Header("Sounds")]
 
         [NonSerialized]public float musicVolume = 0.5f;
@@ -158,15 +164,8 @@ namespace Photon.Pun.Demo.PunBasics
             }
             paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("hand_right.001").Find("PaintGun");
 
-            if (PhotonNetwork.IsMasterClient)
-            {
-                LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
-            }
-
-            HealingRateDDAA.Instance.SetHealingListener(
-                new OnValueChangeListener(newValue => paintballHealingRate = newValue)
-            );
-
+            LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
+            
             // #Critical
             // we flag as don't destroy on load so that instance survives level synchronization, thus giving a seamless experience when levels load.
             DontDestroyOnLoad(gameObject);
@@ -194,10 +193,6 @@ namespace Photon.Pun.Demo.PunBasics
 
             FindNewGameObjects();
 
-            PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
-                new OnValueChangeListener(newValue => paintballDamage = newValue)
-            );
-
             if (photonView.IsMine)
             {
                 GameObject.Find("ConditionSetter").GetComponent<PlayerIdentifier>().SetPlayerIdentifiers();
@@ -210,8 +205,9 @@ namespace Photon.Pun.Demo.PunBasics
                 audioSourceMusicLow.loop = true;
                 audioSourceMusicBase.Play();
                 audioSourceMusicLow.Play();
-            }
 
+                LoadDDAAListeners();
+            }
         }
 
 
@@ -350,35 +346,48 @@ namespace Photon.Pun.Demo.PunBasics
 
         //Call this function from non networked projectiles to change a player's health. This allows to avoid having a PhotonView on every paintball which is very inefficient.
         //We have to call the RPC from this function because RPCs must be called from gameobjects that have a PhotonView component.
-        public void HitPlayer(GameObject player, float healthChange)
+        public void HitPlayer(GameObject player, bool isHealing = false, bool isMeleeAttack = false)
         {
-            photonView.RPC(nameof(ChangeHealth), RpcTarget.All, healthChange, player.GetComponent<PhotonView>().ViewID);
+            player.GetComponent<PhotonView>().RPC(nameof(ChangeHealth), RpcTarget.All, isHealing, isMeleeAttack, player.GetComponent<PhotonView>().ViewID);
         }
         
         /// <summary>
         /// Change the player's health.
         /// </summary>
         [PunRPC]
-        public void ChangeHealth(float value, int targetViewID)
+        public void ChangeHealth(bool isHealing, bool isMeleeAttack, int targetViewID)
         {
             PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
             PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
-            player.health = Mathf.Clamp(player.health + value, 0f, startingHealth);
-            if (value < 0)
-            {
-                player.totalDamageReceived += value;
-                if (receivedPhotonView.IsMine)
-                {
-                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += value;
-                    //Debug.Log("We were damaged! Local player total damage received: " + DamageReceivedCondition.Instance.localPlayerTotalDamageReceived);
-                }
-                //else Debug.Log("Someone was damaged! Player's total damage received: " + player.totalDamageReceived);
-            }
-            else if (value > 0)
+            if (isHealing)
             {
                 player.HealEffect();
-
             }
+
+            Debug.Log("IsHealing = " + isHealing + ". TargetViewId = " + targetViewID + ". PhotonView.ViewID = " + photonView.ViewID + ". PhotonView.IsMine = " + photonView.IsMine);
+            if (targetViewID == photonView.ViewID && photonView.IsMine)
+            {
+                float healthChange = 0f;
+                if (isHealing)
+                {
+                    Debug.Log("Healed the player. Healing rate: " + paintballHealingRate + ". Current health: " + health);
+                    healthChange = paintballHealingRate;
+                    health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
+                }
+                else
+                {
+                    if (isMeleeAttack)
+                        healthChange = -enemyMeleeDamage;
+                    else healthChange = -enemyProjectileDamage;
+
+                    Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage dealt: " + healthChange);
+                    totalDamageReceived += healthChange;
+                    DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
+                    GetComponent<HurtEffect>().Hit();
+                    health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
+                }
+            }
+                
         }
 
         public void UpdatePlayerHealthUI()
@@ -414,23 +423,27 @@ namespace Photon.Pun.Demo.PunBasics
         }
 
         [PunRPC]
-        public void ChangeEnemyHealth(float value, int playerViewID, int targetViewID)
+        public void ChangeEnemyHealth(float healthChange, int playerViewID, int targetViewID)
         {
-            PhotonView enemyPhotonView = PhotonView.Find(targetViewID);
-            EnemyController enemy = enemyPhotonView.gameObject.GetComponent<EnemyController>();
-            enemy.currentHealth += value;
-            enemy.OnDamageTaken();
-            if (enemy.currentHealth <= 0)
+            EnemyController enemy = PhotonView.Find(targetViewID).gameObject.GetComponent<EnemyController>();
+            
+            PhotonView playerPhotonView = PhotonView.Find(playerViewID);
+            PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
+            if (enemy.currentHealth > 0)
             {
-                PhotonView playerPhotonView = PhotonView.Find(playerViewID);
-                PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
-                player.defeatedEnemiesCount++;
-                if (playerPhotonView.IsMine)
+                Debug.Log("Damaged enemy. Paintball damage: " + healthChange);
+                enemy.currentHealth = Mathf.Max(0f, enemy.currentHealth + healthChange);
+                enemy.OnDamageTaken();
+                if (enemy.currentHealth <= 0)
                 {
-                    DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount++;
-                    Debug.Log("We defeated enemy! Local player defeated enemy count is " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+                    player.defeatedEnemiesCount++;
+                    if (playerPhotonView.IsMine)
+                    {
+                        DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount++;
+                        Debug.Log("We defeated enemy! Local player defeated enemy count is " + DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount);
+                    }
+                    else Debug.Log("Someone defeated enemy! Player's defeated enemy count is " + player.defeatedEnemiesCount);
                 }
-                else Debug.Log("Someone defeated enemy! Player's defeated enemy count is " + player.defeatedEnemiesCount);
             }
         }
 
@@ -658,7 +671,6 @@ namespace Photon.Pun.Demo.PunBasics
             paintball = Instantiate(paintballPrefab, paintGun.transform.position, Quaternion.identity);
             paintball.GetComponent<PaintBall>().playerWhoShot = this.gameObject;
             paintball.GetComponent<PaintBall>().paintballDamage = this.paintballDamage;
-            paintball.GetComponent<PaintBall>().paintballHealingRate = this.paintballHealingRate;
             paintball.GetComponent<PaintBall>().isLocal = photonView.IsMine;
             paintball.GetComponent<Rigidbody>().velocity = paintGun.TransformDirection(Vector3.forward * paintBallSpeed);
             PlayShootingSound();
@@ -666,23 +678,41 @@ namespace Photon.Pun.Demo.PunBasics
             waitingToShoot = false;
         }
 
-    #endregion
+        private void LoadDDAAListeners()
+        {
+            HealingRateDDAA.Instance.SetHealingListener(
+                new OnValueChangeListener(newValue => paintballHealingRate = newValue)
+            );
+            PlayerPainballDamageDDAA.Instance.SetPainballDamageListener(
+                new OnValueChangeListener(newValue => paintballDamage = newValue)
+            );
+            EnemyMeleeDamageDDAA.Instance.SetMeleeDamageListener(
+                new OnValueChangeListener(newValue => enemyMeleeDamage = newValue)
+            );
+            EnemyBulletDamageDDAA.Instance.SetBulletDamageListener(
+                new OnValueChangeListener(newValue => enemyProjectileDamage = newValue)
+            );
+        }
 
-    #region IPunObservable implementation
+        #endregion
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        #region IPunObservable implementation
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
             if (stream.IsWriting)
             {
                 // We own this player: send the others our data
                 stream.SendNext(this.health);
                 stream.SendNext(this.IsFiring);
+                stream.SendNext(this.totalDamageReceived);
             }
             else
             {
                 // Network player, receive data
                 this.health = (float)stream.ReceiveNext();
                 this.IsFiring = (bool)stream.ReceiveNext();
+                this.totalDamageReceived = (float)stream.ReceiveNext();
             }
         }
 

@@ -16,6 +16,7 @@ public static class DDAEngine
 
     public static void ResetConditionsAndVariables()
     {
+        difficultiesPointGlobal = 10f;
         LevelProgressionCondition.Instance.Reset();
         DefeatedEnemiesCountCondition.Instance.Reset();
         DamageReceivedCondition.Instance.Reset();
@@ -26,7 +27,6 @@ public static class DDAEngine
         EnemyBulletDamageDDAA.Instance.Reset();
         EnemyMeleeDamageDDAA.Instance.Reset();
 
-        difficultiesPointGlobal = 10f;
     }
 
     public static void AdjustDPG(float conditionValue, int[] conditionalValues, float[] additiveValues)

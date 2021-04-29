@@ -114,7 +114,10 @@ public class KeyLocationController : MonoBehaviour
         }
 
         foreach (AudioSource audioSource in fountainAudio)
-            audioSource.volume = fountainSoundsBaseVolume * PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
+        {
+            if (PlayerManager.LocalPlayerInstance != null && PlayerManager.LocalPlayerInstance.TryGetComponent(out FirstPersonController controller))
+                audioSource.volume = fountainSoundsBaseVolume * controller.volume;
+        }
     }
 
     private IEnumerator GetPlayers()

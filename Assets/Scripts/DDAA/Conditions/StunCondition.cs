@@ -38,7 +38,7 @@ public sealed class StunCondition: ICondition
 
     public int localPlayerStuntCount = 0;
 
-    private float comparisonWithTeam; // smaller value - better player
+    private float comparisonWithTeam = 1f; // smaller value - better player
 
     public float ConditionValue
     {
@@ -55,10 +55,10 @@ public sealed class StunCondition: ICondition
     {
         if (teamPlayers.Count > 0)
         {
-            int totalTeamStunCount = 0;
+            int totalTeamStunCount = 1; //we add 1 to not devide by 0. This is mathematically valid
             teamPlayers.ForEach(player => totalTeamStunCount += player.GetComponent<PlayerManager>().stunCount);
             float teamStunCountAverage = totalTeamStunCount / teamPlayers.Count;
-            ConditionValue = localPlayerStuntCount / teamStunCountAverage;
+            ConditionValue = (localPlayerStuntCount + 1) / teamStunCountAverage;
         }
         else
         {

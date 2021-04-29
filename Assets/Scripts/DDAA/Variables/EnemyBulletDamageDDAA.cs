@@ -41,14 +41,14 @@ public sealed class EnemyBulletDamageDDAA : IDDAA
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] stunCountDiffPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
-    private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { 0.5f, 0.2f, 0f, -0.2f, -0.5f }; // additive values to multiplier
+    private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { 0.1f, 0.05f, 0f, -0.05f, -0.1f }; // additive values to multiplier
 
     private static readonly float[] damageReceivedDiffPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
-    private static readonly float[] damageReceivedDiffMultiplierAdditiveValues = new float[] { 0.5f, 0.2f, 0f, -0.2f, -0.5f }; // additive values to multiplier
+    private static readonly float[] damageReceivedDiffMultiplierAdditiveValues = new float[] { 0.1f, 0.05f, 0f, -0.05f, -0.1f }; // additive values to multiplier
 
 
     private static readonly float[] defeatedEnemiesDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
-    private static readonly float[] defeatedEnemiesDiffMultiplierAdditiveValues = new float[] { -0.5f, -0.2f, 0f, 0.2f, 0.5f }; // additive values to multiplier
+    private static readonly float[] defeatedEnemiesDiffMultiplierAdditiveValues = new float[] { -0.1f, -0.05f, 0f, 0.05f, 0.1f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
@@ -71,13 +71,7 @@ public sealed class EnemyBulletDamageDDAA : IDDAA
         // adjust multiplier and point values
         bulletDamagePoint = baseBulletDamagePoint * UpdatedMultiplier(); // possible to add value directly as well
 
-        //set healing rate
-        bulletDamage = DDAEngine.CalculateInGameValue(bulletDamagePoint, bulletDamagePointContribution, dpgContribution, minBulletDamage + addToInGameValue);
-
-        if (bulletDamageListener != null)
-        {
-            bulletDamageListener.OnValueChanged(bulletDamage);
-        }
+        CalculateInGameValue(addToInGameValue);
     }
 
     private float UpdatedMultiplier()
@@ -104,8 +98,21 @@ public sealed class EnemyBulletDamageDDAA : IDDAA
         return bulletDamageMultiplier;
     }
 
+    public void CalculateInGameValue(int addToInGameValue = 0)
+    {
+        //set healing rate
+        bulletDamage = DDAEngine.CalculateInGameValue(bulletDamagePoint, bulletDamagePointContribution, dpgContribution, minBulletDamage + addToInGameValue);
+
+        if (bulletDamageListener != null)
+        {
+            bulletDamageListener.OnValueChanged(bulletDamage);
+        }
+    }
+
     public void Reset()
     {
         bulletDamageMultiplier = 1f;
+        bulletDamagePoint = baseBulletDamagePoint;
+        CalculateInGameValue();
     }
 }

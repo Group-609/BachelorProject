@@ -34,20 +34,20 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float basePaintballDamagePoint = 10f;
+    private static readonly float basePaintballDamagePoint = 8f;
     public static readonly float minPaintballDamage = 5f;
     private static readonly float dpgContribution = 0.2f;
     private static readonly float paintballDamagePointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] stunCountDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
-    private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { -0.5f, -0.2f, 0f, 0.2f, 0.5f }; // additive values to multiplier
+    private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { -0.3f, -0.15f, 0f, 0.15f, 0.3f }; // additive values to multiplier
 
     private static readonly float[] damageReceivedDiffPointAdditiveValues = new float[] { -2f, -1f, 0f, 1f, 2f }; // additive values to point directly
-    private static readonly float[] damageReceivedDiffMultiplierAdditiveValues = new float[] { -0.5f, -0.2f, 0f, 0.2f, 0.5f }; // additive values to multiplier
+    private static readonly float[] damageReceivedDiffMultiplierAdditiveValues = new float[] { -0.3f, -0.15f, 0f, 0.15f, 0.3f }; // additive values to multiplier
 
     private static readonly float[] defeatedEnemiesDiffPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
-    private static readonly float[] defeatedEnemiesDiffMultiplierAdditiveValues = new float[] { 0.5f, 0.2f, 0f, -0.2f, -0.5f }; // additive values to multiplier
+    private static readonly float[] defeatedEnemiesDiffMultiplierAdditiveValues = new float[] { 0.3f, 0.15f, 0f, -0.15f, -0.3f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, they will change during the gameplay
@@ -70,13 +70,7 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
         // adjust multiplier and point values
         paintballDamagePoint = basePaintballDamagePoint * UpdatedMultiplier(); // possible to add value directly as well
 
-        //set healing rate
-        paintballDamage = DDAEngine.CalculateInGameValue(paintballDamagePoint, paintballDamagePointContribution, dpgContribution, minPaintballDamage + addToInGameValue);
-
-        if (paintballDamageListener != null)
-        {
-            paintballDamageListener.OnValueChanged(paintballDamage);
-        }
+        CalculateInGameValue(addToInGameValue);
     }
 
     private float UpdatedMultiplier()
@@ -103,8 +97,21 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
         return painballDamageMultiplier;
     }
 
+    private void CalculateInGameValue(int addToInGameValue = 0)
+    {
+        //set healing rate
+        paintballDamage = DDAEngine.CalculateInGameValue(paintballDamagePoint, paintballDamagePointContribution, dpgContribution, minPaintballDamage + addToInGameValue);
+
+        if (paintballDamageListener != null)
+        {
+            paintballDamageListener.OnValueChanged(paintballDamage);
+        }
+    }
+
     public void Reset()
     {
         painballDamageMultiplier = 1f;
+        paintballDamagePoint = basePaintballDamagePoint;
+        CalculateInGameValue();
     }
 }
