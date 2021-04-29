@@ -56,9 +56,14 @@ public sealed class StunCondition: ICondition
         if (teamPlayers.Count > 0)
         {
             int totalTeamStunCount = 1; //we add 1 to not devide by 0. This is mathematically valid
-            teamPlayers.ForEach(player => totalTeamStunCount += player.GetComponent<PlayerManager>().stunCount);
+            teamPlayers.ForEach(player =>
+            {
+                totalTeamStunCount += player.GetComponent<PlayerManager>().stunCount;
+                player.GetComponent<PlayerManager>().stunCount = 0;
+            });
             float teamStunCountAverage = totalTeamStunCount / teamPlayers.Count;
             ConditionValue = (localPlayerStuntCount + 1) / teamStunCountAverage;
+            localPlayerStuntCount = 0;
         }
         else
         {

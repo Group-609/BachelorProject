@@ -26,7 +26,6 @@ public static class DDAEngine
         PlayerPainballDamageDDAA.Instance.Reset();
         EnemyBulletDamageDDAA.Instance.Reset();
         EnemyMeleeDamageDDAA.Instance.Reset();
-
     }
 
     public static void AdjustDPG(float conditionValue, int[] conditionalValues, float[] additiveValues)
