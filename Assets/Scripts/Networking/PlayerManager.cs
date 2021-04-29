@@ -370,7 +370,7 @@ namespace Photon.Pun.Demo.PunBasics
                 healthChange = paintballHealingRate;
                 player.health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
             }
-            if (targetViewID == photonView.ViewID && photonView.IsMine)
+            else if (targetViewID == photonView.ViewID && photonView.IsMine)
             {
                 if (isMeleeAttack)
                     healthChange = -enemyMeleeDamage;
