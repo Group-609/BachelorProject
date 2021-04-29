@@ -366,6 +366,8 @@ namespace Photon.Pun.Demo.PunBasics
                 PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
                 player.HealEffect();
             }
+
+            Debug.Log("IsHealing = " + isHealing + ". TargetViewId = " + targetViewID + ". PhotonView.ViewID = " + photonView.ViewID + ". PhotonView.IsMine = " + photonView.IsMine);
             if (targetViewID == photonView.ViewID && photonView.IsMine)
             {
                 float healthChange = 0f;
