@@ -360,10 +360,10 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void ChangeHealth(bool isHealing, bool isMeleeAttack, int targetViewID)
         {
+            PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
+            PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
             if (isHealing)
             {
-                PhotonView receivedPhotonView = PhotonView.Find(targetViewID);
-                PlayerManager player = receivedPhotonView.gameObject.GetComponent<PlayerManager>();
                 player.HealEffect();
             }
 
@@ -384,7 +384,7 @@ namespace Photon.Pun.Demo.PunBasics
                     else healthChange = -enemyProjectileDamage;
 
                     Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage dealt: " + healthChange);
-                    totalDamageReceived += health;
+                    totalDamageReceived += healthChange;
                     DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
                     GetComponent<HurtEffect>().Hit();
                     health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
@@ -434,7 +434,7 @@ namespace Photon.Pun.Demo.PunBasics
             PlayerManager player = playerPhotonView.gameObject.GetComponent<PlayerManager>();
 
             Debug.Log("Damaged enemy. Paintball damage: " + healthChange);
-            enemy.currentHealth += healthChange;
+            enemy.currentHealth = Mathf.Max(0f, enemy.currentHealth + healthChange);
             enemy.OnDamageTaken();
             if (enemy.currentHealth <= 0)
             {
@@ -706,12 +706,14 @@ namespace Photon.Pun.Demo.PunBasics
                 // We own this player: send the others our data
                 stream.SendNext(this.health);
                 stream.SendNext(this.IsFiring);
+                stream.SendNext(this.totalDamageReceived);
             }
             else
             {
                 // Network player, receive data
                 this.health = (float)stream.ReceiveNext();
                 this.IsFiring = (bool)stream.ReceiveNext();
+                this.totalDamageReceived = (float)stream.ReceiveNext();
             }
         }
 
