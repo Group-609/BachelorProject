@@ -48,14 +48,17 @@ MonoBehaviour:
   areaIndex: 0
   radius: 0
   sphere: {fileID: 3549167572352077796}
+  fountain: {fileID: 7232753103619106290}
   clearSphere: {fileID: 7324278031975958964, guid: ba56b467c4ceafc46a377431fd8d74d0, type: 3}
   clearSphereSpawnAmount: 30
   players: []
+  exposureValue: 0
   fountainWaterObject: {fileID: 7232753103619153658}
   cleanFountainMain: {r: 0.25490198, g: 0.50980395, b: 0.77647066, a: 0}
   cleanFountainSecondary: {r: 0.10196079, g: 0.3254902, b: 0.50980395, a: 0}
   clearedClip: {fileID: 8300000, guid: a5f9e6ddbd472fb408b10a32c9d9783b, type: 3}
-  volume: 0.2
+  volume: 0.4
+  fountainSoundsBaseVolume: 1
 --- !u!1 &3549167572352077796
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +240,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 60b7d28b82143174b895497209269e19, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a6338093d8dd4044b2ecb013b97d071, type: 3}
+--- !u!1 &7232753103619106290 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 169418, guid: 3a6338093d8dd4044b2ecb013b97d071, type: 3}
+  m_PrefabInstance: {fileID: 7232753103619010616}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7232753103619410236 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 424196, guid: 3a6338093d8dd4044b2ecb013b97d071, type: 3}

@@ -11,7 +11,8 @@ public class PlayerDataRecorder : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void Save(string str);
 
-    private List<FrameData> frames = new List<FrameData>();
+    private List<FrameData> timeBasedData = new List<FrameData>();
+    private List<FrameData> teamData = new List<FrameData>();
     private StreamWriter writer;
     private int counter = 0;
     [SerializeField] private int framesBetweenRecordTakes = 500; // How many frames between recording of DDA data
@@ -25,28 +26,26 @@ public class PlayerDataRecorder : MonoBehaviour
             this.enabled = false;
         }
         sessionStartTime = (JsonDateTime)System.DateTime.Now;
+
+        //Initial data added
+        AddTimeBasedData();
+        AddTeamData();
     }
 
-    //Does not depend on framerate
-    void FixedUpdate()
-    {   
-        counter++;
-        if (counter % framesBetweenRecordTakes == 0)
-        {
-            frames.Add(new FrameData(
-                LevelProgressionCondition.Instance.ConditionValue,
+    public void AddTimeBasedData()
+    {
+        timeBasedData.Add(
+            new FrameData(
+                DDAEngine.difficultiesPointGlobal,
+
                 DefeatedEnemiesCountCondition.Instance.ConditionValue,
                 StunCondition.Instance.ConditionValue,
                 DamageReceivedCondition.Instance.ConditionValue,
 
-                EnemySpawnDDAA.Instance.spawnAmount,
-                HealingRateDDAA.Instance.healingRate,
                 PlayerPainballDamageDDAA.Instance.paintballDamage,
                 EnemyMeleeDamageDDAA.Instance.meleeDamage,
                 EnemyBulletDamageDDAA.Instance.bulletDamage,
 
-                EnemySpawnDDAA.Instance.spawnMultiplier,
-                HealingRateDDAA.Instance.healingMultiplier,
                 PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
                 EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
                 EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
@@ -55,8 +54,30 @@ public class PlayerDataRecorder : MonoBehaviour
                 StunCondition.Instance.localPlayerStuntCount,
                 DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
 
-                Time.fixedTime));
-        }
+                Time.fixedTime
+            )
+        );
+        Debug.Log("Added time based data frame. Count: " + timeBasedData.Count);
+    }
+
+    public void AddTeamData()
+    {
+        teamData.Add(
+            new FrameData(
+                DDAEngine.difficultiesPointGlobal,
+
+                LevelProgressionCondition.Instance.ConditionValue,
+
+                EnemySpawnDDAA.Instance.spawnAmount,
+                HealingRateDDAA.Instance.healingRate,
+
+                EnemySpawnDDAA.Instance.spawnMultiplier,
+                HealingRateDDAA.Instance.healingMultiplier,
+
+                Time.fixedTime
+            )
+        );
+        Debug.Log("Added team data frame. Count: " + teamData.Count);
     }
 
     //Forms the JSON string to be send to the database
@@ -64,7 +85,8 @@ public class PlayerDataRecorder : MonoBehaviour
     {
         DataContainer data = new DataContainer();
         data.playerIDs = CollectPlayerIDs();
-        data.frames = frames.ToArray();
+        data.timeBasedData = timeBasedData.ToArray();
+        data.teamData = teamData.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
         if (DDAEngine.isDynamicAdjustmentEnabled)
         {
@@ -93,7 +115,8 @@ class DataContainer{
     public string sessionStartTime;
     public string condition;
     public string[] playerIDs;
-    public FrameData[] frames;
+    public FrameData[] timeBasedData;
+    public FrameData[] teamData;
 }
 
 struct JsonDateTime
