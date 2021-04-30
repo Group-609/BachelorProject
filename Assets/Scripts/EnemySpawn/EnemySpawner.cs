@@ -9,13 +9,13 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     public GameObject enemyPrefab;
 
     [SerializeField]
-    private int maxEnemyCount = 4;
+    private int maxEnemyCount = 6;
 
     [SerializeField]
-    private int spawnIntervalForArea = 2;
+    private int spawnIntervalForArea = 1;
 
     [SerializeField]
-    private int spawnIntervalForProgress = 5;
+    private int spawnIntervalForProgress = 3;
 
     private bool isEnemySpawning = false;
 
@@ -23,7 +23,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private readonly int[] enemyCountForProgressSpawnPoints = new int[] { 2, 4, 6 };
 
     // adds to the base enemy count when the level changes. First is always 0. 
-    private static readonly int[] baseEnemyCountAddition = new int[] { 0, 2, 5 };
+    private static readonly int[] baseEnemyCountAddition = new int[] { 0, 8, 13 };
 
     private static readonly int initialEnemyAmountToSpawn = EnemySpawnDDAA.Instance.spawnAmount;
     private int enemiesLeftToSpawnForArea = initialEnemyAmountToSpawn;

@@ -35,9 +35,9 @@ public sealed class HealingRateDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseHealingPoint = 3f;
-    public static readonly float minHealingRate = 4f;
-    public static readonly float maxHealingRate = 30f;
+    private static readonly float baseHealingPoint = 10f;
+    public static readonly float minHealingRate = 10f;
+    public static readonly float maxHealingRate = 50f;
     private static readonly float dpgContribution = 0.1f;
     private static readonly float healingPointContribution = 1f;
 
