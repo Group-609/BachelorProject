@@ -95,17 +95,6 @@ namespace Photon.Pun.Demo.Asteroids
                 if (!entry.Value.GetComponent<CustomPlayerListEntry>().isPlayerReady)
                     return false;
             }
-
-            /*foreach (Player p in PhotonNetwork.PlayerList)
-            {
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
-                {
-                    if (!(bool)isPlayerReady)
-                        return false;
-                }
-                else return false;
-                
-            }*/
             Debug.Log("All players are ready");
             return true;
         }
