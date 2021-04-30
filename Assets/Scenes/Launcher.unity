@@ -1547,7 +1547,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: TestConditionSelectionPanel
+          m_StringArgument: TestConditionSelection
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6428829112012402726}
@@ -4327,7 +4327,6 @@ MonoBehaviour:
   PlayerNameInput: {fileID: 328590478}
   GameConditionSelectionPanel: {fileID: 995216039}
   TestConditionSelectionPanel: {fileID: 1891814199}
-  HostSelectionPanel: {fileID: 0}
   RoomSelectionPanel: {fileID: 1771933899}
   CreateRoomPanel: {fileID: 1406502566}
   RoomNameInputField: {fileID: 1541721128}
