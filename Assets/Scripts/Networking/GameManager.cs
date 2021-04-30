@@ -68,7 +68,7 @@ namespace Photon.Pun.Demo.PunBasics
 		private void Awake()
 		{
 			GameObject conditionSetter = GameObject.Find("ConditionSetter");
-			if (conditionSetter != null)
+			if (conditionSetter != null && PhotonNetwork.IsMasterClient)
             {
 				IsDDAEnabled = conditionSetter.GetComponent<ConditionSetter>().IsDDACondition();
 				//Debug.LogError("condition string: " + conditionSetter.GetComponent<ConditionSetter>().condition);
@@ -93,7 +93,6 @@ namespace Photon.Pun.Demo.PunBasics
 			if (!PhotonNetwork.IsConnected)
 			{
 				SceneManager.LoadScene("Launcher");
-
 				return;
 			}
 
@@ -116,12 +115,9 @@ namespace Photon.Pun.Demo.PunBasics
 					StartCoroutine(LevelStartReset(initialSpawnPosition));
 				}
 			}
+
 			if (PhotonNetwork.IsMasterClient)
 				photonView.RPC(nameof(SetCondition), RpcTarget.All, IsDDAEnabled);
-			if (IsDDAEnabled)
-				InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
-
-			Debug.Log("Is DDA enabled: " + IsDDAEnabled);
 
 			InvokeRepeating(nameof(RefreshPlayers), 0, 1f);
 		}
@@ -187,6 +183,10 @@ namespace Photon.Pun.Demo.PunBasics
 			this.IsDDAEnabled = IsDDAEnabled;
 			DDAEngine.isDynamicAdjustmentEnabled = IsDDAEnabled;
 			//Debug.LogError("Condition set by master client - " + IsDDAEnabled);
+			if (IsDDAEnabled)
+				InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
+
+			Debug.Log("Is DDA enabled: " + IsDDAEnabled + ". TimeBasedDDAAs are invoked: " + IsInvoking(nameof(TriggerTimeBasedDDAAs)));
 		}
 
 		/// <summary>

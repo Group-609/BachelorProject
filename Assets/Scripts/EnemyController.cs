@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     [Header("DDA friendly variables - they might be changed by the DDAA")]
     public float speed = 3f;
     public float maxHealth = 50f;
-    public float shootingDistance = 25f;
+    public float shootingDistance = 50f;
     public float minDistForMeleeAttack = 2.5f;
     [Tooltip("Stopping distance should be lower than minimum distance for melee")]
     public float stoppingDistance = 2f;
@@ -309,7 +309,12 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         Debug.Log("Enemy took damage. Current health: " + currentHealth);
         audioSourceHit.volume = volumeHit * sfxVolume;
         audioSourceHit.Play();
-        HurtSound();
+
+        if (Random.Range(0,10) < 2)
+        {
+            HurtSound();
+        }
+
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
@@ -350,7 +355,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                     projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
                     projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
                     projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
-                    projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
+                    projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity, shootingDistance);
 
                     audioSource.volume = volumeSpawn * sfxVolume;
                     audioSource.PlayOneShot(shootClip);

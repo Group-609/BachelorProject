@@ -162,7 +162,7 @@ namespace Photon.Pun.Demo.PunBasics
                 gameObject.transform.Find("Character").gameObject.transform.Find("hat").gameObject.SetActive(false);
                 gameObject.transform.Find("Character").gameObject.transform.Find("head").gameObject.SetActive(false);
             }
-            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("hand_right.001").Find("PaintGun");
+            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("PaintGun");
 
             LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
             
@@ -307,6 +307,7 @@ namespace Photon.Pun.Demo.PunBasics
                 if (eventCode == GameManager.levelStartReset)
                 {
                     transform.position = (Vector3)photonEvent.CustomData;
+                    GetComponent<PlayerDataRecorder>().ResetForCondition();
                     SetMouseLock(true);
                     SetValuesForLevelStart();
                 }
@@ -458,6 +459,7 @@ namespace Photon.Pun.Demo.PunBasics
             animatorHands.Play("Shoot");
         }
 
+
         //this is only called for other players 
         public void CallGetPlayerIdentifier(string playerIdentifier)
         {
@@ -478,7 +480,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void PlayShootingSound()
         {
-            GetComponent<AudioSource>().volume = LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
+            GetComponent<AudioSource>().volume = LocalPlayerInstance.GetComponent<FirstPersonController>().volume * .4f;
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
         }
 
