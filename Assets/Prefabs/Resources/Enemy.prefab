@@ -723,7 +723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   maxHealth: 50
-  shootingDistance: 25
+  shootingDistance: 50
   minDistForMeleeAttack: 4
   stoppingDistance: 3
   minDistForMovement: 110
