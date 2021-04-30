@@ -37,6 +37,7 @@ public sealed class HealingRateDDAA : IDDAA
     //static parameters
     private static readonly float baseHealingPoint = 3f;
     public static readonly float minHealingRate = 4f;
+    public static readonly float maxHealingRate = 30f;
     private static readonly float dpgContribution = 0.1f;
     private static readonly float healingPointContribution = 1f;
 
@@ -80,7 +81,11 @@ public sealed class HealingRateDDAA : IDDAA
         healingPoint = baseHealingPoint * healingMultiplier; // possible to add value directly
 
         //set healing rate
-        healingRate = DDAEngine.CalculateInGameValue(healingPoint, healingPointContribution, dpgContribution, minHealingRate + addToInGameValue);
+        healingRate = Mathf.Min(
+            DDAEngine.CalculateInGameValue(healingPoint, healingPointContribution, dpgContribution, minHealingRate + addToInGameValue),
+            maxHealingRate
+        );
+            
 
         if (healingListener != null)
         {

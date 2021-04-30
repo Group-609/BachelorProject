@@ -36,6 +36,7 @@ public sealed class EnemyBulletDamageDDAA : IDDAA
     //static parameters
     private static readonly float baseBulletDamagePoint = 10f;
     public static readonly float minBulletDamage = 15f;
+    public static readonly float maxBulletDamage = 80f;
     private static readonly float dpgContribution = 0.3f;
     private static readonly float bulletDamagePointContribution = 2f;
 
@@ -100,8 +101,12 @@ public sealed class EnemyBulletDamageDDAA : IDDAA
 
     public void CalculateInGameValue(int addToInGameValue = 0)
     {
-        //set healing rate
-        bulletDamage = DDAEngine.CalculateInGameValue(bulletDamagePoint, bulletDamagePointContribution, dpgContribution, minBulletDamage + addToInGameValue);
+        //set bullet damage
+        bulletDamage = Mathf.Min(
+            DDAEngine.CalculateInGameValue(bulletDamagePoint, bulletDamagePointContribution, dpgContribution, minBulletDamage + addToInGameValue),
+            maxBulletDamage
+        );
+            
 
         if (bulletDamageListener != null)
         {
