@@ -7,7 +7,7 @@ using Photon.Pun.Demo.PunBasics;
 public class DebugWindow : MonoBehaviour
 {
     Text debugText;
-    float debugStartDelay = 1f;     //How long we wait until debugging starts
+    float debugStartDelay = 2f;     //How long we wait until debugging starts
     bool isDebugInfoCollected = false;
     private bool isDDAInfoShown = true;
     List<PlayerManager> players = new List<PlayerManager>();
