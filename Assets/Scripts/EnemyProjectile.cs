@@ -30,7 +30,7 @@ public class EnemyProjectile : MonoBehaviour
 		GameObject hitObject = collision.collider.gameObject;
 
 		//If the object is the enemy, who shot
-		if (hitObject.CompareTag("Enemy"))
+		if (hitObject.CompareTag("Enemy") || hitObject.CompareTag("Paintball"))
 		{
 			return;
 		}
