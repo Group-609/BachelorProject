@@ -152,6 +152,9 @@ public class KeyLocationController : MonoBehaviour
     {
         Debug.Log("Begin Destroying process");
         hasEventToDestroyStarted = true;
+
+        sphere.GetComponent<SphereCollider>().enabled = false;
+
         foreach (GameObject player in players)
         {
             player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
@@ -178,6 +181,7 @@ public class KeyLocationController : MonoBehaviour
 
             yield return null;
         }
+
         if (sphere.transform.localScale.x <= 0)
         {
             sphere.SetActive(false);
