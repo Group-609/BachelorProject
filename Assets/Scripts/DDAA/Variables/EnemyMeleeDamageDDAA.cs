@@ -34,11 +34,12 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseMeleeDamagePoint = 10f;
-    public static readonly float minMeleeDamage = 45f;
+    private static readonly float baseMeleeDamagePoint = 9f;
+    public static readonly float minMeleeDamage = 30f;
     public static readonly float maxMeleeDamage = 100f;
     private static readonly float dpgContribution = 0.3f;
     private static readonly float meleeDamagePointContribution = 3f;
+    //actual value = minMeleeDamage + (baseMeleeDamagePoint * meleeDamagePointContribution) + (difficultiesPointGlobal(10 by default) * dpgContribution);
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] stunCountDiffPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
