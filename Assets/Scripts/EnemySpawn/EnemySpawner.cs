@@ -12,7 +12,7 @@ public class EnemySpawner : MonoBehaviourPunCallbacks, IValueChangeListener
     private int maxEnemyCount = 6;
 
     [SerializeField]
-    private int spawnIntervalForArea = 1;
+    private float spawnIntervalForArea = 0.5f;
 
     [SerializeField]
     private int spawnIntervalForProgress = 3;
