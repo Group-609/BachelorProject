@@ -162,7 +162,7 @@ namespace Photon.Pun.Demo.PunBasics
                 gameObject.transform.Find("Character").gameObject.transform.Find("hat").gameObject.SetActive(false);
                 gameObject.transform.Find("Character").gameObject.transform.Find("head").gameObject.SetActive(false);
             }
-            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("hand_right.001").Find("PaintGun");
+            paintGun = gameObject.transform.Find("FirstPersonCharacter").Find("CharacterHands").Find("Armature").Find("Base").Find("Base.002").Find("Base.003").Find("hand_right").Find("PaintGun");
 
             LevelProgressionCondition.Instance.AddLevelProgressionListener(this);
             
@@ -455,18 +455,9 @@ namespace Photon.Pun.Demo.PunBasics
         public void AnimateShoot()
         {
             animator.Play("Shoot");
-
-            animatorHands.speed = 1/shootWaitTime;
             animatorHands.Play("Shoot");
-
-            StartCoroutine(resetAnimSpeedAfterShoot());
         }
 
-        private IEnumerator resetAnimSpeedAfterShoot()
-        {
-            yield return new WaitForSeconds(shootWaitTime);
-            animatorHands.speed = 1;
-        }
 
         //this is only called for other players 
         public void CallGetPlayerIdentifier(string playerIdentifier)
