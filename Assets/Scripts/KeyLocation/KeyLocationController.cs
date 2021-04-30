@@ -124,7 +124,7 @@ public class KeyLocationController : MonoBehaviour
     {
         while (players.Count == 0)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(2f);
             players.AddRange(GameObject.FindGameObjectsWithTag("Player"));
         }
     }
