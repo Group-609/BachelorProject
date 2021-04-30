@@ -26,7 +26,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_CharacterTargetRot = character.localRotation;
             m_CameraTargetRot = camera.localRotation;
         }
-
+        
 
         public void LookRotation(Transform character, Transform camera)
         {
@@ -48,6 +48,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             else
             {
+                m_CharacterTargetRot.x = 0f;
+                m_CharacterTargetRot.z = 0f;
+                m_CameraTargetRot.z = 0f;
+                m_CameraTargetRot.y = 0f;
                 character.localRotation = m_CharacterTargetRot;
                 camera.localRotation = m_CameraTargetRot;
             }
