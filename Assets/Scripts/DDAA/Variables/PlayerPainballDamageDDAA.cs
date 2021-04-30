@@ -37,7 +37,7 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
     private static readonly float basePaintballDamagePoint = 3.2f;
     public static readonly float minPaintballDamage = 2f;
     public static readonly float maxPaintballDamage = 20f;
-    private static readonly float dpgContribution = 0.2f;
+    private static readonly float dpgContribution = 0.08f;
     private static readonly float paintballDamagePointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length
