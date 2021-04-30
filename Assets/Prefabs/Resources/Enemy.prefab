@@ -740,10 +740,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0a34975baac280c4cb4062e74079cd8d, type: 3}
   - {fileID: 8300000, guid: 5b50330a04676c64db00ff7d306d72a8, type: 3}
   - {fileID: 8300000, guid: 40cf788a9c7ca7946bc939a3c8cd61d0, type: 3}
-  volumeHurt: 0.4
+  volumeHurt: 0.5
   volumeSpawn: 1.5
   volumeWalk: 0.6
-  volumeHit: 0.7
+  volumeHit: 0.2
   projectilePrefab: {fileID: 909444189230491489, guid: 3caea48985aeb1b409d3fa430b907d88, type: 3}
   refreshTargetTimeSec: 1
   spawnSizeScaleSpeed: 0.5
