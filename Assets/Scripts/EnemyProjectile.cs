@@ -16,7 +16,8 @@ public class EnemyProjectile : MonoBehaviour
 	[NonSerialized]
 	public bool isLocal; //true if this is a real bullet that does damage
 
-	public float h = 10;
+	public float defaultHeight = 1;
+	public float maxHeightAddition = 3;
 	public bool debugPath;
 
 	void Start()
@@ -41,17 +42,23 @@ public class EnemyProjectile : MonoBehaviour
 		Destroy(gameObject);
     }
 
-	public void Launch(Vector3 playerVelocity)
+	public void Launch(Vector3 playerVelocity, float maxDistance)
 	{
-		GetComponent<Rigidbody>().velocity = CalculateLaunchData(playerVelocity).initialVelocity;
+		GetComponent<Rigidbody>().velocity = CalculateLaunchData(playerVelocity, maxDistance).initialVelocity;
 	}
 
-	LaunchData CalculateLaunchData(Vector3 playerVelocity)
+	private static float map(float value, float fromLow, float fromHigh, float toLow, float toHigh)
+	{
+		return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+	}
+
+	LaunchData CalculateLaunchData(Vector3 playerVelocity, float maxDistance)
 	{
 		float displacementY = target.position.y - transform.position.y;
-		float time = Mathf.Sqrt(-2 * h / Physics.gravity.y) + Mathf.Sqrt(2 * (displacementY - h) / Physics.gravity.y);
+		float height = defaultHeight + defaultHeight * map(Vector3.Distance(target.position, transform.position), 0, maxDistance, 0, maxHeightAddition);
+		float time = Mathf.Sqrt(-2 * height / Physics.gravity.y) + Mathf.Sqrt(2 * (displacementY - height) / Physics.gravity.y);
 		Vector3 displacementXZ = new Vector3(target.position.x + playerVelocity.x * time - transform.position.x, 0, target.position.z + playerVelocity.z * time - transform.position.z);
-		Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * Physics.gravity.y * h);
+		Vector3 velocityY = Vector3.up * Mathf.Sqrt(-2 * Physics.gravity.y * height);
 		Vector3 velocityXZ = displacementXZ / time;
 
 		return new LaunchData(velocityXZ + velocityY * -Mathf.Sign(Physics.gravity.y), time);

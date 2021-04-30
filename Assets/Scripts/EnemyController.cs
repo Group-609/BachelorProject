@@ -350,7 +350,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
                     projectile.GetComponent<EnemyProjectile>().enemyWhoShot = this.gameObject;
                     projectile.GetComponent<EnemyProjectile>().target = closestPlayer;
                     projectile.GetComponent<EnemyProjectile>().isLocal = PhotonNetwork.IsMasterClient;
-                    projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity);
+                    projectile.GetComponent<EnemyProjectile>().Launch(playerVelocity, shootingDistance);
 
                     audioSource.volume = volumeSpawn * sfxVolume;
                     audioSource.PlayOneShot(shootClip);
