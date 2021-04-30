@@ -21,7 +21,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
     [Header("DDA friendly variables - they might be changed by the DDAA")]
     public float speed = 3f;
     public float maxHealth = 50f;
-    public float shootingDistance = 25f;
+    public float shootingDistance = 50f;
     public float minDistForMeleeAttack = 2.5f;
     [Tooltip("Stopping distance should be lower than minimum distance for melee")]
     public float stoppingDistance = 2f;
