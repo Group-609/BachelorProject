@@ -34,8 +34,8 @@ public sealed class EnemySpawnDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseSpawnPoint = 4f;
-    public static readonly int minSpawnAmount = 7;
+    private static readonly float baseSpawnPoint = 2f;
+    public static readonly int minSpawnAmount = 3;
     private static readonly float dpgContribution = 0.1f;
     private static readonly float spawnPointContribution = 1.5f;
 
