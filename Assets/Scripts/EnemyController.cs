@@ -311,7 +311,7 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         audioSourceHit.Play();
 
         int r = Random.Range(0,10);
-        if (r <= 3)
+        if (r < 2)
         {
             HurtSound();
         }
