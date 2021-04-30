@@ -90,15 +90,10 @@ namespace Photon.Pun.Demo.Asteroids
             if (!PhotonNetwork.IsMasterClient)
                 return false;
 
-            foreach (Player p in PhotonNetwork.PlayerList)
+            foreach (KeyValuePair<int, GameObject> entry in playerListEntries)
             {
-                if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
-                {
-                    if (!(bool)isPlayerReady)
-                        return false;
-                }
-                else return false;
-                
+                if (!entry.Value.GetComponent<CustomPlayerListEntry>().isPlayerReady)
+                    return false;
             }
             Debug.Log("All players are ready");
             return true;
