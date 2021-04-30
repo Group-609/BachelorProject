@@ -191,7 +191,7 @@ namespace Photon.Pun.Demo.PunBasics
             try{fpsController = GetComponent<FirstPersonController>();}
             catch{Debug.LogError("Missing fpsController.", this);}
 
-            FindNewGameObjects();
+            SetValuesForLevelStart();
 
             if (photonView.IsMine)
             {
@@ -266,7 +266,7 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonNetwork.AddCallbackTarget(this);
         }
          
-        public void FindNewGameObjects()
+        public void SetValuesForLevelStart()
         {
             // Create the UI
             if (this.playerUiPrefab != null)
@@ -289,6 +289,10 @@ namespace Photon.Pun.Demo.PunBasics
 
             try { respawnTransform = gameManager.transform.Find("PlayerRespawnPoint").transform; }
             catch { Debug.LogError("<Color=Red><b>Missing</b></Color> Respawn location", this); }
+
+            defeatedEnemiesCount = 0;
+            totalDamageReceived = 0;
+            stunCount = 0;
         }
 
         #endregion
@@ -304,7 +308,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     transform.position = (Vector3)photonEvent.CustomData;
                     SetMouseLock(true);
-                    FindNewGameObjects();
+                    SetValuesForLevelStart();
                 }
                 if (eventCode == GameManager.respawnEvent)
                     transform.position = respawnTransform.position;
@@ -474,7 +478,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void PlayShootingSound()
         {
-            GetComponent<AudioSource>().volume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
+            GetComponent<AudioSource>().volume = LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
         }
 

@@ -80,8 +80,8 @@ public sealed class EnemySpawnDDAA : IDDAA
         // adjust multiplier and point values
         spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
 
-        //set reloadTime
-        spawnAmount = (int)DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
+        //set enemy spawn amount
+        spawnAmount = (int) DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
 
         if (spawnListener != null)
         {

@@ -36,6 +36,7 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
     //static parameters
     private static readonly float basePaintballDamagePoint = 8f;
     public static readonly float minPaintballDamage = 5f;
+    public static readonly float maxPaintballDamage = 40f;
     private static readonly float dpgContribution = 0.2f;
     private static readonly float paintballDamagePointContribution = 1f;
 
@@ -100,7 +101,10 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
     private void CalculateInGameValue(int addToInGameValue = 0)
     {
         //set healing rate
-        paintballDamage = DDAEngine.CalculateInGameValue(paintballDamagePoint, paintballDamagePointContribution, dpgContribution, minPaintballDamage + addToInGameValue);
+        paintballDamage = Mathf.Min(
+            DDAEngine.CalculateInGameValue(paintballDamagePoint, paintballDamagePointContribution, dpgContribution, minPaintballDamage + addToInGameValue),
+            maxPaintballDamage
+        );
 
         if (paintballDamageListener != null)
         {

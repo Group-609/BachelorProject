@@ -56,9 +56,14 @@ public class DefeatedEnemiesCountCondition : ICondition
         if (teamPlayers.Count > 0)
         {
             int totalTeamDefeatedEnemiesCount = 1; //we add 1 to not devide by 0. This is mathematically valid
-            teamPlayers.ForEach(player => totalTeamDefeatedEnemiesCount += player.GetComponent<PlayerManager>().defeatedEnemiesCount);
+            teamPlayers.ForEach(player =>
+            {
+                totalTeamDefeatedEnemiesCount += player.GetComponent<PlayerManager>().defeatedEnemiesCount;
+                player.GetComponent<PlayerManager>().defeatedEnemiesCount = 0;
+            });
             float teamDefeatedEnemiesAverage = totalTeamDefeatedEnemiesCount / teamPlayers.Count;
             ConditionValue = (localPlayerDefeatsCount + 1) / teamDefeatedEnemiesAverage;
+            localPlayerDefeatsCount = 0;
         }
         else
         {

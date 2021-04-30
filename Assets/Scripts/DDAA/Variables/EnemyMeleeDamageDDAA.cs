@@ -36,6 +36,7 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
     //static parameters
     private static readonly float baseMeleeDamagePoint = 10f;
     public static readonly float minMeleeDamage = 45f;
+    public static readonly float maxMeleeDamage = 100f;
     private static readonly float dpgContribution = 0.3f;
     private static readonly float meleeDamagePointContribution = 3f;
 
@@ -98,8 +99,11 @@ public sealed class EnemyMeleeDamageDDAA: IDDAA
 
     private void CalculateInGameValue(int addToInGameValue = 0)
     {
-        //set healing rate
-        meleeDamage = DDAEngine.CalculateInGameValue(meleeDamagePoint, meleeDamagePointContribution, dpgContribution, minMeleeDamage + addToInGameValue);
+        //set melee damage
+        meleeDamage = Mathf.Min(
+            DDAEngine.CalculateInGameValue(meleeDamagePoint, meleeDamagePointContribution, dpgContribution, minMeleeDamage + addToInGameValue),
+            maxMeleeDamage
+        );
 
         if (meleeDamageListener != null)
         {

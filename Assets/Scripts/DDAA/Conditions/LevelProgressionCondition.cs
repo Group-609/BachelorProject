@@ -57,6 +57,7 @@ public sealed class LevelProgressionCondition : ICondition
     public void Reset()
     {
         isGameFinished = false;
+        currentConditionalValue = 1f;
         time = 0f;
         currentLevel = 0;
     }
