@@ -454,7 +454,6 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         public void AnimateShoot()
         {
-            animator.speed = 1/shootWaitTime;
             animator.Play("Shoot");
 
             animatorHands.speed = 1/shootWaitTime;
@@ -466,7 +465,6 @@ namespace Photon.Pun.Demo.PunBasics
         private IEnumerator resetAnimSpeedAfterShoot()
         {
             yield return new WaitForSeconds(shootWaitTime);
-            animator.speed = 1;
             animatorHands.speed = 1;
         }
 
