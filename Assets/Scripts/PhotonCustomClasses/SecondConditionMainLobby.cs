@@ -90,7 +90,13 @@ namespace Photon.Pun.Demo.Asteroids
             if (!PhotonNetwork.IsMasterClient)
                 return false;
 
-            foreach (Player p in PhotonNetwork.PlayerList)
+            foreach (KeyValuePair<int, GameObject> entry in playerListEntries)
+            {
+                if (!entry.Value.GetComponent<CustomPlayerListEntry>().isPlayerReady)
+                    return false;
+            }
+
+            /*foreach (Player p in PhotonNetwork.PlayerList)
             {
                 if (p.CustomProperties.TryGetValue(AsteroidsGame.PLAYER_READY, out object isPlayerReady))
                 {
@@ -99,7 +105,7 @@ namespace Photon.Pun.Demo.Asteroids
                 }
                 else return false;
                 
-            }
+            }*/
             Debug.Log("All players are ready");
             return true;
         }

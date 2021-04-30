@@ -34,7 +34,7 @@ namespace Photon.Pun.Demo.Asteroids
         public Image PlayerReadyImage;
 
         private int ownerId;
-        public bool isPlayerReady;
+        public bool isPlayerReady = false;
 
         #region UNITY
 
@@ -46,6 +46,7 @@ namespace Photon.Pun.Demo.Asteroids
             }
             else
             {
+                isPlayerReady = false;
                 Hashtable initialProps = new Hashtable() { { AsteroidsGame.PLAYER_READY, isPlayerReady } };
                 PhotonNetwork.LocalPlayer.SetCustomProperties(initialProps);
 
@@ -53,8 +54,7 @@ namespace Photon.Pun.Demo.Asteroids
 
                 PlayerReadyButton.onClick.AddListener(() =>
                 {
-                    isPlayerReady = !isPlayerReady;
-                    SetPlayerReady(isPlayerReady);
+                    SetPlayerReady(!isPlayerReady);
 
                     Hashtable props = new Hashtable() { { AsteroidsGame.PLAYER_READY, isPlayerReady } };
                     PhotonNetwork.LocalPlayer.SetCustomProperties(props);
@@ -77,6 +77,7 @@ namespace Photon.Pun.Demo.Asteroids
 
         public void SetPlayerReady(bool playerReady)
         {
+            isPlayerReady = playerReady;
             PlayerReadyButton.GetComponentInChildren<Text>().text = playerReady ? "Ready!" : "Ready?";
             PlayerReadyImage.enabled = playerReady;
         }
