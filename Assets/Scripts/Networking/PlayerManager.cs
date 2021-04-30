@@ -479,7 +479,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void PlayShootingSound()
         {
-            GetComponent<AudioSource>().volume = LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
+            GetComponent<AudioSource>().volume = LocalPlayerInstance.GetComponent<FirstPersonController>().volume * .4f;
             GetComponent<AudioSource>().PlayOneShot(shootingClip);
         }
 

@@ -309,7 +309,13 @@ public class EnemyController : MonoBehaviourPunCallbacks, IPunObservable, IPunIn
         Debug.Log("Enemy took damage. Current health: " + currentHealth);
         audioSourceHit.volume = volumeHit * sfxVolume;
         audioSourceHit.Play();
-        HurtSound();
+
+        int r = Random.Range(0,10);
+        if (r <= 2)
+        {
+            HurtSound();
+        }
+
         if (meshRenderer != null)
             meshRenderer.material.color = Color.Lerp(lowHealthColor, maxHealthColor, currentHealth / maxHealth);
     }
