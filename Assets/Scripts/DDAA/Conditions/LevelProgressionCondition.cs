@@ -29,7 +29,7 @@ public sealed class LevelProgressionCondition : ICondition
     }
 
     public int currentLevel;
-    private static readonly int[] expectedTimeSpendInCombat = new int[] { 50, 120, 200 }; // adjust these. Expected time (in sec), when player should complete level
+    private static readonly int[] expectedTimeSpendInCombat = new int[] { 50, 120, 200 }; // adjust these (expected time in seconds)
 
     // IMPORTANT! Both arrays have to be the same length
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
