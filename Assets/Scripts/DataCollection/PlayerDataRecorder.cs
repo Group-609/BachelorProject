@@ -13,11 +13,10 @@ public class PlayerDataRecorder : MonoBehaviour
 
     private List<FrameData> timeBasedData = new List<FrameData>();
     private List<FrameData> teamData = new List<FrameData>();
-    private StreamWriter writer;
-    private int counter = 0;
     [SerializeField] private int framesBetweenRecordTakes = 500; // How many frames between recording of DDA data
     [System.NonSerialized] public bool testEnded = false;       //Set to true when the player finishes the game
     private JsonDateTime sessionStartTime;
+    private float conditionStartTime;
     
     void Start()
     {
@@ -26,8 +25,18 @@ public class PlayerDataRecorder : MonoBehaviour
             this.enabled = false;
         }
         sessionStartTime = (JsonDateTime)System.DateTime.Now;
-
+        conditionStartTime = Time.fixedTime;
         //Initial data added
+        AddTimeBasedData();
+        AddTeamData();
+    }
+
+    public void ResetForCondition()
+    {
+        timeBasedData = new List<FrameData>();
+        teamData = new List<FrameData>();
+        testEnded = false;
+        conditionStartTime = Time.fixedTime;
         AddTimeBasedData();
         AddTeamData();
     }
@@ -54,7 +63,7 @@ public class PlayerDataRecorder : MonoBehaviour
                 StunCondition.Instance.localPlayerStuntCount,
                 DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
 
-                Time.fixedTime
+                Time.fixedTime - conditionStartTime
             )
         );
         Debug.Log("Added time based data frame. Count: " + timeBasedData.Count);
@@ -74,7 +83,7 @@ public class PlayerDataRecorder : MonoBehaviour
                 EnemySpawnDDAA.Instance.spawnMultiplier,
                 HealingRateDDAA.Instance.healingMultiplier,
 
-                Time.fixedTime
+                Time.fixedTime - conditionStartTime
             )
         );
         Debug.Log("Added team data frame. Count: " + teamData.Count);

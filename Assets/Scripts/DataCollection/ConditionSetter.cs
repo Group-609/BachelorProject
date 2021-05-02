@@ -64,6 +64,7 @@ public class ConditionSetter : MonoBehaviour
         this.shouldChangeCondition = shouldChangeCondition;
     }
 
+    //This should only be called by master. Master gives the condition to all players
     public bool IsDDACondition()
     {
         if (forceControl || forceDDA)

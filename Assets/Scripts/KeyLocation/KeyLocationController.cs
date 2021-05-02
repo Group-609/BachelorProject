@@ -33,9 +33,12 @@ public class KeyLocationController : MonoBehaviour
 
 
     [System.NonSerialized] public float sfxVolume;
-    public AudioClip clearedClip;
-    public float volume;
-    private AudioSource audioSource;
+    public AudioClip clearedClip; 
+    public AudioClip shrinkingClip;
+    public float clearedVolume;
+    public float shrinkingVolume;
+    private AudioSource audioSourceCleared;
+    private AudioSource audioSourceBubbleShrink;
     private Component[] fountainAudio;
     public float fountainSoundsBaseVolume = 1f;
 
@@ -43,7 +46,8 @@ public class KeyLocationController : MonoBehaviour
     {
         StartCoroutine(GetPlayers());
         sphere.transform.localScale = new Vector3((radius * 2) + 1, (radius * 2) + 1, (radius * 2) + 1); //+1 to reduce screen clipping with sphere
-        audioSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceCleared = gameObject.AddComponent<AudioSource>() as AudioSource;
+        audioSourceBubbleShrink = gameObject.AddComponent<AudioSource>() as AudioSource;
         directionalLight = GameObject.FindGameObjectWithTag("DirectionalLight");
 
         fountainAudio = fountain.GetComponents(typeof(AudioSource));
@@ -140,10 +144,10 @@ public class KeyLocationController : MonoBehaviour
 
     void AreaClearedSound()
     {
-        audioSource.clip = clearedClip;
+        audioSourceCleared.clip = clearedClip;
         sfxVolume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
-        audioSource.volume = volume * sfxVolume;
-        audioSource.Play();
+        audioSourceCleared.volume = clearedVolume * sfxVolume;
+        audioSourceCleared.Play();
         Debug.Log("Area Cleared");
         
     }
@@ -152,6 +156,14 @@ public class KeyLocationController : MonoBehaviour
     {
         Debug.Log("Begin Destroying process");
         hasEventToDestroyStarted = true;
+
+        sphere.GetComponent<SphereCollider>().enabled = false;
+
+        sfxVolume = PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().volume;
+        audioSourceBubbleShrink.clip = shrinkingClip;
+        audioSourceBubbleShrink.loop = true;
+        audioSourceBubbleShrink.Play();
+
         foreach (GameObject player in players)
         {
             player.GetComponent<FirstPersonController>().keyLocationSpeedMod = 1; //reset speedmod in case a player should be slowed by the edge when the location is disabled.
@@ -162,6 +174,7 @@ public class KeyLocationController : MonoBehaviour
         while (sphere.transform.localScale.x > 0)
         {
             sphere.transform.localScale -= new Vector3(shrinkValue, shrinkValue, shrinkValue) * Time.deltaTime;
+            audioSourceBubbleShrink.volume = shrinkingVolume * sfxVolume * (sphere.transform.localScale.x/radius);
 
             for (int i = 0; i < players.Count; i++)
             {
@@ -178,6 +191,9 @@ public class KeyLocationController : MonoBehaviour
 
             yield return null;
         }
+
+        audioSourceBubbleShrink.loop = false;
+
         if (sphere.transform.localScale.x <= 0)
         {
             sphere.SetActive(false);

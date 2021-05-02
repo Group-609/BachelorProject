@@ -307,6 +307,7 @@ namespace Photon.Pun.Demo.PunBasics
                 if (eventCode == GameManager.levelStartReset)
                 {
                     transform.position = (Vector3)photonEvent.CustomData;
+                    GetComponent<PlayerDataRecorder>().ResetForCondition();
                     SetMouseLock(true);
                     SetValuesForLevelStart();
                 }
