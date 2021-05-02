@@ -59,10 +59,12 @@ function showSecondForm(gatheredData)
 {
   var event = new CustomEvent('showSecondForm', { detail: gatheredData })
   window.parent.document.dispatchEvent(event)
+  publicUnityInstance.SetFullscreen(0);
 }
 
 function showLastForm(gatheredData)
 {
   var event = new CustomEvent('showLastForm', { detail: gatheredData })
   window.parent.document.dispatchEvent(event)
+  publicUnityInstance.SetFullscreen(0);
 }
