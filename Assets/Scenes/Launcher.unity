@@ -3572,8 +3572,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: One person will need to create a room (Create Room), while the other one
-    will need to join the same room from the list (Show Room List).
+  m_Text: One person has to create a room (Create Room), while the other one has
+    to join the same room from the list (Show Room List).
 --- !u!222 &923861982
 CanvasRenderer:
   m_ObjectHideFlags: 0
