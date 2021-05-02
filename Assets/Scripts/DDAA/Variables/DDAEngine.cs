@@ -64,6 +64,7 @@ public static class DDAEngine
                 // 1
                 return additiveValues[i];
         }
+        Debug.LogError("IMPORTANT! No additive value found. Something went wrong with the system");
         return 0;
     }
 
