@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311918, g: 0.3807398, b: 0.35872716, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -682,7 +682,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -32.000122, y: 172}
+  m_AnchoredPosition: {x: -32, y: 172}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &759308736
@@ -1171,7 +1171,7 @@ MonoBehaviour:
   SecondConditionInfoPanel: {fileID: 1771933899}
   InsideRoomPanel: {fileID: 1370510199}
   StartGameButton: {fileID: 800069350}
-  PlayerListEntryPrefab: {fileID: 195212, guid: 066d79181313d8f4bb04d87e9a32045d, type: 3}
+  PlayerListEntryPrefab: {fileID: 195212, guid: 160998e6d73b37740bf9a0afc799eef5, type: 3}
 --- !u!222 &1310044698
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1282,9 +1282,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 300
-    m_Right: 300
-    m_Top: 250
+    m_Left: 500
+    m_Right: 500
+    m_Top: 380
     m_Bottom: 400
   m_ChildAlignment: 1
   m_Spacing: 0
