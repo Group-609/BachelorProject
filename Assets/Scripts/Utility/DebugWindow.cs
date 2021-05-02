@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun.Demo.PunBasics;
+using Photon.Pun;
 
 public class DebugWindow : MonoBehaviour
 {
     Text debugText;
-    float debugStartDelay = 2f;     //How long we wait until debugging starts
+    float debugStartDelay = 0.5f;     //How long we wait until debugging starts
     bool isDebugInfoCollected = false;
     private bool isDDAInfoShown = true;
     List<PlayerManager> players = new List<PlayerManager>();
@@ -83,9 +84,14 @@ public class DebugWindow : MonoBehaviour
 
     IEnumerator GetInfoSources()
     {
-        yield return new WaitForSeconds(debugStartDelay);
-        List<GameObject> playerObjects = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
-        foreach(GameObject playerObject in playerObjects)
+        List<GameObject> playerObjects = new List<GameObject>();
+        while (PhotonNetwork.PlayerList.Length > playerObjects.Count)
+        {
+            yield return new WaitForSeconds(debugStartDelay);
+            playerObjects.Clear();
+            playerObjects.AddRange(GameObject.FindGameObjectsWithTag("Player"));
+        }
+        foreach (GameObject playerObject in playerObjects)
         {
             players.Add(playerObject.GetComponent<PlayerManager>());
         }
