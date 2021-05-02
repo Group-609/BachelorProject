@@ -52,7 +52,7 @@ public static class DDAEngine
 
             if (i > 0)
                 lower = conditionalValues[i - 1];
-            if (i < conditionalValues.Length - 1)
+            if (i <= conditionalValues.Length - 1)
                 upper = conditionalValues[i];
 
             //conditionalValues.Length = 4
