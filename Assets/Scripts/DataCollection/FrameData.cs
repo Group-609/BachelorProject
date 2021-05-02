@@ -36,9 +36,9 @@ public class FrameData
     public FrameData(float DPG, float DEC, float SC, float DRC, float PD, float EMD, float EBD, float PDM, float MDM, float BDM, float ED, float S, float TDR, float time)
     {
         this.DPG = DPG.ToString("000.00");
-        this.DEC = DEC.ToString("00.00");
-        this.SC = SC.ToString("00.00");
-        this.DRC = DRC.ToString("00.00");
+        this.DEC = DEC.ToString("00.0000");
+        this.SC = SC.ToString("00.0000");
+        this.DRC = DRC.ToString("00.0000");
         this.PD = PD.ToString("00.00");
         this.EMD = EMD.ToString("000.00");
         this.EBD = EBD.ToString("000.00");
@@ -54,7 +54,7 @@ public class FrameData
     public FrameData(float DPG, float LPC, float SA, float HR, float SFP, float SM, float HM, float time)
     {
         this.DPG = DPG.ToString("000.00");
-        this.LPC = LPC.ToString("00.00");
+        this.LPC = LPC.ToString("00.0000");
         this.SA = SA.ToString("00");
         this.HR = HR.ToString("00.00");
         this.SFP = SFP.ToString("00.00");
