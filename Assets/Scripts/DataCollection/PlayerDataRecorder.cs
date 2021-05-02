@@ -80,6 +80,8 @@ public class PlayerDataRecorder : MonoBehaviour
                 EnemySpawnDDAA.Instance.spawnAmount,
                 HealingRateDDAA.Instance.healingRate,
 
+                EnemySpawnDDAA.Instance.spawnFloatingPoint,
+
                 EnemySpawnDDAA.Instance.spawnMultiplier,
                 HealingRateDDAA.Instance.healingMultiplier,
 
