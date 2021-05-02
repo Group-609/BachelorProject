@@ -19,6 +19,8 @@ public class FrameData
     public string EMD; //enemyMeleeDamage;
     public string EBD; //enemyBulletDamage;
 
+    public string SFP; //spawnFloatingPoint;
+
     public string SM; //spawnMultiplier;
     public string HM; //healingMultiplier;
     public string PDM;//painballDamageMultiplier;
@@ -49,12 +51,13 @@ public class FrameData
         this.time = time.ToString("0000.0");
     }
 
-    public FrameData(float DPG, float LPC, float SA, float HR, float SM, float HM, float time)
+    public FrameData(float DPG, float LPC, float SA, float HR, float SFP, float SM, float HM, float time)
     {
         this.DPG = DPG.ToString("000.00");
         this.LPC = LPC.ToString("00.00");
         this.SA = SA.ToString("00");
         this.HR = HR.ToString("00.00");
+        this.SFP = SFP.ToString("00.00");
         this.SM = SM.ToString("00.00");
         this.HM = HM.ToString("00.00");
         this.time = time.ToString("0000.0");

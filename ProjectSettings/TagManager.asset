@@ -12,6 +12,7 @@ TagManager:
   - DebugWindow
   - DirectionalLight
   - HealthUI
+  - Paintball
   layers:
   - Default
   - TransparentFX

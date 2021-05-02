@@ -176,11 +176,14 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void Start()
         {
-            if (gameObject.TryGetComponent(out CameraWork cameraWork) && photonView.IsMine)
+            if (photonView.IsMine)
             {
-                cameraWork.OnStartFollowing(); 
+                if (gameObject.TryGetComponent(out CameraWork cameraWork))
+                {
+                    cameraWork.OnStartFollowing();
+                }
+                else Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
             }
-            else Debug.LogError("<Color=Red><b>Missing</b></Color> CameraWork Component on player Prefab.", this);
             
             try {animator = GetComponent<Animator>();}
             catch{Debug.LogError("Missing Animator Component on player Prefab.", this);}

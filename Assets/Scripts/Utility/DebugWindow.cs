@@ -137,11 +137,15 @@ public class DebugWindow : MonoBehaviour
         debugStrings.Add("Enemy melee damage: " + EnemyMeleeDamageDDAA.Instance.meleeDamage + "; Min: " + EnemyMeleeDamageDDAA.minMeleeDamage);
         debugStrings.Add("Enemy bullet damage: " + EnemyBulletDamageDDAA.Instance.bulletDamage + "; Min: " + EnemyBulletDamageDDAA.minBulletDamage);
 
+        debugStrings.Add("----------Floating points-----------");
+        debugStrings.Add("Enemy spawn floating point for area (TEAM): " + EnemySpawnDDAA.Instance.spawnFloatingPoint);
+
+        debugStrings.Add("----------Multipliers-----------");
+        debugStrings.Add("Enemy spawn multiplier for area (TEAM): " + EnemySpawnDDAA.Instance.spawnMultiplier);
+        debugStrings.Add("Player healing rate multiplier (TEAM): " + HealingRateDDAA.Instance.healingMultiplier);
+
         if (DDAEngine.isDynamicAdjustmentEnabled)
         {
-            debugStrings.Add("----------Multipliers-----------");
-            debugStrings.Add("Enemy spawn multiplier for area (TEAM): " + EnemySpawnDDAA.Instance.spawnMultiplier);
-            debugStrings.Add("Player healing rate multiplier (TEAM): " + HealingRateDDAA.Instance.healingMultiplier);
             debugStrings.Add("Player paintball damage multiplier: " + PlayerPainballDamageDDAA.Instance.painballDamageMultiplier);
             debugStrings.Add("Enemy melee damage multiplier: " + EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier);
             debugStrings.Add("Enemy bullet damage multiplier: " + EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier);

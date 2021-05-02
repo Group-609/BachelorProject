@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.InteropServices;
 using Photon.Pun.Demo.PunBasics;
+using Photon.Pun;
 
 
 public class PlayerDataRecorder : MonoBehaviour
@@ -17,6 +18,7 @@ public class PlayerDataRecorder : MonoBehaviour
     [System.NonSerialized] public bool testEnded = false;       //Set to true when the player finishes the game
     private JsonDateTime sessionStartTime;
     private float conditionStartTime;
+    private bool isMasterClient;
     
     void Start()
     {
@@ -80,6 +82,8 @@ public class PlayerDataRecorder : MonoBehaviour
                 EnemySpawnDDAA.Instance.spawnAmount,
                 HealingRateDDAA.Instance.healingRate,
 
+                EnemySpawnDDAA.Instance.spawnFloatingPoint,
+
                 EnemySpawnDDAA.Instance.spawnMultiplier,
                 HealingRateDDAA.Instance.healingMultiplier,
 
@@ -94,6 +98,7 @@ public class PlayerDataRecorder : MonoBehaviour
     {
         DataContainer data = new DataContainer();
         data.playerIDs = CollectPlayerIDs();
+        data.isMaster = PhotonNetwork.IsMasterClient;
         data.timeBasedData = timeBasedData.ToArray();
         data.teamData = teamData.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
@@ -123,6 +128,7 @@ public class PlayerDataRecorder : MonoBehaviour
 class DataContainer{
     public string sessionStartTime;
     public string condition;
+    public bool isMaster;
     public string[] playerIDs;
     public FrameData[] timeBasedData;
     public FrameData[] teamData;
