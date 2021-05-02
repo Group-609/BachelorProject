@@ -27,14 +27,6 @@ public static class DDAEngine
         EnemyBulletDamageDDAA.Instance.Reset();
         EnemyMeleeDamageDDAA.Instance.Reset();
     }
-
-    public static void AdjustDPG(float conditionValue, int[] conditionalValues, float[] additiveValues)
-    {
-        difficultiesPointGlobal = Mathf.Max(
-            0f,
-            difficultiesPointGlobal + GetAdditiveValue(conditionValue, conditionalValues, additiveValues)
-        );
-    }
     
     public static void AdjustDPG(float conditionValue, float[] conditionalValues, float[] additiveValues)
     {
@@ -45,25 +37,35 @@ public static class DDAEngine
     }
 
     // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
-    public static float GetAdditiveValue(float conditionValue, int[] conditionalValues, float[] additiveValues)
-    {
-        for (int i = 0; i < conditionalValues.Length; i++)
-        {
-            if (conditionalValues[i] >= conditionValue)
-                return additiveValues[i];
-        }
-        return additiveValues[additiveValues.Length - 1];
-    }
-
-    // Based on ConditionalValue this function should return what adjustment should be done to DDAA's multiplier/point
     public static float GetAdditiveValue(float conditionValue, float[] conditionalValues, float[] additiveValues)
     {
-        for (int i = 0; i < conditionalValues.Length; i++)
+        //conditionValue = 1.6
+        //conditionalValues = { 0.5, 0.75, 1.25, 1.5 }
+        //additiveValues = { -1, -0.5, 0, 0.5, 1 }
+        if (conditionalValues.Length + 1 != additiveValues.Length)
+            Debug.LogError("IMPORTANT! Conditional and additive values are not of the required length");
+
+        for (int i = 0; i < additiveValues.Length; i++)
         {
-            if (conditionalValues[i] >= conditionValue)
+            float? lower = null;
+            float? upper = null;
+
+            if (i > 0)
+                lower = conditionalValues[i - 1];
+            if (i <= conditionalValues.Length - 1)
+                upper = conditionalValues[i];
+
+            //conditionalValues.Length = 4
+            //additiveValues.Length = 5
+
+            // i = 4
+            //1.5 <= 1.6 <= null
+            if (conditionValue.Between(lower, upper))
+                // 1
                 return additiveValues[i];
         }
-        return additiveValues[additiveValues.Length - 1];
+        Debug.LogError("IMPORTANT! No additive value found. Something went wrong with the system");
+        return 0;
     }
 
     public static float CalculateInGameValue(float point, float pointContribution, float dpgContribution, float minValue = 0f) 

@@ -46,4 +46,21 @@ public static class CustomExtensions
             .OrderBy(gameObject => (gameObject.transform.position - targetObject.transform.position).sqrMagnitude)
             .FirstOrDefault();
     }
+
+    public static bool Between(this float num, float? lower, float? upper)
+    {
+        if (lower != null || upper != null)
+        {
+            if (lower == null)
+                return num <= upper;
+            if (upper == null)
+                return lower <= num;
+            return lower <= num && num <= upper;
+        }
+        else
+        {
+            Debug.LogError("Both numbers in comparison cannot be null");
+            return false;
+        }
+    }
 }
