@@ -40,11 +40,12 @@ public sealed class EnemySpawnDDAA : IDDAA
     private static readonly float spawnPointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length
-    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 2f, 1f, 0f, -1f, -2f }; // additive values to point directly
+    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 1.5f, 1f, 0f, -1f, -1.5f }; // additive values to point directly
     private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { 0.8f, 0.5f, 0f, -0.5f, -0.8f }; // additive values to multiplier
 
     // Mutable parameters. 
     // Do not ajust these, it will change during the gameplay
+    public float spawnFloatingPoint = baseSpawnPoint;
     public float spawnMultiplier = 1f;
     private float spawnPoint = baseSpawnPoint;
 
@@ -63,6 +64,15 @@ public sealed class EnemySpawnDDAA : IDDAA
 
     public void AdjustInGameValue(int addToInGameValue = 0)
     {
+        spawnFloatingPoint = Mathf.Max(
+            0f,
+            spawnFloatingPoint + DDAEngine.GetAdditiveValue(
+                LevelProgressionCondition.Instance.ConditionValue,
+                LevelProgressionCondition.levelProgression,
+                levelProgressionPointAdditiveValues
+            )
+        );
+
         spawnMultiplier = Mathf.Max(
             0f,
             spawnMultiplier + DDAEngine.GetAdditiveValue(
@@ -78,7 +88,7 @@ public sealed class EnemySpawnDDAA : IDDAA
     private void CalculateInGameValue(int addToInGameValue = 0)
     {
         // adjust multiplier and point values
-        spawnPoint = baseSpawnPoint * spawnMultiplier; // possible to add value directly
+        spawnPoint = spawnFloatingPoint * spawnMultiplier; // possible to add value directly
 
         //set enemy spawn amount
         spawnAmount = (int) DDAEngine.CalculateInGameValue(spawnPoint, spawnPointContribution, dpgContribution, minSpawnAmount + addToInGameValue);
@@ -92,6 +102,7 @@ public sealed class EnemySpawnDDAA : IDDAA
     public void Reset()
     {
         spawnMultiplier = 1f;
+        spawnFloatingPoint = baseSpawnPoint;
         spawnPoint = baseSpawnPoint;
         CalculateInGameValue();
     }
