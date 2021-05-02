@@ -63,6 +63,7 @@ public sealed class DamageReceivedCondition: ICondition
             float teamDamageReceivedAverage = totalTeamDamageReceived / teamPlayers.Count;
             ConditionValue = (localPlayerTotalDamageReceived - 1) / teamDamageReceivedAverage;
             localPlayerTotalDamageReceived = 0f;
+            PlayerManager.LocalPlayerManager.totalDamageReceived = 0f;
         }
         else
         {
