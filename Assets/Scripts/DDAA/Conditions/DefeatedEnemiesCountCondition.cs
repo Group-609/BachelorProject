@@ -32,7 +32,7 @@ public class DefeatedEnemiesCountCondition : ICondition
     }
 
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
-    public static readonly float[] defeatedEnemiesDiff = new float[] { 0.5f, 0.75f, 1.25f, 1.5f }; // how many times did the player defeat more enemies than other players
+    public static readonly float[] defeatedEnemiesDiff = new float[] { 0.6f, 0.85f, 1.15f, 1.4f }; // how many times did the player defeat more enemies than other players
     private static readonly float[] dpgAdditiveValues = new float[] { 1.5f, 1f, 0f, -1f, -1.5f }; // additive values to DPG point
 
     public int localPlayerDefeatsCount = 0;
