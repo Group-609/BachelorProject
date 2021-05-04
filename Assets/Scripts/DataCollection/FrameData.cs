@@ -53,7 +53,7 @@ public class FrameData
         this.time = time.ToString("0000.0");
     }
 
-    public FrameData(float DPG, float LPC, float SA, float HR, float SFP, float SM, float HM,, float TIC float time)
+    public FrameData(float DPG, float LPC, float SA, float HR, float SFP, float SM, float HM, float TIC, float time)
     {
         this.DPG = DPG.ToString("000.00");
         this.LPC = LPC.ToString("00.0000");
