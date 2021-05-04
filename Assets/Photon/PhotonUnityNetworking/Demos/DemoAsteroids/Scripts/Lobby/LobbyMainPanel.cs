@@ -55,6 +55,8 @@ namespace Photon.Pun.Demo.Asteroids
         public GameObject devFlowActiveText;
         private bool isDevFlowActivated = false;
 
+        private bool forceTwoPlayersForGame;
+
         #region UNITY
 
         public void Awake()
@@ -300,6 +302,11 @@ namespace Photon.Pun.Demo.Asteroids
             PhotonNetwork.LoadLevel(SceneName);
         }
 
+        public void ForceTwoPlayersForGame(bool shouldForce)
+        {
+            forceTwoPlayersForGame = shouldForce;
+        }
+
         #endregion
 
         private bool CheckPlayersReady()
@@ -316,7 +323,10 @@ namespace Photon.Pun.Demo.Asteroids
                 }
                 else return false;
             }
-            return true;
+
+            if (forceTwoPlayersForGame)
+                return PhotonNetwork.PlayerList.Length == 2;
+            else return true;
         }
         
         private void ClearRoomListView()
