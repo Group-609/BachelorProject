@@ -50,7 +50,6 @@ public sealed class LevelProgressionCondition : ICondition
         {
             // should start the configuration of every DDAA here
             currentConditionalValue = value;
-            DDAEngine.AdjustDPG(currentConditionalValue, levelProgression, dpgAdditiveValues);
         }
     }
 
