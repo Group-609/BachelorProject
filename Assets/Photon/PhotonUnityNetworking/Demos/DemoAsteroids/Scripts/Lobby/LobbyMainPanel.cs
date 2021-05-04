@@ -46,6 +46,7 @@ namespace Photon.Pun.Demo.Asteroids
         public GameObject InsideRoomPanel;
 
         public Button StartGameButton;
+        public GameObject WaitingForSecondPlayerText;
         public GameObject PlayerListEntryPrefab;
 
         private Dictionary<string, RoomInfo> cachedRoomList;
@@ -153,6 +154,7 @@ namespace Photon.Pun.Demo.Asteroids
             {
                 GameObject entry = Instantiate(PlayerListEntryPrefab);
                 entry.transform.SetParent(InsideRoomPanel.transform);
+                entry.transform.SetSiblingIndex(entry.transform.GetSiblingIndex() - 1);
                 entry.transform.localScale = Vector3.one;
                 entry.GetComponent<PlayerListEntry>().Initialize(p.ActorNumber, p.NickName);
                 entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
@@ -166,6 +168,7 @@ namespace Photon.Pun.Demo.Asteroids
             }
 
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
+            WaitingForSecondPlayerText.SetActive(forceTwoPlayersForGame && playerListEntries.Count == 1);
 
             Hashtable props = new Hashtable
             {
@@ -191,6 +194,7 @@ namespace Photon.Pun.Demo.Asteroids
         {
             GameObject entry = Instantiate(PlayerListEntryPrefab);
             entry.transform.SetParent(InsideRoomPanel.transform);
+            entry.transform.SetSiblingIndex(entry.transform.GetSiblingIndex() - 1);
             entry.transform.localScale = Vector3.one;
             entry.GetComponent<PlayerListEntry>().Initialize(newPlayer.ActorNumber, newPlayer.NickName);
             entry.GetComponent<PlayerListEntry>().AddLocalPlayerPropertiesListener(this);
@@ -198,6 +202,8 @@ namespace Photon.Pun.Demo.Asteroids
             playerListEntries.Add(newPlayer.ActorNumber, entry);
 
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
+
+            WaitingForSecondPlayerText.SetActive(forceTwoPlayersForGame && playerListEntries.Count == 1);
         }
 
         public override void OnPlayerLeftRoom(Player otherPlayer)
@@ -206,6 +212,7 @@ namespace Photon.Pun.Demo.Asteroids
             playerListEntries.Remove(otherPlayer.ActorNumber);
 
             StartGameButton.gameObject.SetActive(CheckPlayersReady());
+            WaitingForSecondPlayerText.SetActive(forceTwoPlayersForGame && playerListEntries.Count == 1);
         }
 
         public override void OnMasterClientSwitched(Player newMasterClient)
