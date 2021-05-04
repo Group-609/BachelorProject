@@ -38,7 +38,8 @@ public sealed class HealingRateDDAA : IDDAA
     private static readonly float baseHealingPoint = 4f;
     public static readonly float minHealingRate = 4f;
     public static readonly float maxHealingRate = 20f;
-    private static readonly float dpgContribution = 0.04f;
+    // DPG is individual, so it shouldn't change team based DDA variables (based on one player's individual skill, spawn amount shouldn't change
+    private static readonly float dpgContribution = 0f;
     private static readonly float healingPointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length

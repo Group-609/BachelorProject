@@ -34,13 +34,14 @@ public sealed class EnemySpawnDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseSpawnPoint = 3f;
+    private static readonly float baseSpawnPoint = 4f;
     public static readonly int minSpawnAmount = 3;
-    private static readonly float dpgContribution = 0.1f;
+    // DPG is individual, so it shouldn't change team based DDA variables (based on one player's individual skill, spawn amount shouldn't change
+    private static readonly float dpgContribution = 0f; 
     private static readonly float spawnPointContribution = 1f;
 
     // IMPORTANT! Both arrays have to be the same length
-    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 1.5f, 1f, 0f, -1f, -1.5f }; // additive values to point directly
+    private static readonly float[] levelProgressionPointAdditiveValues = new float[] { 2f, 1.5f, 0f, -1.5f, -2f }; // additive values to point directly
     private static readonly float[] levelProgressionMultiplierAdditiveValues = new float[] { 0.8f, 0.5f, 0f, -0.5f, -0.8f }; // additive values to multiplier
 
     // Mutable parameters. 
