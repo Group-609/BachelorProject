@@ -32,7 +32,7 @@ public sealed class LevelProgressionCondition : ICondition
     private static readonly int[] expectedTimeSpendInCombat = new int[] { 50, 120, 200 }; // adjust these (expected time in seconds)
 
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
-    public static readonly float[] levelProgression = new float[] { 0.5f, 0.75f, 1.25f, 1.5f }; // how many times were they faster than needed
+    public static readonly float[] levelProgression = new float[] { 0.6f, 0.85f, 1.15f, 1.4f }; // how many times were they faster than needed
     private static readonly float[] dpgAdditiveValues = new float[] { 1f, 0.5f, 0f, -0.5f, -1f }; // additive values to DPG point
 
     //holds the value of player's speed compared to what is expected (time/expectedTime)
