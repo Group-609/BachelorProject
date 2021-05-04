@@ -68,6 +68,12 @@ namespace Photon.Pun.Demo.PunBasics
         public float totalDamageReceived;
 
         [NonSerialized]
+        public float completeDamageReceived = 0;
+
+        [NonSerialized]
+        public float completeDamageDone = 0;
+
+        [NonSerialized]
         public int defeatedEnemiesCount;
 
         [Tooltip("Damage that player receives from enemy's meelee attacks")]
@@ -295,6 +301,8 @@ namespace Photon.Pun.Demo.PunBasics
 
             defeatedEnemiesCount = 0;
             totalDamageReceived = 0;
+            completeDamageReceived = 0;
+            completeDamageDone = 0;
             stunCount = 0;
         }
 
@@ -390,6 +398,7 @@ namespace Photon.Pun.Demo.PunBasics
 
                     Debug.Log("Player received damage from enemy. IsMeleeAttack: " + isMeleeAttack + ". Damage dealt: " + healthChange);
                     totalDamageReceived += healthChange;
+                    completeDamageReceived += healthChange;
                     DamageReceivedCondition.Instance.localPlayerTotalDamageReceived += healthChange;
                     GetComponent<HurtEffect>().Hit();
                     health = Mathf.Clamp(health + healthChange, 0f, startingHealth);
@@ -440,6 +449,10 @@ namespace Photon.Pun.Demo.PunBasics
             if (enemy.currentHealth > 0)
             {
                 Debug.Log("Damaged enemy. Paintball damage: " + healthChange);
+                if (playerPhotonView.IsMine)
+                {
+                    completeDamageDone -= healthChange;
+                }
                 enemy.currentHealth = Mathf.Max(0f, enemy.currentHealth + healthChange);
                 enemy.OnDamageTaken();
                 if (enemy.currentHealth <= 0)

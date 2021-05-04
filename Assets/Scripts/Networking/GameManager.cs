@@ -185,6 +185,7 @@ namespace Photon.Pun.Demo.PunBasics
 			//Debug.LogError("Condition set by master client - " + IsDDAEnabled);
 			if (IsDDAEnabled)
 				InvokeRepeating(nameof(TriggerTimeBasedDDAAs), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
+			InvokeRepeating(nameof(CollectValidationData), timeBasedDDAAPeriod, timeBasedDDAAPeriod);
 
 			Debug.Log("Is DDA enabled: " + IsDDAEnabled + ". TimeBasedDDAAs are invoked: " + IsInvoking(nameof(TriggerTimeBasedDDAAs)));
 		}
@@ -278,6 +279,11 @@ namespace Photon.Pun.Demo.PunBasics
         #endregion
 
         #region DDA System methods
+
+		private void CollectValidationData()
+        {
+			PlayerManager.LocalPlayerInstance.GetComponent<PlayerDataRecorder>().AddValidationData();
+		}
 
 		private void TriggerTimeBasedDDAAs()
 		{
