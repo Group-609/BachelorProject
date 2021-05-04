@@ -14,6 +14,7 @@ public class PlayerDataRecorder : MonoBehaviour
 
     private List<FrameData> timeBasedData = new List<FrameData>();
     private List<FrameData> teamData = new List<FrameData>();
+    private List<ValidationData> validationData = new List<ValidationData>();
     [SerializeField] private int framesBetweenRecordTakes = 500; // How many frames between recording of DDA data
     [System.NonSerialized] public bool testEnded = false;       //Set to true when the player finishes the game
     private JsonDateTime sessionStartTime;
@@ -31,16 +32,30 @@ public class PlayerDataRecorder : MonoBehaviour
         //Initial data added
         AddTimeBasedData();
         AddTeamData();
+        AddValidationData();
     }
 
     public void ResetForCondition()
     {
         timeBasedData = new List<FrameData>();
         teamData = new List<FrameData>();
+        validationData = new List<ValidationData>();
         testEnded = false;
         conditionStartTime = Time.fixedTime;
         AddTimeBasedData();
         AddTeamData();
+        AddValidationData();
+    }
+
+    public void AddValidationData()
+    {
+        validationData.Add(
+            new ValidationData(
+                GetComponent<PlayerManager>().completeDamageReceived,
+                GetComponent<PlayerManager>().completeDamageDone,
+                Time.fixedTime - conditionStartTime
+            )
+        );
     }
 
     public void AddTimeBasedData()
@@ -103,6 +118,7 @@ public class PlayerDataRecorder : MonoBehaviour
         data.isMaster = PhotonNetwork.IsMasterClient;
         data.timeBasedData = timeBasedData.ToArray();
         data.teamData = teamData.ToArray();
+        data.validationData = validationData.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
         if (DDAEngine.isDynamicAdjustmentEnabled)
         {
@@ -134,6 +150,7 @@ class DataContainer{
     public string[] playerIDs;
     public FrameData[] timeBasedData;
     public FrameData[] teamData;
+    public ValidationData[] validationData;
 }
 
 struct JsonDateTime
