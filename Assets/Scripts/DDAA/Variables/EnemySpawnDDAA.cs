@@ -34,8 +34,8 @@ public sealed class EnemySpawnDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseSpawnPoint = 4f;
-    public static readonly int minSpawnAmount = 3;
+    private static readonly float baseSpawnPoint = 5f;
+    public static readonly int minSpawnAmount = 4;
     // DPG is individual, so it shouldn't change team based DDA variables (based on one player's individual skill, spawn amount shouldn't change
     private static readonly float dpgContribution = 0f; 
     private static readonly float spawnPointContribution = 1f;

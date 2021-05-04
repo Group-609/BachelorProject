@@ -29,7 +29,7 @@ public sealed class LevelProgressionCondition : ICondition
     }
 
     public int currentLevel;
-    private static readonly int[] expectedTimeSpendInCombat = new int[] { 50, 150, 250 }; // adjust these (expected time in seconds)
+    private static readonly int[] expectedTimeSpendInCombat = new int[] { 60, 165, 265 }; // adjust these (expected time in seconds)
 
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
     public static readonly float[] levelProgression = new float[] { 0.6f, 0.85f, 1.15f, 1.4f }; // how many times were they faster than needed
