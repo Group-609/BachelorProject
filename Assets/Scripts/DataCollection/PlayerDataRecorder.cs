@@ -87,6 +87,8 @@ public class PlayerDataRecorder : MonoBehaviour
                 EnemySpawnDDAA.Instance.spawnMultiplier,
                 HealingRateDDAA.Instance.healingMultiplier,
 
+                LevelProgressionCondition.Instance.timesSpent.FindLast(delegate(float time) { return true; }),
+
                 Time.fixedTime - conditionStartTime
             )
         );

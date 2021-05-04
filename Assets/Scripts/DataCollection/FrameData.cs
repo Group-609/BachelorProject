@@ -31,6 +31,8 @@ public class FrameData
     public string S;  //localPlayerStuntCount;
     public string TDR; //localPlayerTotalDamageReceived;
 
+    public string TIC; //time in combat
+
     public string time;
 
     public FrameData(float DPG, float DEC, float SC, float DRC, float PD, float EMD, float EBD, float PDM, float MDM, float BDM, float ED, float S, float TDR, float time)
@@ -51,7 +53,7 @@ public class FrameData
         this.time = time.ToString("0000.0");
     }
 
-    public FrameData(float DPG, float LPC, float SA, float HR, float SFP, float SM, float HM, float time)
+    public FrameData(float DPG, float LPC, float TIC, float SA, float HR, float SFP, float SM, float HM, float time)
     {
         this.DPG = DPG.ToString("000.00");
         this.LPC = LPC.ToString("00.0000");
@@ -60,6 +62,7 @@ public class FrameData
         this.SFP = SFP.ToString("00.00");
         this.SM = SM.ToString("00.00");
         this.HM = HM.ToString("00.00");
+        this.TIC = TIC.ToString("0000.0");
         this.time = time.ToString("0000.0");
     }
 }

@@ -39,6 +39,7 @@ public sealed class LevelProgressionCondition : ICondition
     private float currentConditionalValue = 1f;
 
     private float time;
+    public List<float> timesSpent = new List<float>();
 
     public bool isGameFinished = false;
 
@@ -59,6 +60,7 @@ public sealed class LevelProgressionCondition : ICondition
         currentConditionalValue = 1f;
         time = 0f;
         currentLevel = 0;
+        timesSpent = new List<float>();
     }
 
     //call this in Update
@@ -73,6 +75,7 @@ public sealed class LevelProgressionCondition : ICondition
         {
             Debug.Log("Time spent for level " + currentLevel + ": " + time + ". Expected time was: " + expectedTimeSpendInCombat[currentLevel]);
             ConditionValue = time / expectedTimeSpendInCombat[currentLevel];
+            timesSpent.Add(time);
             currentLevel++;
             //Debug.Log("Adjusted conditional value. Started level: " + currentLevel);
 
