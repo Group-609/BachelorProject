@@ -51,9 +51,9 @@ public class PlayerDataRecorder : MonoBehaviour
     {
         validationData.Add(
             new ValidationData(
-                GetComponent<PlayerManager>().completeDamageReceived,
-                GetComponent<PlayerManager>().completeDamageDone,
-                Time.fixedTime - conditionStartTime
+                CDR: GetComponent<PlayerManager>().completeDamageReceived,
+                CDD: GetComponent<PlayerManager>().completeDamageDone,
+                time: Time.fixedTime - conditionStartTime
             )
         );
     }
@@ -62,25 +62,25 @@ public class PlayerDataRecorder : MonoBehaviour
     {
         timeBasedData.Add(
             new FrameData(
-                DDAEngine.difficultiesPointGlobal,
+                DPG: DDAEngine.difficultiesPointGlobal,
 
-                DefeatedEnemiesCountCondition.Instance.ConditionValue,
-                StunCondition.Instance.ConditionValue,
-                DamageReceivedCondition.Instance.ConditionValue,
+                DEC: DefeatedEnemiesCountCondition.Instance.ConditionValue,
+                SC: StunCondition.Instance.ConditionValue,
+                DRC: DamageReceivedCondition.Instance.ConditionValue,
 
-                PlayerPainballDamageDDAA.Instance.paintballDamage,
-                EnemyMeleeDamageDDAA.Instance.meleeDamage,
-                EnemyBulletDamageDDAA.Instance.bulletDamage,
+                PD: PlayerPainballDamageDDAA.Instance.paintballDamage,
+                EMD: EnemyMeleeDamageDDAA.Instance.meleeDamage,
+                EBD: EnemyBulletDamageDDAA.Instance.bulletDamage,
 
-                PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
-                EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
-                EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
+                PDM: PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
+                MDM: EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
+                BDM: EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
 
-                DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
-                StunCondition.Instance.localPlayerStuntCount,
-                DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
+                ED: DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
+                S: StunCondition.Instance.localPlayerStuntCount,
+                TDR: DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
 
-                Time.fixedTime - conditionStartTime
+                time: Time.fixedTime - conditionStartTime
             )
         );
         Debug.Log("Added time based data frame. Count: " + timeBasedData.Count);
@@ -90,21 +90,21 @@ public class PlayerDataRecorder : MonoBehaviour
     {
         teamData.Add(
             new FrameData(
-                DDAEngine.difficultiesPointGlobal,
+                DPG: DDAEngine.difficultiesPointGlobal,
 
-                LevelProgressionCondition.Instance.ConditionValue,
+                LPC: LevelProgressionCondition.Instance.ConditionValue,
 
-                EnemySpawnDDAA.Instance.spawnAmount,
-                HealingRateDDAA.Instance.healingRate,
+                SA: EnemySpawnDDAA.Instance.spawnAmount,
+                HR: HealingRateDDAA.Instance.healingRate,
 
-                EnemySpawnDDAA.Instance.spawnFloatingPoint,
+                SFP: EnemySpawnDDAA.Instance.spawnFloatingPoint,
 
-                EnemySpawnDDAA.Instance.spawnMultiplier,
-                HealingRateDDAA.Instance.healingMultiplier,
+                SM: EnemySpawnDDAA.Instance.spawnMultiplier,
+                HM: HealingRateDDAA.Instance.healingMultiplier,
 
-                LevelProgressionCondition.Instance.timesSpent.FindLast(delegate(float time) { return true; }),
+                TIC: LevelProgressionCondition.Instance.timesSpent.FindLast(delegate(float time) { return true; }),
 
-                Time.fixedTime - conditionStartTime
+                time: Time.fixedTime - conditionStartTime
             )
         );
         Debug.Log("Added team data frame. Count: " + teamData.Count);
