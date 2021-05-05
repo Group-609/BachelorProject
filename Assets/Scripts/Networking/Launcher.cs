@@ -91,6 +91,10 @@ namespace Photon.Pun.Demo.PunBasics
 			// we want to make sure the log is clear everytime we connect, we might have several failed attempted if connection failed.
 			feedbackText.text = "";
 
+			//try to help with disconnecting
+			PhotonNetwork.QuickResends = 3;
+			PhotonNetwork.MaxResendsBeforeDisconnect = 7;
+
 			// keep track of the will to join a room, because when we come back from the game we will get a callback that we are connected, so we need to know what to do then
 			isConnecting = true;
 
@@ -182,7 +186,7 @@ namespace Photon.Pun.Demo.PunBasics
 		public override void OnDisconnected(DisconnectCause cause)
 		{
 			LogFeedback("<Color=Red>OnDisconnected</Color> "+cause);
-			Debug.LogError("PUN Basics Tutorial/Launcher:Disconnected");
+			Debug.LogError("PUN Basics Tutorial/Launcher:Disconnected Cause: " + cause);
 
 			// #Critical: we failed to connect or got disconnected. There is not much we can do. Typically, a UI system should be in place to let the user attemp to connect again.
 			loaderAnime.StopLoaderAnimation();
