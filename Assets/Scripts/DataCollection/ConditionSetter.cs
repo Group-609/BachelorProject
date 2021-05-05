@@ -18,6 +18,9 @@ public class ConditionSetter : MonoBehaviour
     [Tooltip("Force DDA condition")]
     public bool forceDDA;
 
+    private readonly string ddaString = "DDA";
+    private readonly string controlString = "control";
+
     void Start()
     {
         DontDestroyOnLoad(transform.gameObject);
@@ -34,8 +37,10 @@ public class ConditionSetter : MonoBehaviour
 
     public void ChangeCondition()
     {
-        forceControl = !forceControl;
-        forceDDA = !forceDDA;
+        //if DDA was enabled in the first condition, we want to force Control condition in the second condition
+        forceControl = DDAEngine.isDynamicAdjustmentEnabled;
+        forceDDA = !DDAEngine.isDynamicAdjustmentEnabled;
+        condition = DDAEngine.isDynamicAdjustmentEnabled ? controlString : ddaString;
     }
 
     public void ShouldGetConditionFromServer()
@@ -73,7 +78,7 @@ public class ConditionSetter : MonoBehaviour
         }
         else
         {
-            return condition == "DDA";
+            return condition == ddaString;
         }
     }
 }
