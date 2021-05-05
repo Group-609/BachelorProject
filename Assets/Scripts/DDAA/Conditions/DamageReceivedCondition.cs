@@ -32,7 +32,7 @@ public sealed class DamageReceivedCondition: ICondition
     }
 
     // They both are optional to have (based on our decisions what condition affects what variables etc.)
-    public static readonly float[] damageReceivedDiff = new float[] { 0.5f, 0.75f, 1.25f, 1.5f }; // how many times was the player damaged more than other players
+    public static readonly float[] damageReceivedDiff = new float[] { 0.6f, 0.85f, 1.15f, 1.4f }; // how much more the player got damaged than other players
     private static readonly float[] dpgAdditiveValues = new float[] { 1.5f, 1f, 0f, -1f, -1.5f }; // additive values to DPG point
 
     public float localPlayerTotalDamageReceived = 0;

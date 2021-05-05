@@ -14,6 +14,7 @@ public class PlayerDataRecorder : MonoBehaviour
 
     private List<FrameData> timeBasedData = new List<FrameData>();
     private List<FrameData> teamData = new List<FrameData>();
+    private List<ValidationData> validationData = new List<ValidationData>();
     [SerializeField] private int framesBetweenRecordTakes = 500; // How many frames between recording of DDA data
     [System.NonSerialized] public bool testEnded = false;       //Set to true when the player finishes the game
     private JsonDateTime sessionStartTime;
@@ -31,41 +32,55 @@ public class PlayerDataRecorder : MonoBehaviour
         //Initial data added
         AddTimeBasedData();
         AddTeamData();
+        AddValidationData();
     }
 
     public void ResetForCondition()
     {
         timeBasedData = new List<FrameData>();
         teamData = new List<FrameData>();
+        validationData = new List<ValidationData>();
         testEnded = false;
         conditionStartTime = Time.fixedTime;
         AddTimeBasedData();
         AddTeamData();
+        AddValidationData();
+    }
+
+    public void AddValidationData()
+    {
+        validationData.Add(
+            new ValidationData(
+                CDR: GetComponent<PlayerManager>().completeDamageReceived,
+                CDD: GetComponent<PlayerManager>().completeDamageDone,
+                time: Time.fixedTime - conditionStartTime
+            )
+        );
     }
 
     public void AddTimeBasedData()
     {
         timeBasedData.Add(
             new FrameData(
-                DDAEngine.difficultiesPointGlobal,
+                DPG: DDAEngine.difficultiesPointGlobal,
 
-                DefeatedEnemiesCountCondition.Instance.ConditionValue,
-                StunCondition.Instance.ConditionValue,
-                DamageReceivedCondition.Instance.ConditionValue,
+                DEC: DefeatedEnemiesCountCondition.Instance.ConditionValue,
+                SC: StunCondition.Instance.ConditionValue,
+                DRC: DamageReceivedCondition.Instance.ConditionValue,
 
-                PlayerPainballDamageDDAA.Instance.paintballDamage,
-                EnemyMeleeDamageDDAA.Instance.meleeDamage,
-                EnemyBulletDamageDDAA.Instance.bulletDamage,
+                PD: PlayerPainballDamageDDAA.Instance.paintballDamage,
+                EMD: EnemyMeleeDamageDDAA.Instance.meleeDamage,
+                EBD: EnemyBulletDamageDDAA.Instance.bulletDamage,
 
-                PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
-                EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
-                EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
+                PDM: PlayerPainballDamageDDAA.Instance.painballDamageMultiplier,
+                MDM: EnemyMeleeDamageDDAA.Instance.meleeDamageMultiplier,
+                BDM: EnemyBulletDamageDDAA.Instance.bulletDamageMultiplier,
 
-                DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
-                StunCondition.Instance.localPlayerStuntCount,
-                DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
+                ED: DefeatedEnemiesCountCondition.Instance.localPlayerDefeatsCount,
+                S: StunCondition.Instance.localPlayerStuntCount,
+                TDR: DamageReceivedCondition.Instance.localPlayerTotalDamageReceived,
 
-                Time.fixedTime - conditionStartTime
+                time: Time.fixedTime - conditionStartTime
             )
         );
         Debug.Log("Added time based data frame. Count: " + timeBasedData.Count);
@@ -75,19 +90,21 @@ public class PlayerDataRecorder : MonoBehaviour
     {
         teamData.Add(
             new FrameData(
-                DDAEngine.difficultiesPointGlobal,
+                DPG: DDAEngine.difficultiesPointGlobal,
 
-                LevelProgressionCondition.Instance.ConditionValue,
+                LPC: LevelProgressionCondition.Instance.ConditionValue,
 
-                EnemySpawnDDAA.Instance.spawnAmount,
-                HealingRateDDAA.Instance.healingRate,
+                SA: EnemySpawnDDAA.Instance.spawnAmount,
+                HR: HealingRateDDAA.Instance.healingRate,
 
-                EnemySpawnDDAA.Instance.spawnFloatingPoint,
+                SFP: EnemySpawnDDAA.Instance.spawnFloatingPoint,
 
-                EnemySpawnDDAA.Instance.spawnMultiplier,
-                HealingRateDDAA.Instance.healingMultiplier,
+                SM: EnemySpawnDDAA.Instance.spawnMultiplier,
+                HM: HealingRateDDAA.Instance.healingMultiplier,
 
-                Time.fixedTime - conditionStartTime
+                TIC: LevelProgressionCondition.Instance.timesSpent.FindLast(delegate(float time) { return true; }),
+
+                time: Time.fixedTime - conditionStartTime
             )
         );
         Debug.Log("Added team data frame. Count: " + teamData.Count);
@@ -101,6 +118,7 @@ public class PlayerDataRecorder : MonoBehaviour
         data.isMaster = PhotonNetwork.IsMasterClient;
         data.timeBasedData = timeBasedData.ToArray();
         data.teamData = teamData.ToArray();
+        data.validationData = validationData.ToArray();
         data.sessionStartTime = sessionStartTime.dateTime.ToString();
         if (DDAEngine.isDynamicAdjustmentEnabled)
         {
@@ -132,6 +150,7 @@ class DataContainer{
     public string[] playerIDs;
     public FrameData[] timeBasedData;
     public FrameData[] teamData;
+    public ValidationData[] validationData;
 }
 
 struct JsonDateTime

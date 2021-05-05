@@ -47,9 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4433564e76b1940028e7e531f171050d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsDDAEnabled: 0
-  isLiveTest: 0
-  timeBasedDDAAPeriod: 30
+  timeBasedDDAAPeriod: 40
   playerPrefab: {fileID: 100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
 --- !u!114 &978113929
 MonoBehaviour:
