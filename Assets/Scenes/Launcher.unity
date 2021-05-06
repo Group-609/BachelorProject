@@ -2154,7 +2154,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Coop game
+  m_Text: Ink Busters
 --- !u!222 &635595327
 CanvasRenderer:
   m_ObjectHideFlags: 0
