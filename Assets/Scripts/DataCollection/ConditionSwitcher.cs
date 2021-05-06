@@ -21,6 +21,7 @@ public class ConditionSwitcher : MonoBehaviour
 
     private bool isFirstCondition = true;
     private bool bothConditionsFinished = false;
+    private bool endScreenIsOpen = false;
 
     public bool shouldSendDataToServer;
 
@@ -94,6 +95,7 @@ public class ConditionSwitcher : MonoBehaviour
 
     public void ShowFirstConditionEndScreen()
     {
+        endScreenIsOpen = true;
         PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().SetMouseLock(false);
         PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().areSettingsEnabled = true;
         PlayerManager.LocalPlayerInstance.GetComponent<PlayerManager>().areSettingsEnabled = true;
@@ -101,15 +103,26 @@ public class ConditionSwitcher : MonoBehaviour
         overlay.SetActive(true);
         Button button = overlay.transform.Find("Button").GetComponent<Button>();
         button.onClick.AddListener(EndFirstCondition);
+        StartCoroutine(HideEndScreenIfNotPressedForLong());
+    }
+
+    IEnumerator HideEndScreenIfNotPressedForLong()
+    {
+        yield return new WaitForSeconds(20.0f);
+        if(endScreenIsOpen)
+        {
+            EndFirstCondition();
+        }
     }
 
     public void EndFirstCondition()
-    {
+    {   
         PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().SetMouseLock(true);
         PlayerManager.LocalPlayerInstance.GetComponent<FirstPersonController>().areSettingsEnabled = false;
         PlayerManager.LocalPlayerInstance.GetComponent<PlayerManager>().areSettingsEnabled = false;
         GameObject overlay = GameObject.Find("Canvas/Player HUD/Condition1EndOverlay");
         overlay.SetActive(false);
+        endScreenIsOpen = false;
         if (!Application.isEditor && shouldSendDataToServer)
             FirstConditionFinished(GetJsonToSend());
         else Debug.Log("Json data to send: " + GetJsonToSend());
