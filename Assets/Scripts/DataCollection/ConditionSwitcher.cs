@@ -68,6 +68,7 @@ public class ConditionSwitcher : MonoBehaviour
         List<GameObject> players = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
         UnlockPlayersMouse(players);
         StopMusic(players);
+        yield return new WaitForSeconds(gameCloseDelay);
 
         if (PhotonNetwork.IsMasterClient)
         {
