@@ -38,7 +38,7 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
     public static readonly float minPaintballDamage = 2f;
     public static readonly float maxPaintballDamage = 20f;
     private static readonly float dpgContribution = -0.08f;
-    private static readonly float paintballDamagePointContribution = 3.2f;
+    private static readonly float paintballDamagePointContribution = 4f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { -0.1f, -0.05f, 0f, 0.05f, 0.1f }; // additive values to multiplier
