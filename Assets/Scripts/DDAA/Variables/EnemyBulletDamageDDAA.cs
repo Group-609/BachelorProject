@@ -34,11 +34,11 @@ public sealed class EnemyBulletDamageDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float baseBulletDamagePoint = 10f;
+    private static readonly float baseBulletDamagePoint = 1f;
     public static readonly float minBulletDamage = 15f;
     public static readonly float maxBulletDamage = 80f;
     private static readonly float dpgContribution = 0.3f;
-    private static readonly float bulletDamagePointContribution = 2f;
+    private static readonly float bulletDamagePointContribution = 20f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { 0.1f, 0.05f, 0f, -0.05f, -0.1f }; // additive values to multiplier

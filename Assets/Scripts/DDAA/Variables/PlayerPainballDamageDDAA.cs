@@ -34,11 +34,11 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
     // All of the parameters below are the ones to change, when adjusting the DDA (unless there's a bug)
 
     //static parameters
-    private static readonly float basePaintballDamagePoint = 3.2f;
+    private static readonly float basePaintballDamagePoint = 1f;
     public static readonly float minPaintballDamage = 2f;
     public static readonly float maxPaintballDamage = 20f;
-    private static readonly float dpgContribution = 0.08f;
-    private static readonly float paintballDamagePointContribution = 1f;
+    private static readonly float dpgContribution = -0.08f;
+    private static readonly float paintballDamagePointContribution = 4f;
 
     // IMPORTANT! Both arrays have to be the same length
     private static readonly float[] stunCountDiffMultiplierAdditiveValues = new float[] { -0.1f, -0.05f, 0f, 0.05f, 0.1f }; // additive values to multiplier
@@ -95,9 +95,10 @@ public sealed class PlayerPainballDamageDDAA : IDDAA
 
     private void CalculateInGameValue(int addToInGameValue = 0)
     {
-        //set healing rate
-        paintballDamage = Mathf.Min(
+        //set paintball damage
+        paintballDamage = Mathf.Clamp(
             DDAEngine.CalculateInGameValue(paintballDamagePoint, paintballDamagePointContribution, dpgContribution, minPaintballDamage + addToInGameValue),
+            minPaintballDamage,
             maxPaintballDamage
         );
 
